@@ -6,4 +6,4 @@ type: application
 sources:
 - https://github.com/hobops/helm-charts
 version: 0.1.8
-appVersion: "0.1.8"
+appVersion: "0.1.9"
