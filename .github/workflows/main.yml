@@ -3,10 +3,12 @@ name: Lint and Test Charts
 on:
   push:
     branches:
-    - main
+      - main
+      - 'releases/**'
   pull_request:
-    - main
-    - feat/*
+    branches:
+      - main
+      - 'feat/**'
 
 jobs:
   lint-test:
