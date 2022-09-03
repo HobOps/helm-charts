@@ -39,6 +39,11 @@ jobs:
             echo "::set-output name=changed::true"
           fi
 
+      - name: Add hobops helm repo
+        id: helm-add
+        run: |
+          helm repo add hobops https://hobops-helm-charts.storage.googleapis.com
+
       - name: Run chart-testing (lint)
         run: ct lint --lint-conf .github/workflows/lintconf.yaml --target-branch ${{ github.event.repository.default_branch }}
 

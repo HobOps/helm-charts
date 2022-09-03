@@ -1,0 +1,11 @@
+common-library:
+  ClusterIssuer:
+    letsencrypt:
+      email: test@example.com
+      server: https://acme-v02.api.letsencrypt.org/directory
+      privateKeySecretRef:
+        name: clusterissuer-letsencrypt-key
+      solvers:
+      - http01:
+          ingress:
+            class: nginx
