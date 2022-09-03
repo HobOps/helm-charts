@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.ConfigMap }}
+  {{ include "library.Kubernetes.ConfigMap" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

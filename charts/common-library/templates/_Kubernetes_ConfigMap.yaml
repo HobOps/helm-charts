@@ -1,0 +1,13 @@
+{{- define "library.Kubernetes.ConfigMap" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+type: {{ (index .Values.ConfigMap .name).type | default "Opaque" }}
+{{- with (index .Values.ConfigMap .name).data }}
+data:
+  {{- tpl (toYaml .) $ | nindent 2 }}
+{{- end }}
+{{- end }}
