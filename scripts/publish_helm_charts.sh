@@ -3,6 +3,7 @@ set -e
 # https://helm.sh/docs/topics/chart_repository/
 export CHARTS_PATH="charts"
 export RELEASE_PATH="$(mktemp -d)"
+gsutil -m rsync gs://hobops-helm-charts/ "${RELEASE_PATH}/"
 for CHART in $(ls $CHARTS_PATH); do
   helm package -u ${CHARTS_PATH}/${CHART} -d ${RELEASE_PATH};
 done
