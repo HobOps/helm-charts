@@ -1,4 +1,4 @@
-name: Lint and Test Charts
+name: Helm Lint and Publish Charts
 
 on:
   push:
@@ -45,11 +45,40 @@ jobs:
           helm repo add hobops https://hobops-helm-charts.storage.googleapis.com
 
       - name: Run chart-testing (lint)
-        run: ct lint --lint-conf .github/workflows/lintconf.yaml --target-branch ${{ github.event.repository.default_branch }}
+        run: ct lint --lint-conf scripts/lintconf.yaml --target-branch ${{ github.event.repository.default_branch }}
 
-#      - name: Create kind cluster
-#        uses: helm/kind-action@v1.2.0
-#        if: steps.list-changed.outputs.changed == 'true'
-#
-#      - name: Run chart-testing (install)
-#        run: ct install
+  publish:
+    runs-on: ubuntu-latest
+    needs: lint-test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.9.2
+
+      - name: Add hobops helm repo
+        id: helm-add
+        run: |
+          helm repo add hobops https://hobops-helm-charts.storage.googleapis.com
+
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "credentials.json"
+          json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Publish helm charts
+        id: helm-publish
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS=/home/runner/work/helm-charts/helm-charts/credentials.json
+          echo "[Credentials]" > ~/.boto
+          echo "gs_service_key_file=${GOOGLE_APPLICATION_CREDENTIALS}" >> ~/.boto
+          cat ~/.boto
+          ./scripts/publish_helm_charts.sh
