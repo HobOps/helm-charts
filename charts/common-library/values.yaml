@@ -1,3 +1,4 @@
 ClusterIssuer: {}
 ConfigMap: {}
 Secret: {}
+StorageClass: {}

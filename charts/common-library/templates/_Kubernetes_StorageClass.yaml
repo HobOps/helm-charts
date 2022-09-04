@@ -1,0 +1,16 @@
+{{- define "library.Kubernetes.StorageClass" }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+provisioner: {{ (index .Values.StorageClass .name).provisioner }}
+allowVolumeExpansion: {{ (index .Values.StorageClass .name).allowVolumeExpansion | default "true" }}
+reclaimPolicy: {{ (index .Values.StorageClass .name).reclaimPolicy | default "Delete" }}
+volumeBindingMode: {{ (index .Values.StorageClass .name).volumeBindingMode | default "Immediate" }}
+{{- with (index .Values.StorageClass .name).parameters }}
+parameters:
+  {{- tpl (toYaml .) $ | nindent 2 }}
+{{- end }}
+{{- end }}
