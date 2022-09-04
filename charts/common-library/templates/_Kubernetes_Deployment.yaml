@@ -117,9 +117,9 @@ spec:
       tolerations:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
-# TODO: DRY needed here
 {{- if (index .Values.Deployment .name).service }}{{- if (index .Values.Deployment .name).service.ports }}
 ---
+# TODO: DRY needed here
 apiVersion: v1
 kind: Service
 metadata:
