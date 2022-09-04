@@ -1,4 +1,5 @@
 ClusterIssuer: {}
 ConfigMap: {}
+Job: {}
 Secret: {}
 StorageClass: {}
