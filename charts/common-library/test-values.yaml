@@ -1,22 +1,22 @@
-ClusterIssuer:
-  letsencrypt:
-    email: changeme@example.com
-    server: https://changeme-acme-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: changeme-clusterissuer-letsencrypt-key
-    solvers:
-    - http01:
-        ingress:
-          class: changeme-nginx
-  letsencrypt-staging:
-    email: changeme@example.com
-    server: https://changeme-acme-staging-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: changeme-clusterissuer-letsencrypt-staging-key
-    solvers:
-    - http01:
-        ingress:
-          class: changeme-nginx
+#ClusterIssuer:
+#  letsencrypt:
+#    email: changeme@example.com
+#    server: https://changeme-acme-v02.api.letsencrypt.org/directory
+#    privateKeySecretRef:
+#      name: changeme-clusterissuer-letsencrypt-key
+#    solvers:
+#    - http01:
+#        ingress:
+#          class: changeme-nginx
+#  letsencrypt-staging:
+#    email: changeme@example.com
+#    server: https://changeme-acme-staging-v02.api.letsencrypt.org/directory
+#    privateKeySecretRef:
+#      name: changeme-clusterissuer-letsencrypt-staging-key
+#    solvers:
+#    - http01:
+#        ingress:
+#          class: changeme-nginx
 
 ConfigMap:
   test-configmap:
@@ -28,28 +28,26 @@ ConfigMap:
         [Service]
         foo=bar
 
-Job:
-  test-job:
+Deployment:
+  test-deployment:
+    annotations:
+      annotation: test-deployment
     podAnnotations:
-      app: test-job
+      podAnnotations: test-deployment
     selectorLabels:
-      app: test-job
-    restartPolicy: changeme
-    serviceAccountName: test-job
+      selectorLabels: test-deployment
+    serviceAnnotations:
+      serviceAnnotations: test-deployment
+#    serviceAccountName: test-deployment
     podSecurityContext:
       fsGroup: 2000
     securityContext:
-      capabilities:
-        drop:
-        - ALL
-      readOnlyRootFilesystem: true
-      runAsNonRoot: true
-      runAsUser: 1000
-    backoffLimit: 1
-    completions: 1
-    parallelism: 1
+      privileged: false
+    progressDeadlineSeconds: 30
+    replicas: 2
+    initContainers: {}
     image:
-      repository: alpine
+      repository: nginx
       tag: latest
       pullPolicy: IfNotPresent
     imagePullSecrets:
@@ -66,7 +64,35 @@ Job:
     - bash
     - -c
     args:
-    - sleep 9999
+    - nginx -g "daemon off;"
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /
+        port: 80
+        scheme: HTTP
+      initialDelaySeconds: 30
+      periodSeconds: 2
+      successThreshold: 1
+      timeoutSeconds: 2
+    readinessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /
+        port: 80
+        scheme: HTTP
+      initialDelaySeconds: 30
+      periodSeconds: 2
+      successThreshold: 1
+      timeoutSeconds: 2
+    service:
+      ports:
+      - name: nginx
+        port: 80
+        protocol: TCP
+      - name: nginx1
+        port: 801
+        protocol: TCP
     resources:
       requests:
         memory: 100Mi
@@ -94,7 +120,7 @@ Job:
         requiredDuringSchedulingIgnoredDuringExecution:
           nodeSelectorTerms:
           - matchExpressions:
-            - key: "failure-domain.beta.kubernetes.io/zone"
+            - key: "topology.kubernetes.io/zone"
               operator: In
               values: ["us-central1-a", "us-central1-b"]
     tolerations:
@@ -102,36 +128,113 @@ Job:
       operator: Equal
       value: "true"
       effect: NoSchedule
-
+#
+#Job:
+#  test-job:
+#    annotations:
+#      annotation: test-job
+#    podAnnotations:
+#      podAnnotations: test-job
+#    selectorLabels:
+#      selectorLabels: test-job
+#    restartPolicy: OnFailure
+#    serviceAccountName: test-job
+#    podSecurityContext:
+#      fsGroup: 2000
+#    securityContext:
+#      capabilities:
+#        drop:
+#        - ALL
+#      readOnlyRootFilesystem: true
+#      runAsNonRoot: true
+#      runAsUser: 1000
+#    backoffLimit: 1
+#    completions: 1
+#    parallelism: 1
+#    image:
+#      repository: alpine
+#      tag: latest
+#      pullPolicy: IfNotPresent
+#    imagePullSecrets:
+#    - name: changeme
+#    envFrom:
+#    - configMapRef:
+#        name: test-configmap
+#    - secretRef:
+#        name: test-secret
+#    env:
+#    - name: FUZZ
+#      value: BUZZ
+#    command:
+#    - bash
+#    - -c
+#    args:
+#    - sleep 9999
+#    resources:
+#      requests:
+#        memory: 100Mi
+#        cpu: 100m
+#      limits:
+#        memory: 200Mi
+#        cpu: 200m
+#    volumeMounts:
+#    - name: config-file
+#      mountPath: /etc/service.conf
+#      subPath: service.conf
+#      readOnly: true
+#    volumes:
+#    - name: config-file
+#      configMap:
+#        name: test-file-configmap
+#    nodeSelector:
+#      node: changeme
+#    hostAliases:
+#    - hostnames:
+#      - example.com
+#      ip: 1.1.1.1
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#          - matchExpressions:
+#            - key: "topology.kubernetes.io/zone"
+#              operator: In
+#              values: ["us-central1-a", "us-central1-b"]
+#    tolerations:
+#    - key: reserved-pool
+#      operator: Equal
+#      value: "true"
+#      effect: NoSchedule
+#
 Secret:
   test-secret:
     data:
       FOO: changeme
     stringData:
       BAR: changeme
-
-StorageClass:
-  test-storageclass:
-    provisioner: changeme
-    allowVolumeExpansion: true
-    reclaimPolicy: changeme
-    volumeBindingMode: changeme
-    parameters:
-      type: changeme
-
-NetworkPolicy:
-  test-networkpolicy:
-    podSelector:
-      matchLabels:
-        changeme-match-label: "true"
-    policyTypes:
-    - Ingress
-    ingress:
-    - from:
-      - namespaceSelector:
-          matchLabels:
-            name: changeme-namespace
-        podSelector:
-          matchLabels:
-            type: changeme-label
-
+#
+#StorageClass:
+#  test-storageclass:
+#    provisioner: changeme
+#    allowVolumeExpansion: true
+#    reclaimPolicy: Delete
+#    volumeBindingMode: Immediate
+#    parameters:
+#      type: changeme
+#
+#NetworkPolicy:
+#  test-networkpolicy:
+#    podSelector:
+#      matchLabels:
+#        changeme-match-label: "true"
+#    policyTypes:
+#    - Ingress
+#    ingress:
+#    - from:
+#      - namespaceSelector:
+#          matchLabels:
+#            name: changeme-namespace
+#        podSelector:
+#          matchLabels:
+#            type: changeme-label
+#
