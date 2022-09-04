@@ -38,3 +38,20 @@ StorageClass:
     volumeBindingMode: changeme
     parameters:
       type: changeme
+
+NetworkPolicy:
+  test-networkpolicy:
+    podSelector:
+      matchLabels:
+        changeme-match-label: "true"
+    policyTypes:
+    - Ingress
+    ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: changeme-namespace
+        podSelector:
+          matchLabels:
+            type: changeme-label
+

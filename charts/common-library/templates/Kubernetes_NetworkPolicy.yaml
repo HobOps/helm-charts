@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.NetworkPolicy }}
+  {{ include "library.Kubernetes.NetworkPolicy" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}
