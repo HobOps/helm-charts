@@ -1,0 +1,31 @@
+ClusterIssuer:
+  letsencrypt:
+    email: test@example.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: clusterissuer-letsencrypt-key
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+  letsencrypt-staging:
+    email: test@example.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: clusterissuer-letsencrypt-staging-key
+    solvers:
+    - http01:
+        ingress:
+          class: nginx
+
+ConfigMap:
+  test-configmap:
+    data:
+      FOO: BAR
+
+Secret:
+  test-secret:
+    data:
+      FOO: BAR
+    stringData:
+      HELLO: WORLD
