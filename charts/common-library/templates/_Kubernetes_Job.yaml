@@ -5,6 +5,10 @@ kind: Job
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.Job .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
   {{- with (index .Values.Job .name).labels }}
   labels:
     {{- tpl (toYaml .) $ | nindent 4 }}
@@ -16,7 +20,7 @@ spec:
   template:
     metadata:
       {{- with (index .Values.Job .name).podAnnotations }}
-      data:
+      annotations:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       {{- with (index .Values.Job .name).selectorLabels }}
@@ -28,7 +32,7 @@ spec:
       imagePullSecrets:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
-      serviceAccountName: {{ (index .Values.Job .name).serviceAccountName | default "" }}
+      serviceAccountName: {{ (index .Values.Job .name).serviceAccountName | default "default" }}
       restartPolicy: {{ (index .Values.Job .name).restartPolicy | default "Never" }}
       {{- with (index .Values.Job .name).podSecurityContext }}
       securityContext:
@@ -41,7 +45,7 @@ spec:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
         image: "{{ (index .Values.Job .name).image.repository }}:{{ (index .Values.Job .name).image.tag }}"
-        pullPolicy: {{ (index .Values.Job .name).image.pullPolicy }}
+        imagePullPolicy: {{ (index .Values.Job .name).image.pullPolicy }}
         {{- with (index .Values.Job .name).command }}
         command:
           {{- tpl (toYaml .) $ | nindent 8 }}
@@ -62,24 +66,28 @@ spec:
         resources:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
-        {{- with (index .Values.Job .name).volumes }}
-        volumes:
+        {{- with (index .Values.Job .name).volumeMounts }}
+        volumeMounts:
           {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with (index .Values.Job .name).nodeSelector }}
-        nodeSelector:
-          {{- tpl (toYaml .) $ | nindent 10 }}
-        {{- end }}
-        {{- with (index .Values.Job .name).hostAliases }}
-        hostAliases:
-          {{- tpl (toYaml .) $ | nindent 8 }}
-        {{- end }}
-        {{- with (index .Values.Job .name).affinity }}
-        affinity:
-          {{- tpl (toYaml .) $ | nindent 8 }}
-        {{- end }}
-        {{- with (index .Values.Job .name).tolerations }}
-        tolerations:
-          {{- tpl (toYaml .) $ | nindent 8 }}
-        {{- end }}
+      {{- with (index .Values.Job .name).volumes }}
+      volumes:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).hostAliases }}
+      hostAliases:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).affinity }}
+      affinity:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).tolerations }}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
 {{- end }}
