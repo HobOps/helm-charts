@@ -1,0 +1,156 @@
+{{- define "library.Kubernetes.DaemonSet" }}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.DaemonSet .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.DaemonSet .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with (index .Values.DaemonSet .name).updateStrategy }}
+  updateStrategy:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.DaemonSet .name).selectorLabels }}
+  selector:
+    matchLabels:
+      {{- tpl (toYaml .) $ | nindent 6 }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with (index .Values.DaemonSet .name).podAnnotations }}
+      annotations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.DaemonSet .name).selectorLabels }}
+      labels:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with (index .Values.DaemonSet .name).imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      serviceAccountName: {{ (index .Values.DaemonSet .name).serviceAccountName | default "default" }}
+      {{- with (index .Values.DaemonSet .name).podSecurityContext }}
+      securityContext:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.DaemonSet .name).initContainers }}
+      initContainers:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .name }}
+        {{- with (index .Values.DaemonSet .name).securityContext }}
+        securityContext:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        image: "{{ (index .Values.DaemonSet .name).image.repository }}:{{ (index .Values.DaemonSet .name).image.tag }}"
+        imagePullPolicy: {{ (index .Values.DaemonSet .name).image.pullPolicy }}
+        {{- with (index .Values.DaemonSet .name).command }}
+        command:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.DaemonSet .name).args }}
+        args:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.DaemonSet .name).envFrom }}
+        envFrom:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.DaemonSet .name).env }}
+        env:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- if (index .Values.DaemonSet .name).service }}{{- if (index .Values.DaemonSet .name).service.ports }}
+        ports:
+        {{- range (index .Values.DaemonSet .name).service.ports }}
+        - name: {{ .name }}
+          containerPort: {{ .containerPort | default .port }}
+          protocol: {{ .protocol }}
+        {{- end }}
+        {{- end }}{{- end }}
+        {{- with (index .Values.DaemonSet .name).livenessProbe }}
+        livenessProbe:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.DaemonSet .name).readinessProbe }}
+        readinessProbe:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.DaemonSet .name).resources }}
+        resources:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.DaemonSet .name).volumeMounts }}
+        volumeMounts:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+      {{- with (index .Values.DaemonSet .name).volumes }}
+      volumes:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.DaemonSet .name).nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.DaemonSet .name).hostAliases }}
+      hostAliases:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.DaemonSet .name).affinity }}
+      affinity:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.DaemonSet .name).tolerations }}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+{{- if (index .Values.DaemonSet .name).service }}{{- if (index .Values.DaemonSet .name).service.ports }}
+---
+# TODO: DRY needed here
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.DaemonSet .name).serviceAnnotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ (index .Values.DaemonSet .name).service.type | default "ClusterIP" }}
+  {{- if (index .Values.DaemonSet .name).service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ (index .Values.DaemonSet .name).service.externalTrafficPolicy | default "Cluster" }}
+  {{- end }}
+  {{- if (index .Values.DaemonSet .name).service.loadBalancerIP }}
+  loadBalancerIP: {{ (index .Values.DaemonSet .name).service.loadBalancerIP }}
+  {{- end }}
+  sessionAffinity: {{ (index .Values.DaemonSet .name).service.sessionAffinity | default "None" }}
+  {{- with (index .Values.DaemonSet .name).service.sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  ports:
+  {{- range (index .Values.DaemonSet .name).service.ports }}
+  - name: {{ .name }}
+    nodePort: {{ .nodePort | default "" }}
+    port: {{ .port }}
+    protocol: {{ .protocol }}
+    targetPort:  {{ .targetPort | default .port }}
+  {{- end }}
+  {{- with (index .Values.DaemonSet .name).selectorLabels }}
+  selector:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}{{- end }}
+{{- end }}
