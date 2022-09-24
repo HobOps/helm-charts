@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.Deployment }}
+  {{ include "library.Kubernetes.Deployment" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

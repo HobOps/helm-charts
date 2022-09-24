@@ -1,0 +1,93 @@
+{{- define "library.Kubernetes.Job" }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.Job .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.Job .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  backoffLimit: {{ (index .Values.Job .name).backoffLimit | default 1 }}
+  completions: {{ (index .Values.Job .name).completions | default 1 }}
+  parallelism: {{ (index .Values.Job .name).parallelism | default 1 }}
+  template:
+    metadata:
+      {{- with (index .Values.Job .name).podAnnotations }}
+      annotations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).selectorLabels }}
+      labels:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with (index .Values.Job .name).imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      serviceAccountName: {{ (index .Values.Job .name).serviceAccountName | default "default" }}
+      restartPolicy: {{ (index .Values.Job .name).restartPolicy | default "Never" }}
+      {{- with (index .Values.Job .name).podSecurityContext }}
+      securityContext:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .name }}
+        {{- with (index .Values.Job .name).securityContext }}
+        securityContext:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        image: "{{ (index .Values.Job .name).image.repository }}:{{ (index .Values.Job .name).image.tag }}"
+        imagePullPolicy: {{ (index .Values.Job .name).image.pullPolicy }}
+        {{- with (index .Values.Job .name).command }}
+        command:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.Job .name).args }}
+        args:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.Job .name).envFrom }}
+        envFrom:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.Job .name).env }}
+        env:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.Job .name).resources }}
+        resources:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.Job .name).volumeMounts }}
+        volumeMounts:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+      {{- with (index .Values.Job .name).volumes }}
+      volumes:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).hostAliases }}
+      hostAliases:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).affinity }}
+      affinity:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Job .name).tolerations }}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+{{- end }}

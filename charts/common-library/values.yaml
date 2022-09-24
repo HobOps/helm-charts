@@ -1,4 +1,8 @@
 ClusterIssuer: {}
 ConfigMap: {}
+DaemonSet: {}
+Deployment: {}
+Job: {}
 Secret: {}
+StatefulSet: {}
 StorageClass: {}

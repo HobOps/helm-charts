@@ -1,0 +1,158 @@
+{{- define "library.Kubernetes.Deployment" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.Deployment .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.Deployment .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ (index .Values.Deployment .name).replicas | default 1 }}
+  progressDeadlineSeconds: {{ (index .Values.Deployment .name).progressDeadlineSeconds | default 600 }}
+  {{- with (index .Values.Deployment .name).strategy }}
+  strategy:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.Deployment .name).selectorLabels }}
+  selector:
+    matchLabels:
+      {{- tpl (toYaml .) $ | nindent 6 }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with (index .Values.Deployment .name).podAnnotations }}
+      annotations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Deployment .name).selectorLabels }}
+      labels:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with (index .Values.Deployment .name).imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      serviceAccountName: {{ (index .Values.Deployment .name).serviceAccountName | default "default" }}
+      {{- with (index .Values.Deployment .name).podSecurityContext }}
+      securityContext:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Deployment .name).initContainers }}
+      initContainers:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .name }}
+        {{- with (index .Values.Deployment .name).securityContext }}
+        securityContext:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        image: "{{ (index .Values.Deployment .name).image.repository }}:{{ (index .Values.Deployment .name).image.tag }}"
+        imagePullPolicy: {{ (index .Values.Deployment .name).image.pullPolicy }}
+        {{- with (index .Values.Deployment .name).command }}
+        command:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.Deployment .name).args }}
+        args:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.Deployment .name).envFrom }}
+        envFrom:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.Deployment .name).env }}
+        env:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- if (index .Values.Deployment .name).service }}{{- if (index .Values.Deployment .name).service.ports }}
+        ports:
+        {{- range (index .Values.Deployment .name).service.ports }}
+        - name: {{ .name }}
+          containerPort: {{ .containerPort | default .port }}
+          protocol: {{ .protocol }}
+        {{- end }}
+        {{- end }}{{- end }}
+        {{- with (index .Values.Deployment .name).livenessProbe }}
+        livenessProbe:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.Deployment .name).readinessProbe }}
+        readinessProbe:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.Deployment .name).resources }}
+        resources:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.Deployment .name).volumeMounts }}
+        volumeMounts:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+      {{- with (index .Values.Deployment .name).volumes }}
+      volumes:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.Deployment .name).nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Deployment .name).hostAliases }}
+      hostAliases:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.Deployment .name).affinity }}
+      affinity:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.Deployment .name).tolerations }}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+{{- if (index .Values.Deployment .name).service }}{{- if (index .Values.Deployment .name).service.ports }}
+---
+# TODO: DRY needed here
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.Deployment .name).serviceAnnotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ (index .Values.Deployment .name).service.type | default "ClusterIP" }}
+  {{- if (index .Values.Deployment .name).service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ (index .Values.Deployment .name).service.externalTrafficPolicy | default "Cluster" }}
+  {{- end }}
+  {{- if (index .Values.Deployment .name).service.loadBalancerIP }}
+  loadBalancerIP: {{ (index .Values.Deployment .name).service.loadBalancerIP }}
+  {{- end }}
+  sessionAffinity: {{ (index .Values.Deployment .name).service.sessionAffinity | default "None" }}
+  {{- with (index .Values.Deployment .name).service.sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  ports:
+  {{- range (index .Values.Deployment .name).service.ports }}
+  - name: {{ .name }}
+    nodePort: {{ .nodePort | default "" }}
+    port: {{ .port }}
+    protocol: {{ .protocol }}
+    targetPort:  {{ .targetPort | default .port }}
+  {{- end }}
+  {{- with (index .Values.Deployment .name).selectorLabels }}
+  selector:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}{{- end }}
+{{- end }}

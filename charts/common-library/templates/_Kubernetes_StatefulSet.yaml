@@ -1,0 +1,158 @@
+{{- define "library.Kubernetes.StatefulSet" }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.StatefulSet .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.StatefulSet .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ (index .Values.Deployment .name).replicas | default 1 }}
+  serviceName: {{ .name }}
+  {{- with (index .Values.StatefulSet .name).updateStrategy }}
+  updateStrategy:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.StatefulSet .name).selectorLabels }}
+  selector:
+    matchLabels:
+      {{- tpl (toYaml .) $ | nindent 6 }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with (index .Values.StatefulSet .name).podAnnotations }}
+      annotations:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.StatefulSet .name).selectorLabels }}
+      labels:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with (index .Values.StatefulSet .name).imagePullSecrets }}
+      imagePullSecrets:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      serviceAccountName: {{ (index .Values.StatefulSet .name).serviceAccountName | default "default" }}
+      {{- with (index .Values.StatefulSet .name).podSecurityContext }}
+      securityContext:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.StatefulSet .name).initContainers }}
+      initContainers:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .name }}
+        {{- with (index .Values.StatefulSet .name).securityContext }}
+        securityContext:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        image: "{{ (index .Values.StatefulSet .name).image.repository }}:{{ (index .Values.StatefulSet .name).image.tag }}"
+        imagePullPolicy: {{ (index .Values.StatefulSet .name).image.pullPolicy }}
+        {{- with (index .Values.StatefulSet .name).command }}
+        command:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.StatefulSet .name).args }}
+        args:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.StatefulSet .name).envFrom }}
+        envFrom:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- with (index .Values.StatefulSet .name).env }}
+        env:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+        {{- if (index .Values.StatefulSet .name).service }}{{- if (index .Values.StatefulSet .name).service.ports }}
+        ports:
+        {{- range (index .Values.StatefulSet .name).service.ports }}
+        - name: {{ .name }}
+          containerPort: {{ .containerPort | default .port }}
+          protocol: {{ .protocol }}
+        {{- end }}
+        {{- end }}{{- end }}
+        {{- with (index .Values.StatefulSet .name).livenessProbe }}
+        livenessProbe:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.StatefulSet .name).readinessProbe }}
+        readinessProbe:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.StatefulSet .name).resources }}
+        resources:
+          {{- tpl (toYaml .) $ | nindent 10 }}
+        {{- end }}
+        {{- with (index .Values.StatefulSet .name).volumeMounts }}
+        volumeMounts:
+          {{- tpl (toYaml .) $ | nindent 8 }}
+        {{- end }}
+      {{- with (index .Values.StatefulSet .name).volumes }}
+      volumes:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.StatefulSet .name).nodeSelector }}
+      nodeSelector:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.StatefulSet .name).hostAliases }}
+      hostAliases:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      {{- with (index .Values.StatefulSet .name).affinity }}
+      affinity:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
+      {{- with (index .Values.StatefulSet .name).tolerations }}
+      tolerations:
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+{{- if (index .Values.StatefulSet .name).service }}{{- if (index .Values.StatefulSet .name).service.ports }}
+---
+# TODO: DRY needed here
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.StatefulSet .name).serviceAnnotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ (index .Values.StatefulSet .name).service.type | default "ClusterIP" }}
+  {{- if (index .Values.StatefulSet .name).service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ (index .Values.StatefulSet .name).service.externalTrafficPolicy | default "Cluster" }}
+  {{- end }}
+  {{- if (index .Values.StatefulSet .name).service.loadBalancerIP }}
+  loadBalancerIP: {{ (index .Values.StatefulSet .name).service.loadBalancerIP }}
+  {{- end }}
+  sessionAffinity: {{ (index .Values.StatefulSet .name).service.sessionAffinity | default "None" }}
+  {{- with (index .Values.StatefulSet .name).service.sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  ports:
+  {{- range (index .Values.StatefulSet .name).service.ports }}
+  - name: {{ .name }}
+    nodePort: {{ .nodePort | default "" }}
+    port: {{ .port }}
+    protocol: {{ .protocol }}
+    targetPort:  {{ .targetPort | default .port }}
+  {{- end }}
+  {{- with (index .Values.StatefulSet .name).selectorLabels }}
+  selector:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}{{- end }}
+{{- end }}
