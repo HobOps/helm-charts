@@ -5,6 +5,10 @@ kind: ConfigMap
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.ConfigMap .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 {{- with (index .Values.ConfigMap .name).data }}
 data:
   {{- tpl (toYaml .) $ | nindent 2 }}

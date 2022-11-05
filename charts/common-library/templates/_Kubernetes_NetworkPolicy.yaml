@@ -5,6 +5,10 @@ kind: NetworkPolicy
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.NetworkPolicy .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
   {{- with (index .Values.NetworkPolicy .name).podSelector }}
   podSelector:
