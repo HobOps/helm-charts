@@ -14,7 +14,7 @@ metadata:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ (index .Values.Deployment .name).replicas | default 1 }}
+  replicas: {{ (index .Values.StatefulSet .name).replicas | default 1 }}
   serviceName: {{ .name }}
   {{- with (index .Values.StatefulSet .name).updateStrategy }}
   updateStrategy:

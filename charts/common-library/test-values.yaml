@@ -1,5 +1,7 @@
 ClusterIssuer:
   letsencrypt:
+    annotations:
+      annotation: test-clusterissuer
     email: changeme@example.com
     server: https://changeme-acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
@@ -9,6 +11,8 @@ ClusterIssuer:
         ingress:
           class: changeme-nginx
   letsencrypt-staging:
+    annotations:
+      annotation: test-clusterissuer
     email: changeme@example.com
     server: https://changeme-acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
@@ -20,6 +24,8 @@ ClusterIssuer:
 
 ConfigMap:
   test-configmap:
+    annotations:
+      annotation: test-configmap
     data:
       FOO: changeme
   test-file-configmap:
@@ -317,6 +323,8 @@ Job:
 
 Secret:
   test-secret:
+    annotations:
+      annotation: test-secret
     data:
       FOO: changeme
     stringData:
@@ -428,6 +436,8 @@ StatefulSet:
 
 StorageClass:
   test-storageclass:
+    annotations:
+      annotation: test-storageclass
     provisioner: changeme
     allowVolumeExpansion: true
     reclaimPolicy: Delete
@@ -443,6 +453,8 @@ StorageClass:
 
 NetworkPolicy:
   test-networkpolicy:
+    annotations:
+      annotation: test-networkpolicy
     podSelector:
       matchLabels:
         changeme-match-label: "true"

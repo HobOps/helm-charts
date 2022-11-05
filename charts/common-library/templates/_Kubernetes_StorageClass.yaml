@@ -5,6 +5,10 @@ kind: StorageClass
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.StorageClass .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 provisioner: {{ (index .Values.StorageClass .name).provisioner }}
 allowVolumeExpansion: {{ (index .Values.StorageClass .name).allowVolumeExpansion | default "true" }}
 reclaimPolicy: {{ (index .Values.StorageClass .name).reclaimPolicy | default "Delete" }}

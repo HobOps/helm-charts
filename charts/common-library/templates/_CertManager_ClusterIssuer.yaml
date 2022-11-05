@@ -5,6 +5,10 @@ kind: ClusterIssuer
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.ClusterIssuer .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
   acme:
     email: {{ (index .Values.ClusterIssuer .name).email }}
