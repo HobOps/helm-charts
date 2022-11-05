@@ -1,0 +1,49 @@
+{{- define "library.Kubernetes.Ingress" }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.Ingress .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- /* ingressClassName */ -}}
+  {{- if (hasKey (index .Values.Ingress .name) "ingressClassName") }}
+  ingressClassName: {{ (index .Values.Ingress .name).ingressClassName }}
+  {{- end -}}
+
+  {{- /* rules */ -}}
+  {{- $env := (index .Values.Ingress .name).paths -}}
+  {{- if (index .Values.Ingress .name).render_ingress_rules }}
+  rules:
+  {{- range (index .Values.Ingress .name).hosts }}
+  - host: {{ . }}
+    http:
+      paths:
+        {{- tpl (toYaml $env) $ | nindent 6 }}
+  {{- end }}
+  {{- else }}
+  {{- with (index .Values.Ingress .name).rules }}
+  rules:
+      {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end -}}
+  {{- end -}}
+
+  {{- /* tls */ -}}
+  {{- if (index .Values.Ingress .name).render_ingress_tls }}
+  tls:
+  - hosts:
+      {{- range (index .Values.Ingress .name).hosts }}
+      - {{ . }}
+      {{- end }}
+      secretName: {{ .Chart.Name }}-tls
+  {{ else }}
+  {{- with (index .Values.Ingress .name).tls }}
+  tls:
+      {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end -}}
+  {{- end -}}
+{{- end }}
