@@ -119,7 +119,7 @@ spec:
     protocol: {{ .protocol }}
     targetPort:  {{ .targetPort | default .port }}
   {{- end }}
-  {{- with .Values.selectorLabels }}
+  {{- with .Values.selector }}
   selector:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
