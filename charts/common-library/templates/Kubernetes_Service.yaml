@@ -1,0 +1,4 @@
+{{ range $name, $data := .Values.Service }}
+  {{- $_ := set $.Values "IsWorkload" false }}
+  {{ include "library.Kubernetes.Service" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}
