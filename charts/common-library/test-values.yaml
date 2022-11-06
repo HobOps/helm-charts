@@ -1,504 +1,726 @@
-ClusterIssuer:
-  letsencrypt:
-    annotations:
-      annotation: test-clusterissuer
-    email: changeme@example.com
-    server: https://changeme-acme-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: changeme-clusterissuer-letsencrypt-key
-    solvers:
-    - http01:
-        ingress:
-          class: changeme-nginx
-  letsencrypt-staging:
-    annotations:
-      annotation: test-clusterissuer
-    email: changeme@example.com
-    server: https://changeme-acme-staging-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
-      name: changeme-clusterissuer-letsencrypt-staging-key
-    solvers:
-    - http01:
-        ingress:
-          class: changeme-nginx
+#ClusterIssuer:
+#  letsencrypt:
+#    annotations:
+#      annotation: test-clusterissuer
+#    email: changeme@example.com
+#    server: https://changeme-acme-v02.api.letsencrypt.org/directory
+#    privateKeySecretRef:
+#      name: changeme-clusterissuer-letsencrypt-key
+#    solvers:
+#    - http01:
+#        ingress:
+#          class: changeme-nginx
+#  letsencrypt-staging:
+#    annotations:
+#      annotation: test-clusterissuer
+#    email: changeme@example.com
+#    server: https://changeme-acme-staging-v02.api.letsencrypt.org/directory
+#    privateKeySecretRef:
+#      name: changeme-clusterissuer-letsencrypt-staging-key
+#    solvers:
+#    - http01:
+#        ingress:
+#          class: changeme-nginx
+#
+#ConfigMap:
+#  test-configmap:
+#    annotations:
+#      annotation: test-configmap
+#    data:
+#      FOO: changeme
+#  test-file-configmap:
+#    data:
+#      service.conf: |
+#        [Service]
+#        foo=bar
+#
+#DaemonSet:
+#  test-daemonset:
+#    labels:
+#      labels: test-daemonset
+#    annotations:
+#      annotation: test-daemonset
+#    podAnnotations:
+#      podAnnotations: test-daemonset
+#    selectorLabels:
+#      selectorLabels: test-daemonset
+#    serviceAnnotations:
+#      serviceAnnotations: test-daemonset
+##    serviceAccountName: test-daemonset
+#    podSecurityContext:
+#      fsGroup: 2000
+#    securityContext:
+#      privileged: false
+#    updateStrategy:
+#      type: RollingUpdate
+#    initContainers: {}
+#    image:
+#      repository: nginx
+#      tag: latest
+#      pullPolicy: IfNotPresent
+#    imagePullSecrets:
+#    - name: changeme
+#    envFrom:
+#    - configMapRef:
+#        name: test-configmap
+#    - secretRef:
+#        name: test-secret
+#    env:
+#    - name: FUZZ
+#      value: BUZZ
+#    command:
+#    - bash
+#    - -c
+#    args:
+#    - nginx -g "daemon off;"
+#    livenessProbe:
+#      failureThreshold: 3
+#      httpGet:
+#        path: /
+#        port: 80
+#        scheme: HTTP
+#      initialDelaySeconds: 30
+#      periodSeconds: 2
+#      successThreshold: 1
+#      timeoutSeconds: 2
+#    readinessProbe:
+#      failureThreshold: 3
+#      httpGet:
+#        path: /
+#        port: 80
+#        scheme: HTTP
+#      initialDelaySeconds: 30
+#      periodSeconds: 2
+#      successThreshold: 1
+#      timeoutSeconds: 2
+#    service:
+#      ports:
+#      - name: nginx
+#        port: 80
+#        protocol: TCP
+#      - name: nginx1
+#        port: 801
+#        protocol: TCP
+#    resources:
+#      requests:
+#        memory: 100Mi
+#        cpu: 100m
+#      limits:
+#        memory: 200Mi
+#        cpu: 200m
+#    volumeMounts:
+#    - name: config-file
+#      mountPath: /etc/service.conf
+#      subPath: service.conf
+#      readOnly: true
+#    volumes:
+#    - name: config-file
+#      configMap:
+#        name: test-file-configmap
+#    nodeSelector:
+#      node: changeme
+#    hostAliases:
+#    - hostnames:
+#      - example.com
+#      ip: 1.1.1.1
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#          - matchExpressions:
+#            - key: "topology.kubernetes.io/zone"
+#              operator: In
+#              values: ["us-central1-a", "us-central1-b"]
+#    tolerations:
+#    - key: reserved-pool
+#      operator: Equal
+#      value: "true"
+#      effect: NoSchedule
+#
+#Deployment:
+#  test-deployment:
+#    labels:
+#      labels: test-deployment
+#    annotations:
+#      annotation: test-deployment
+#    podAnnotations:
+#      podAnnotations: test-deployment
+#    selectorLabels:
+#      selectorLabels: test-deployment
+#    serviceAnnotations:
+#      serviceAnnotations: test-deployment
+#    podSecurityContext:
+#      fsGroup: 2000
+#    securityContext:
+#      privileged: false
+#    progressDeadlineSeconds: 300
+#    strategy:
+#        type: RollingUpdate
+#        rollingUpdate:
+#          maxSurge: 2
+#          maxUnavailable: 1
+#    replicas: 2
+#    initContainers: {}
+#    image:
+#      repository: nginx
+#      tag: latest
+#      pullPolicy: IfNotPresent
+#    imagePullSecrets:
+#    - name: changeme
+#    envFrom:
+#    - configMapRef:
+#        name: test-configmap
+#    - secretRef:
+#        name: test-secret
+#    env:
+#    - name: FUZZ
+#      value: BUZZ
+#    command:
+#    - bash
+#    - -c
+#    args:
+#    - nginx -g "daemon off;"
+#    livenessProbe:
+#      failureThreshold: 3
+#      httpGet:
+#        path: /
+#        port: 80
+#        scheme: HTTP
+#      initialDelaySeconds: 30
+#      periodSeconds: 2
+#      successThreshold: 1
+#      timeoutSeconds: 2
+#    readinessProbe:
+#      failureThreshold: 3
+#      httpGet:
+#        path: /
+#        port: 80
+#        scheme: HTTP
+#      initialDelaySeconds: 30
+#      periodSeconds: 2
+#      successThreshold: 1
+#      timeoutSeconds: 2
+#    service:
+#      ports:
+#      - name: nginx
+#        port: 80
+#        protocol: TCP
+#      - name: nginx1
+#        port: 801
+#        protocol: TCP
+#    resources:
+#      requests:
+#        memory: 100Mi
+#        cpu: 100m
+#      limits:
+#        memory: 200Mi
+#        cpu: 200m
+#    volumeMounts:
+#    - name: config-file
+#      mountPath: /etc/service.conf
+#      subPath: service.conf
+#      readOnly: true
+#    volumes:
+#    - name: config-file
+#      configMap:
+#        name: test-file-configmap
+#    nodeSelector:
+#      node: changeme
+#    hostAliases:
+#    - hostnames:
+#      - example.com
+#      ip: 1.1.1.1
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#          - matchExpressions:
+#            - key: "topology.kubernetes.io/zone"
+#              operator: In
+#              values: ["us-central1-a", "us-central1-b"]
+#    tolerations:
+#    - key: reserved-pool
+#      operator: Equal
+#      value: "true"
+#      effect: NoSchedule
+#
+#Job:
+#  test-job:
+#    annotations:
+#      annotation: test-job
+#    podAnnotations:
+#      podAnnotations: test-job
+#    selectorLabels:
+#      selectorLabels: test-job
+#    restartPolicy: OnFailure
+#    serviceAccountName: test-job
+#    podSecurityContext:
+#      fsGroup: 2000
+#    securityContext:
+#      capabilities:
+#        drop:
+#        - ALL
+#      readOnlyRootFilesystem: true
+#      runAsNonRoot: true
+#      runAsUser: 1000
+#    backoffLimit: 1
+#    completions: 1
+#    parallelism: 1
+#    image:
+#      repository: alpine
+#      tag: latest
+#      pullPolicy: IfNotPresent
+#    imagePullSecrets:
+#    - name: changeme
+#    envFrom:
+#    - configMapRef:
+#        name: test-configmap
+#    - secretRef:
+#        name: test-secret
+#    env:
+#    - name: FUZZ
+#      value: BUZZ
+#    command:
+#    - bash
+#    - -c
+#    args:
+#    - sleep 9999
+#    resources:
+#      requests:
+#        memory: 100Mi
+#        cpu: 100m
+#      limits:
+#        memory: 200Mi
+#        cpu: 200m
+#    volumeMounts:
+#    - name: config-file
+#      mountPath: /etc/service.conf
+#      subPath: service.conf
+#      readOnly: true
+#    volumes:
+#    - name: config-file
+#      configMap:
+#        name: test-file-configmap
+#    nodeSelector:
+#      node: changeme
+#    hostAliases:
+#    - hostnames:
+#      - example.com
+#      ip: 1.1.1.1
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#          - matchExpressions:
+#            - key: "topology.kubernetes.io/zone"
+#              operator: In
+#              values: ["us-central1-a", "us-central1-b"]
+#    tolerations:
+#    - key: reserved-pool
+#      operator: Equal
+#      value: "true"
+#      effect: NoSchedule
+#
+#Secret:
+#  test-secret:
+#    annotations:
+#      annotation: test-secret
+#    data:
+#      FOO: changeme
+#    stringData:
+#      BAR: changeme
+#
+#StatefulSet:
+#  test-statefulset:
+#    labels:
+#      labels: test-statefulset
+#    annotations:
+#      annotation: test-statefulset
+#    podAnnotations:
+#      podAnnotations: test-statefulset
+#    selectorLabels:
+#      selectorLabels: test-statefulset
+#    serviceAnnotations:
+#      serviceAnnotations: test-statefulset
+##    serviceAccountName: test-statefulset
+#    podSecurityContext:
+#      fsGroup: 2000
+#    securityContext:
+#      privileged: false
+#    updateStrategy:
+#      type: RollingUpdate
+#    initContainers: {}
+#    replicas: 3
+#    image:
+#      repository: nginx
+#      tag: latest
+#      pullPolicy: IfNotPresent
+#    imagePullSecrets:
+#    - name: changeme
+#    envFrom:
+#    - configMapRef:
+#        name: test-configmap
+#    - secretRef:
+#        name: test-secret
+#    env:
+#    - name: FUZZ
+#      value: BUZZ
+#    command:
+#    - bash
+#    - -c
+#    args:
+#    - nginx -g "daemon off;"
+#    livenessProbe:
+#      failureThreshold: 3
+#      httpGet:
+#        path: /
+#        port: 80
+#        scheme: HTTP
+#      initialDelaySeconds: 30
+#      periodSeconds: 2
+#      successThreshold: 1
+#      timeoutSeconds: 2
+#    readinessProbe:
+#      failureThreshold: 3
+#      httpGet:
+#        path: /
+#        port: 80
+#        scheme: HTTP
+#      initialDelaySeconds: 30
+#      periodSeconds: 2
+#      successThreshold: 1
+#      timeoutSeconds: 2
+#    service:
+#      ports:
+#      - name: nginx
+#        port: 80
+#        protocol: TCP
+#      - name: nginx1
+#        port: 801
+#        protocol: TCP
+#    resources:
+#      requests:
+#        memory: 100Mi
+#        cpu: 100m
+#      limits:
+#        memory: 200Mi
+#        cpu: 200m
+#    volumeMounts:
+#    - name: config-file
+#      mountPath: /etc/service.conf
+#      subPath: service.conf
+#      readOnly: true
+#    volumes:
+#    - name: config-file
+#      configMap:
+#        name: test-file-configmap
+#    nodeSelector:
+#      node: changeme
+#    hostAliases:
+#    - hostnames:
+#      - example.com
+#      ip: 1.1.1.1
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#          - matchExpressions:
+#            - key: "topology.kubernetes.io/zone"
+#              operator: In
+#              values: ["us-central1-a", "us-central1-b"]
+#    tolerations:
+#    - key: reserved-pool
+#      operator: Equal
+#      value: "true"
+#      effect: NoSchedule
+#
+#StorageClass:
+#  test-storageclass:
+#    annotations:
+#      annotation: test-storageclass
+#    provisioner: changeme
+#    allowVolumeExpansion: true
+#    reclaimPolicy: Delete
+#    volumeBindingMode: Immediate
+#    allowedTopologies:
+#    - matchLabelExpressions:
+#      - key: topology.gke.io/zone
+#        values:
+#        - us-central1-a
+#        - us-central1-b
+#    parameters:
+#      type: changeme
+#
+#NetworkPolicy:
+#  test-networkpolicy:
+#    annotations:
+#      annotation: test-networkpolicy
+#    podSelector:
+#      matchLabels:
+#        changeme-match-label: "true"
+#    policyTypes:
+#    - Ingress
+#    ingress:
+#    - from:
+#      - namespaceSelector:
+#          matchLabels:
+#            name: changeme-namespace
+#        podSelector:
+#          matchLabels:
+#            type: changeme-label
+#
+#Ingress:
+#  test-ingress-without-rendering:
+#    annotations:
+#      annotation: test-ingress-without-rendering
+#    ingressClassName: nginx
+#    rules:
+#    - host: test1.example.com
+#      http:
+#        paths:
+#        - path: /
+#          backend:
+#            service:
+#              name: test-service
+#              port:
+#                number: 80
+#          pathType: ImplementationSpecific
+#  test-ingress-with-rendering:
+#    annotations:
+#      annotation: test-ingress-with-rendering
+#    ingressClassName: nginx
+#    render_ingress_rules: true
+#    hosts:
+#    - test2.example.com
+#    - test3.example.com
+#    paths:
+#    - backend:
+#        service:
+#          name: test-service
+#          port:
+#            number: 80
+#      path: /
+#      pathType: ImplementationSpecific
 
-ConfigMap:
-  test-configmap:
-    annotations:
-      annotation: test-configmap
-    data:
-      FOO: changeme
-  test-file-configmap:
-    data:
-      service.conf: |
-        [Service]
-        foo=bar
 
-DaemonSet:
-  test-daemonset:
-    labels:
-      labels: test-daemonset
-    annotations:
-      annotation: test-daemonset
-    podAnnotations:
-      podAnnotations: test-daemonset
-    selectorLabels:
-      selectorLabels: test-daemonset
-    serviceAnnotations:
-      serviceAnnotations: test-daemonset
-#    serviceAccountName: test-daemonset
-    podSecurityContext:
-      fsGroup: 2000
-    securityContext:
-      privileged: false
-    updateStrategy:
-      type: RollingUpdate
-    initContainers: {}
-    image:
-      repository: nginx
-      tag: latest
-      pullPolicy: IfNotPresent
-    imagePullSecrets:
-    - name: changeme
-    envFrom:
-    - configMapRef:
-        name: test-configmap
-    - secretRef:
-        name: test-secret
-    env:
-    - name: FUZZ
-      value: BUZZ
-    command:
-    - bash
-    - -c
-    args:
-    - nginx -g "daemon off;"
-    livenessProbe:
-      failureThreshold: 3
-      httpGet:
-        path: /
-        port: 80
-        scheme: HTTP
-      initialDelaySeconds: 30
-      periodSeconds: 2
-      successThreshold: 1
-      timeoutSeconds: 2
-    readinessProbe:
-      failureThreshold: 3
-      httpGet:
-        path: /
-        port: 80
-        scheme: HTTP
-      initialDelaySeconds: 30
-      periodSeconds: 2
-      successThreshold: 1
-      timeoutSeconds: 2
-    service:
-      ports:
-      - name: nginx
-        port: 80
-        protocol: TCP
-      - name: nginx1
-        port: 801
-        protocol: TCP
-    resources:
-      requests:
-        memory: 100Mi
-        cpu: 100m
-      limits:
-        memory: 200Mi
-        cpu: 200m
-    volumeMounts:
-    - name: config-file
-      mountPath: /etc/service.conf
-      subPath: service.conf
-      readOnly: true
-    volumes:
-    - name: config-file
-      configMap:
-        name: test-file-configmap
-    nodeSelector:
-      node: changeme
-    hostAliases:
-    - hostnames:
-      - example.com
-      ip: 1.1.1.1
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: "topology.kubernetes.io/zone"
-              operator: In
-              values: ["us-central1-a", "us-central1-b"]
-    tolerations:
-    - key: reserved-pool
-      operator: Equal
-      value: "true"
-      effect: NoSchedule
 
 Deployment:
-  test-deployment:
-    labels:
-      labels: test-deployment
-    annotations:
-      annotation: test-deployment
-    podAnnotations:
-      podAnnotations: test-deployment
-    selectorLabels:
-      selectorLabels: test-deployment
+  test-deployment1:
     serviceAnnotations:
-      serviceAnnotations: test-deployment
-    podSecurityContext:
-      fsGroup: 2000
-    securityContext:
-      privileged: false
-    progressDeadlineSeconds: 300
-    strategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxSurge: 2
-          maxUnavailable: 1
-    replicas: 2
-    initContainers: {}
+      serviceAnnotation: test-deployment1
+    selectorLabels:
+      selectorLabels: test-deployment1
+    serviceLabels:
+      serviceLabels: test-deployment1
     image:
       repository: nginx
       tag: latest
       pullPolicy: IfNotPresent
-    imagePullSecrets:
-    - name: changeme
-    envFrom:
-    - configMapRef:
-        name: test-configmap
-    - secretRef:
-        name: test-secret
-    env:
-    - name: FUZZ
-      value: BUZZ
-    command:
-    - bash
-    - -c
-    args:
-    - nginx -g "daemon off;"
-    livenessProbe:
-      failureThreshold: 3
-      httpGet:
-        path: /
-        port: 80
-        scheme: HTTP
-      initialDelaySeconds: 30
-      periodSeconds: 2
-      successThreshold: 1
-      timeoutSeconds: 2
-    readinessProbe:
-      failureThreshold: 3
-      httpGet:
-        path: /
-        port: 80
-        scheme: HTTP
-      initialDelaySeconds: 30
-      periodSeconds: 2
-      successThreshold: 1
-      timeoutSeconds: 2
     service:
+      type: ClusterIP
+      externalTrafficPolicy: Cluster
+      loadBalancerIP: 2.2.2.2
+      loadBalancerSourceRanges:
+      - 20.254.0.0/24
+      sessionAffinity: None
+      sessionAffinityConfig:
+        clientIP:
+          timeoutSeconds: 10800
       ports:
-      - name: nginx
+      - name: nginx1-deployment1
         port: 80
         protocol: TCP
-      - name: nginx1
-        port: 801
+      - name: nginx2-deployment1
+        port: 802
         protocol: TCP
-    resources:
-      requests:
-        memory: 100Mi
-        cpu: 100m
-      limits:
-        memory: 200Mi
-        cpu: 200m
-    volumeMounts:
-    - name: config-file
-      mountPath: /etc/service.conf
-      subPath: service.conf
-      readOnly: true
-    volumes:
-    - name: config-file
-      configMap:
-        name: test-file-configmap
-    nodeSelector:
-      node: changeme
-    hostAliases:
-    - hostnames:
-      - example.com
-      ip: 1.1.1.1
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: "topology.kubernetes.io/zone"
-              operator: In
-              values: ["us-central1-a", "us-central1-b"]
-    tolerations:
-    - key: reserved-pool
-      operator: Equal
-      value: "true"
-      effect: NoSchedule
-
-Job:
-  test-job:
-    annotations:
-      annotation: test-job
-    podAnnotations:
-      podAnnotations: test-job
+  test-deployment2:
+    serviceAnnotations:
+      serviceAnnotation: test-deployment2
     selectorLabels:
-      selectorLabels: test-job
-    restartPolicy: OnFailure
-    serviceAccountName: test-job
-    podSecurityContext:
-      fsGroup: 2000
-    securityContext:
-      capabilities:
-        drop:
-        - ALL
-      readOnlyRootFilesystem: true
-      runAsNonRoot: true
-      runAsUser: 1000
-    backoffLimit: 1
-    completions: 1
-    parallelism: 1
+      selectorLabels: test-deployment2
+    serviceLabels:
+      serviceLabels: test-deployment2
     image:
-      repository: alpine
+      repository: nginx
       tag: latest
       pullPolicy: IfNotPresent
-    imagePullSecrets:
-    - name: changeme
-    envFrom:
-    - configMapRef:
-        name: test-configmap
-    - secretRef:
-        name: test-secret
-    env:
-    - name: FUZZ
-      value: BUZZ
-    command:
-    - bash
-    - -c
-    args:
-    - sleep 9999
-    resources:
-      requests:
-        memory: 100Mi
-        cpu: 100m
-      limits:
-        memory: 200Mi
-        cpu: 200m
-    volumeMounts:
-    - name: config-file
-      mountPath: /etc/service.conf
-      subPath: service.conf
-      readOnly: true
-    volumes:
-    - name: config-file
-      configMap:
-        name: test-file-configmap
-    nodeSelector:
-      node: changeme
-    hostAliases:
-    - hostnames:
-      - example.com
-      ip: 1.1.1.1
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: "topology.kubernetes.io/zone"
-              operator: In
-              values: ["us-central1-a", "us-central1-b"]
-    tolerations:
-    - key: reserved-pool
-      operator: Equal
-      value: "true"
-      effect: NoSchedule
+    service:
+      type: ClusterIP
+      externalTrafficPolicy: Cluster
+      loadBalancerIP: 2.2.2.2
+      loadBalancerSourceRanges:
+      - 20.254.0.0/24
+      sessionAffinity: None
+      sessionAffinityConfig:
+        clientIP:
+          timeoutSeconds: 10800
+      ports:
+      - name: nginx1-deployment2
+        port: 80
+        protocol: TCP
+      - name: nginx2-deployment2
+        port: 802
+        protocol: TCP
 
-Secret:
-  test-secret:
+DaemonSet:
+  test-daemonset1:
+    labels:
+      labels: test-daemonset1
     annotations:
-      annotation: test-secret
-    data:
-      FOO: changeme
-    stringData:
-      BAR: changeme
+      annotation: test-daemonset1
+    podAnnotations:
+      podAnnotations: test-daemonset1
+    selectorLabels:
+      selectorLabels: test-daemonset1
+    serviceAnnotations:
+      serviceAnnotations: test-daemonset1
+#    serviceAccountName: test-daemonset1
+    image:
+      repository: nginx
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      externalTrafficPolicy: Cluster
+      loadBalancerIP: 2.2.2.2
+      loadBalancerSourceRanges:
+      - 20.254.0.0/24
+      sessionAffinity: None
+      sessionAffinityConfig:
+        clientIP:
+          timeoutSeconds: 10800
+      ports:
+      - name: nginx1-daemonset1
+        port: 80
+        protocol: TCP
+      - name: nginx2-daemonset1
+        port: 802
+        protocol: TCP
+  test-daemonset2:
+    labels:
+      labels: test-daemonset2
+    annotations:
+      annotation: test-daemonset2
+    podAnnotations:
+      podAnnotations: test-daemonset2
+    selectorLabels:
+      selectorLabels: test-daemonset2
+    serviceAnnotations:
+      serviceAnnotations: test-daemonset2
+#    serviceAccountName: test-daemonset2
+    image:
+      repository: nginx
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      externalTrafficPolicy: Cluster
+      loadBalancerIP: 2.2.2.2
+      loadBalancerSourceRanges:
+      - 20.254.0.0/24
+      sessionAffinity: None
+      sessionAffinityConfig:
+        clientIP:
+          timeoutSeconds: 10800
+      ports:
+      - name: nginx1-daemonset2
+        port: 80
+        protocol: TCP
+      - name: nginx2-daemonset2
+        port: 802
+        protocol: TCP
+
 
 StatefulSet:
-  test-statefulset:
+  test-statefulset1:
     labels:
-      labels: test-statefulset
+      labels: test-statefulset1
     annotations:
-      annotation: test-statefulset
+      annotation: test-statefulset1
     podAnnotations:
-      podAnnotations: test-statefulset
+      podAnnotations: test-statefulset1
     selectorLabels:
-      selectorLabels: test-statefulset
+      selectorLabels: test-statefulset1
     serviceAnnotations:
-      serviceAnnotations: test-statefulset
-#    serviceAccountName: test-statefulset
-    podSecurityContext:
-      fsGroup: 2000
-    securityContext:
-      privileged: false
-    updateStrategy:
-      type: RollingUpdate
-    initContainers: {}
-    replicas: 3
+      serviceAnnotations: test-statefulset1
+#    serviceAccountName: test-statefulset1
     image:
       repository: nginx
       tag: latest
       pullPolicy: IfNotPresent
-    imagePullSecrets:
-    - name: changeme
-    envFrom:
-    - configMapRef:
-        name: test-configmap
-    - secretRef:
-        name: test-secret
-    env:
-    - name: FUZZ
-      value: BUZZ
-    command:
-    - bash
-    - -c
-    args:
-    - nginx -g "daemon off;"
-    livenessProbe:
-      failureThreshold: 3
-      httpGet:
-        path: /
-        port: 80
-        scheme: HTTP
-      initialDelaySeconds: 30
-      periodSeconds: 2
-      successThreshold: 1
-      timeoutSeconds: 2
-    readinessProbe:
-      failureThreshold: 3
-      httpGet:
-        path: /
-        port: 80
-        scheme: HTTP
-      initialDelaySeconds: 30
-      periodSeconds: 2
-      successThreshold: 1
-      timeoutSeconds: 2
     service:
+      type: ClusterIP
+      externalTrafficPolicy: Cluster
+      loadBalancerIP: 2.2.2.2
+      loadBalancerSourceRanges:
+      - 20.254.0.0/24
+      sessionAffinity: None
+      sessionAffinityConfig:
+        clientIP:
+          timeoutSeconds: 10800
       ports:
-      - name: nginx
+      - name: nginx1-statefulset1
         port: 80
         protocol: TCP
-      - name: nginx1
-        port: 801
+      - name: nginx2-statefulset1
+        port: 802
         protocol: TCP
-    resources:
-      requests:
-        memory: 100Mi
-        cpu: 100m
-      limits:
-        memory: 200Mi
-        cpu: 200m
-    volumeMounts:
-    - name: config-file
-      mountPath: /etc/service.conf
-      subPath: service.conf
-      readOnly: true
-    volumes:
-    - name: config-file
-      configMap:
-        name: test-file-configmap
-    nodeSelector:
-      node: changeme
-    hostAliases:
-    - hostnames:
-      - example.com
-      ip: 1.1.1.1
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-          - matchExpressions:
-            - key: "topology.kubernetes.io/zone"
-              operator: In
-              values: ["us-central1-a", "us-central1-b"]
-    tolerations:
-    - key: reserved-pool
-      operator: Equal
-      value: "true"
-      effect: NoSchedule
-
-StorageClass:
-  test-storageclass:
+  test-statefulset2:
+    labels:
+      labels: test-statefulset2
     annotations:
-      annotation: test-storageclass
-    provisioner: changeme
-    allowVolumeExpansion: true
-    reclaimPolicy: Delete
-    volumeBindingMode: Immediate
-    allowedTopologies:
-    - matchLabelExpressions:
-      - key: topology.gke.io/zone
-        values:
-        - us-central1-a
-        - us-central1-b
-    parameters:
-      type: changeme
+      annotation: test-statefulset2
+    podAnnotations:
+      podAnnotations: test-statefulset2
+    selectorLabels:
+      selectorLabels: test-statefulset2
+    serviceAnnotations:
+      serviceAnnotations: test-statefulset2
+#    serviceAccountName: test-statefulset2
+    image:
+      repository: nginx
+      tag: latest
+      pullPolicy: IfNotPresent
+    service:
+      type: ClusterIP
+      externalTrafficPolicy: Cluster
+      loadBalancerIP: 2.2.2.2
+      loadBalancerSourceRanges:
+      - 20.254.0.0/24
+      sessionAffinity: None
+      sessionAffinityConfig:
+        clientIP:
+          timeoutSeconds: 10800
+      ports:
+      - name: nginx1-statefulset2
+        port: 80
+        protocol: TCP
+      - name: nginx2-statefulset2
+        port: 802
+        protocol: TCP
 
-NetworkPolicy:
-  test-networkpolicy:
-    annotations:
-      annotation: test-networkpolicy
-    podSelector:
-      matchLabels:
-        changeme-match-label: "true"
-    policyTypes:
-    - Ingress
-    ingress:
-    - from:
-      - namespaceSelector:
-          matchLabels:
-            name: changeme-namespace
-        podSelector:
-          matchLabels:
-            type: changeme-label
 
-Ingress:
-  test-ingress-without-rendering:
+Service:
+  test-service1:
+    labels:
+      labels: test-service1
     annotations:
-      annotation: test-ingress-without-rendering
-    ingressClassName: nginx
-    rules:
-    - host: test1.example.com
-      http:
-        paths:
-        - path: /
-          backend:
-            service:
-              name: test-service
-              port:
-                number: 80
-          pathType: ImplementationSpecific
-  test-ingress-with-rendering:
-    annotations:
-      annotation: test-ingress-with-rendering
-    ingressClassName: nginx
-    render_ingress_rules: true
-    hosts:
-    - test2.example.com
-    - test3.example.com
-    paths:
-    - backend:
-        service:
-          name: test-service
-          port:
-            number: 80
-      path: /
-      pathType: ImplementationSpecific
-
+      annotation: test-service1
+    selectorLabels:
+      selectorLabels: test-service1
+    type: ClusterIP
+    externalTrafficPolicy: Cluster
+    loadBalancerIP: 2.2.2.2
+    loadBalancerSourceRanges:
+    - 90.254.0.0/24
+    sessionAffinity: None
+    sessionAffinityConfig:
+      clientIP:
+        timeoutSeconds: 10800
+    ports:
+    - name: nginx1-service1
+      port: 99
+      protocol: TCP
+    - name: nginx2-service1
+      port: 999
+      protocol: TCP

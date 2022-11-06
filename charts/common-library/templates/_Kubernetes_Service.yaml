@@ -1,0 +1,126 @@
+{{- define "library.Kubernetes.Service" }}
+
+{{- /* externalTrafficPolicy */ -}}
+{{- if .Values.IsWorkload }}
+  {{- if (index .Values.Workload .name).service.externalTrafficPolicy }}
+    {{- $_ := set .Values "externalTrafficPolicy" (index .Values.Workload .name).service.externalTrafficPolicy }}
+  {{- end }}
+{{- else }}
+  {{- if (index .Values.Service .name).externalTrafficPolicy }}
+    {{- $_ := set .Values "externalTrafficPolicy" (index .Values.Service .name).externalTrafficPolicy }}
+  {{- end }}
+{{- end }}
+
+{{- /* ports */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).service.ports }}
+    {{- $_ := set .Values "ports" (index .Values.Workload .name).service.ports }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).ports }}
+    {{- $_ := set .Values "ports" (index .Values.Service .name).ports }}
+{{- end }}
+{{- end }}
+
+{{- /* type */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).service.type }}
+    {{- $_ := set .Values "type" (index .Values.Workload .name).service.type }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).type }}
+    {{- $_ := set .Values "type" (index .Values.Service .name).type }}
+{{- end }}
+{{- end }}
+
+{{- /* annotations */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).serviceAnnotations }}
+    {{- $_ := set .Values "annotations" (index .Values.Workload .name).serviceAnnotations }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).annotations }}
+    {{- $_ := set .Values "annotations" (index .Values.Service .name).annotations }}
+{{- end }}
+{{- end }}
+
+{{- /* labels */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).serviceLabels }}
+    {{- $_ := set .Values "labels" (index .Values.Workload .name).serviceLabels }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).labels }}
+    {{- $_ := set .Values "labels" (index .Values.Service .name).labels }}
+{{- end }}
+{{- end }}
+
+{{- /* selector */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).selectorLabels }}
+    {{- $_ := set .Values "selector" (index .Values.Workload .name).selectorLabels }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).selectorLabels }}
+    {{- $_ := set .Values "selector" (index .Values.Service .name).selectorLabels }}
+{{- end }}
+{{- end }}
+
+{{- /* sessionAffinity */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).service.sessionAffinity }}
+    {{- $_ := set .Values "sessionAffinity" (index .Values.Workload .name).service.sessionAffinity }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).sessionAffinity }}
+    {{- $_ := set .Values "sessionAffinity" (index .Values.Service .name).sessionAffinity }}
+{{- end }}
+{{- end }}
+
+{{- /* sessionAffinityConfig */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).service.sessionAffinityConfig }}
+    {{- $_ := set .Values "sessionAffinityConfig" (index .Values.Workload .name).service.sessionAffinityConfig }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).sessionAffinityConfig }}
+    {{- $_ := set .Values "sessionAffinityConfig" (index .Values.Service .name).sessionAffinityConfig }}
+{{- end }}
+{{- end }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.type | default "ClusterIP" }}
+  {{- if .Values.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.externalTrafficPolicy | default "Cluster" }}
+  {{- end }}
+  {{- if .Values.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.loadBalancerIP }}
+  {{- end }}
+  sessionAffinity: {{ .Values.sessionAffinity | default "None" }}
+  {{- with .Values.sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  ports:
+  {{- range .Values.ports }}
+  - name: {{ .name }}
+    nodePort: {{ .nodePort | default "" }}
+    port: {{ .port }}
+    protocol: {{ .protocol }}
+    targetPort:  {{ .targetPort | default .port }}
+  {{- end }}
+  {{- with .Values.selectorLabels }}
+  selector:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -119,40 +119,8 @@ spec:
       {{- end }}
 {{- if (index .Values.StatefulSet .name).service }}{{- if (index .Values.StatefulSet .name).service.ports }}
 ---
-# TODO: DRY needed here
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .name }}
-  namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.StatefulSet .name).serviceAnnotations }}
-  annotations:
-    {{- tpl (toYaml .) $ | nindent 4 }}
-  {{- end }}
-spec:
-  type: {{ (index .Values.StatefulSet .name).service.type | default "ClusterIP" }}
-  {{- if (index .Values.StatefulSet .name).service.externalTrafficPolicy }}
-  externalTrafficPolicy: {{ (index .Values.StatefulSet .name).service.externalTrafficPolicy | default "Cluster" }}
-  {{- end }}
-  {{- if (index .Values.StatefulSet .name).service.loadBalancerIP }}
-  loadBalancerIP: {{ (index .Values.StatefulSet .name).service.loadBalancerIP }}
-  {{- end }}
-  sessionAffinity: {{ (index .Values.StatefulSet .name).service.sessionAffinity | default "None" }}
-  {{- with (index .Values.StatefulSet .name).service.sessionAffinityConfig }}
-  sessionAffinityConfig:
-    {{- tpl (toYaml .) $ | nindent 4 }}
-  {{- end }}
-  ports:
-  {{- range (index .Values.StatefulSet .name).service.ports }}
-  - name: {{ .name }}
-    nodePort: {{ .nodePort | default "" }}
-    port: {{ .port }}
-    protocol: {{ .protocol }}
-    targetPort:  {{ .targetPort | default .port }}
-  {{- end }}
-  {{- with (index .Values.StatefulSet .name).selectorLabels }}
-  selector:
-    {{- tpl (toYaml .) $ | nindent 4 }}
-  {{- end }}
+  {{- $_ := set .Values "Workload" .Values.StatefulSet }}
+  {{- $_ := set .Values "IsWorkload" true }}
+  {{ include "library.Kubernetes.Service" (dict "name" .name "data" .data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
 {{- end }}{{- end }}
 {{- end }}
