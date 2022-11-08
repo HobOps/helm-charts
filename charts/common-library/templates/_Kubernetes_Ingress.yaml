@@ -36,10 +36,10 @@ spec:
   {{- if (index .Values.Ingress .name).render_ingress_tls }}
   tls:
   - hosts:
-      {{- range (index .Values.Ingress .name).hosts }}
-      - {{ . }}
-      {{- end }}
-      secretName: {{ .Chart.Name }}-tls
+    {{- range (index .Values.Ingress .name).hosts }}
+    - {{ . }}
+    {{- end }}
+    secretName: {{ .name }}-tls
   {{ else }}
   {{- with (index .Values.Ingress .name).tls }}
   tls:

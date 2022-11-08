@@ -469,7 +469,7 @@
 #          matchLabels:
 #            type: changeme-label
 #
-#Ingress:
+Ingress:
 #  test-ingress-without-rendering:
 #    annotations:
 #      annotation: test-ingress-without-rendering
@@ -485,22 +485,24 @@
 #              port:
 #                number: 80
 #          pathType: ImplementationSpecific
-#  test-ingress-with-rendering:
-#    annotations:
-#      annotation: test-ingress-with-rendering
-#    ingressClassName: nginx
-#    render_ingress_rules: true
-#    hosts:
-#    - test2.example.com
-#    - test3.example.com
-#    paths:
-#    - backend:
-#        service:
-#          name: test-service
-#          port:
-#            number: 80
-#      path: /
-#      pathType: ImplementationSpecific
+  test-ingress-with-rendering:
+    annotations:
+      annotation: test-ingress-with-rendering
+    ingressClassName: nginx
+    render_ingress_rules: true
+    render_ingress_tls: true
+    hosts:
+    - test1.example.com
+    - test2.example.com
+    - test3.example.com
+    paths:
+    - backend:
+        service:
+          name: test-service
+          port:
+            number: 80
+      path: /
+      pathType: ImplementationSpecific
 
 
 
