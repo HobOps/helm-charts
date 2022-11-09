@@ -701,7 +701,6 @@ StatefulSet:
         port: 802
         protocol: TCP
 
-
 Service:
   test-service1:
     labels:
@@ -726,3 +725,13 @@ Service:
     - name: nginx2-service1
       port: 999
       protocol: TCP
+
+Endpoints:
+  test-endpoint:
+    annotations:
+      annotation: test-endpoint
+    subsets:
+    - addresses:
+      - ip: 10.0.0.1
+      ports:
+      - port: 80

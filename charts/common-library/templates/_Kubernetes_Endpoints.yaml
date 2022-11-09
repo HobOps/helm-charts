@@ -1,0 +1,16 @@
+{{- define "library.Kubernetes.Endpoints" }}
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.Endpoints .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- with (index .Values.Endpoints .name).subsets }}
+subsets:
+  {{- tpl (toYaml .) $ | nindent 0 }}
+{{- end }}
+{{- end }}
