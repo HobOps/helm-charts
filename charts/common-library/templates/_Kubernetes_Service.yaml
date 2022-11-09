@@ -33,6 +33,18 @@
 {{- end }}
 {{- end }}
 
+
+{{- /* externalName */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).service.externalName }}
+    {{- $_ := set .Values "externalName" (index .Values.Workload .name).service.externalName }}
+{{- end }}
+{{- else }}
+{{- if (index .Values.Service .name).externalName }}
+    {{- $_ := set .Values "externalName" (index .Values.Service .name).externalName }}
+{{- end }}
+{{- end }}
+
 {{- /* annotations */ -}}
 {{- if .Values.IsWorkload }}
 {{- if (index .Values.Workload .name).serviceAnnotations }}
@@ -100,6 +112,9 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.type | default "ClusterIP" }}
+  {{- if eq .Values.type "ExternalName" }}
+  externalName: {{ .Values.externalName }}
+  {{- end }}
   {{- if .Values.externalTrafficPolicy }}
   externalTrafficPolicy: {{ .Values.externalTrafficPolicy | default "Cluster" }}
   {{- end }}
