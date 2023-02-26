@@ -1,3 +1,0 @@
-{{ range $name, $data := .Values.AppProjects }}
-  {{ include "library.ArgoCD.AppProjects" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
-{{ end }}
