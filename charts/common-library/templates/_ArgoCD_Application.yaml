@@ -1,0 +1,39 @@
+{{- define "library.ArgoCD.Application" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.Application .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.Application .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  project: {{ (index .Values.Application .name).project | default "" }}
+  {{- with (index .Values.Application .name).source }}
+  source:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.Application .name).sources }}
+  sources:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  {{- with (index .Values.Application .name).destination }}
+  destination:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.Application .name).syncPolicy }}
+  syncPolicy:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.Application .name).ignoreDifferences }}
+  ignoreDifferences:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  revisionHistoryLimit: {{ (index .Values.Application .name).revisionHistoryLimit | default 10 }}
+{{- end }}

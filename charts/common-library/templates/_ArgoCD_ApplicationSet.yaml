@@ -1,0 +1,25 @@
+{{- define "library.ArgoCD.ApplicationSet" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index .Values.ApplicationSet .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index .Values.ApplicationSet .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with (index .Values.ApplicationSet .name).generators }}
+  generators:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  {{- with (index .Values.ApplicationSet .name).template }}
+  template:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}
