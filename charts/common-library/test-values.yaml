@@ -736,7 +736,7 @@ Endpoints:
       ports:
       - port: 80
 
-AppProjects:
+AppProject:
   test-project:
     description: test-project
     clusterResourceBlacklist:
