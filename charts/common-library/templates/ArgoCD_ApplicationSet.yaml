@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.ApplicationSet }}
+  {{ include "library.ArgoCD.ApplicationSet" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}
