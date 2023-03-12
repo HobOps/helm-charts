@@ -9,6 +9,10 @@ metadata:
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
+  {{- with (index .Values.Secret .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 {{- with (index .Values.ConfigMap .name).data }}
 data:
   {{- tpl (toYaml .) $ | nindent 2 }}
