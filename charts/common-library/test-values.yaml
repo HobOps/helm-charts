@@ -781,33 +781,6 @@ AppProject:
     sourceRepos:
     - '*'
 
-ApplicationSet:
-  test-applicationset:
-    generators:
-    - list:
-        elements:
-        - cluster: engineering-dev
-          url: https://kubernetes.default.svc
-          env: staging
-        - cluster: engineering-prod
-          url: https://kubernetes.default.svc
-          env: prod
-      selector:
-        matchLabels:
-          env: staging
-    template:
-      metadata:
-        name: '{{ "{{cluster}}-{{env}}" }}'
-      spec:
-        project: default
-        source:
-          repoURL: https://github.com/argoproj-labs/applicationset.git
-          targetRevision: main
-          path: examples/list-generator/guestbook/{{ "{{cluster}}" }}
-        destination:
-          server: '{{ "{{url}}" }}'
-          namespace: guestbook
-
 Application:
   test-application:
     namespace: change-me
