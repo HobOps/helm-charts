@@ -1,0 +1,20 @@
+{{- define "library.Keda.TriggerAuthentication" }}
+{{- $data := .Values.TriggerAuthentication }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  podIdentity:
+    provider: {{ (index $data .name).podIdentity.provider }}
+{{- end }}

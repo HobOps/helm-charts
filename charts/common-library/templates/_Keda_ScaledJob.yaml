@@ -1,0 +1,41 @@
+{{- define "library.Keda.ScaledJob" }}
+{{- $data := .Values.ScaledJob }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledJob
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with (index $data .name).jobTargetRef }}
+  jobTargetRef:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  pollingInterval: {{ (index $data .name).pollingInterval }}
+  successfulJobsHistoryLimit: {{ (index $data .name).successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ (index $data .name).failedJobsHistoryLimit }}
+  envSourceContainerName: {{ (index $data .name).envSourceContainerName }}
+  minReplicaCount: {{ (index $data .name).minReplicaCount }}
+  maxReplicaCount: {{ (index $data .name).maxReplicaCount }}
+  rolloutStrategy: {{ (index $data .name).rolloutStrategy }}
+  {{- with (index $data .name).rollout }}
+  rollout:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).scalingStrategy }}
+  scalingStrategy:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).triggers }}
+  triggers:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}

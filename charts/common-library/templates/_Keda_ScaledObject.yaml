@@ -1,0 +1,34 @@
+{{- define "library.Keda.ScaledObject" }}
+{{- $data := .Values.ScaledObject }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with (index $data .name).scaleTargetRef }}
+  scaleTargetRef:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  pollingInterval: {{ (index $data .name).pollingInterval }}
+  cooldownPeriod: {{ (index $data .name).cooldownPeriod }}
+  minReplicaCount: {{ (index $data .name).minReplicaCount }}
+  maxReplicaCount: {{ (index $data .name).maxReplicaCount }}
+  {{- with (index $data .name).advanced }}
+  advanced:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).triggers }}
+  triggers:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}
