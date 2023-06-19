@@ -1,27 +1,3 @@
-#ClusterIssuer:
-#  letsencrypt:
-#    annotations:
-#      annotation: test-clusterissuer
-#    email: changeme@example.com
-#    server: https://changeme-acme-v02.api.letsencrypt.org/directory
-#    privateKeySecretRef:
-#      name: changeme-clusterissuer-letsencrypt-key
-#    solvers:
-#    - http01:
-#        ingress:
-#          class: changeme-nginx
-#  letsencrypt-staging:
-#    annotations:
-#      annotation: test-clusterissuer
-#    email: changeme@example.com
-#    server: https://changeme-acme-staging-v02.api.letsencrypt.org/directory
-#    privateKeySecretRef:
-#      name: changeme-clusterissuer-letsencrypt-staging-key
-#    solvers:
-#    - http01:
-#        ingress:
-#          class: changeme-nginx
-#
 #ConfigMap:
 #  test-configmap:
 #    annotations:
