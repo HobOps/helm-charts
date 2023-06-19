@@ -1,0 +1,8 @@
+TriggerAuthentication:
+  gcp-test-auth:
+    annotations:
+      test: annotation
+    labels:
+      test: label
+    podIdentity:
+      provider: gcp

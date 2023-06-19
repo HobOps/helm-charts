@@ -1,0 +1,38 @@
+ScaledJob:
+  gcp-test-job:
+    annotations:
+      test: annotation
+    labels:
+      test: label
+    failedJobsHistoryLimit: 2
+    jobTargetRef:
+      backoffLimit: 4
+      completions: 1
+      parallelism: 1
+      template:
+        spec:
+          containers:
+          - command:
+            - /bin/bash
+            - -c
+            - echo 'Hello World'; sleep 30; echo 'Bye World'
+            image: nginx:latest
+            imagePullPolicy: IfNotPresent
+            name: gcp-test-job
+            resources: {}
+          restartPolicy: Never
+    maxReplicaCount: 10
+    pollingInterval: 10
+    rollout: {}
+    scalingStrategy:
+      customScalingQueueLengthDeduction: 1
+      customScalingRunningJobPercentage: "0.5"
+      strategy: custom
+    successfulJobsHistoryLimit: 100
+    triggers:
+    - authenticationRef:
+        name: gcp-test-auth
+      metadata:
+        subscriptionName: my-subscription
+        subscriptionSize: "1"
+      type: gcp-pubsub

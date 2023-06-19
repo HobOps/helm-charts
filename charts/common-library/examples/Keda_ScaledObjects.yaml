@@ -1,0 +1,23 @@
+ScaledObject:
+  gcp-test-deployment:
+    annotations:
+      test: annotation
+    labels:
+      test: label
+    advanced:
+      horizontalPodAutoscalerConfig:
+        name: hpa-keda-test-config
+    cooldownPeriod: 10
+    maxReplicaCount: 2
+    minReplicaCount: 1
+    pollingInterval: 5
+    scaleTargetRef:
+      kind: deployment
+      name: gcp-test-deployment
+    triggers:
+    - authenticationRef:
+        name: gcp-test-auth
+      metadata:
+        subscriptionName: my-subscription
+        subscriptionSize: "1"
+      type: gcp-pubsub
