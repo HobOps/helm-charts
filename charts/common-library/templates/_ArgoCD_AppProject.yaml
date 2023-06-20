@@ -1,45 +1,46 @@
 {{- define "library.ArgoCD.AppProject" }}
+{{- $data := .Values.AppProject }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.AppProject .name).annotations }}
+  {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.AppProject .name).labels }}
+  {{- with (index $data .name).labels }}
   labels:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
-  description: {{ (index .Values.AppProject .name).description | default "" }}
-  {{- with (index .Values.AppProject .name).clusterResourceBlacklist }}
+  description: {{ (index $data .name).description | default "" }}
+  {{- with (index $data .name).clusterResourceBlacklist }}
   clusterResourceBlacklist:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.AppProject .name).clusterResourceWhitelist }}
+  {{- with (index $data .name).clusterResourceWhitelist }}
   clusterResourceWhitelist:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.AppProject .name).namespaceResourceBlacklist }}
+  {{- with (index $data .name).namespaceResourceBlacklist }}
   namespaceResourceBlacklist:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.AppProject .name).namespaceResourceWhitelist }}
+  {{- with (index $data .name).namespaceResourceWhitelist }}
   namespaceResourceWhitelist:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.AppProject .name).roles }}
+  {{- with (index $data .name).roles }}
   roles:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.AppProject .name).destinations }}
+  {{- with (index $data .name).destinations }}
   destinations:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.AppProject .name).sourceRepos }}
+  {{- with (index $data .name).sourceRepos }}
   sourceRepos:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
