@@ -1,123 +1,124 @@
 {{- define "library.Kubernetes.DaemonSet" }}
+{{- $data := .Values.DaemonSet }}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.DaemonSet .name).annotations }}
+  {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.DaemonSet .name).labels }}
+  {{- with (index $data .name).labels }}
   labels:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
-  {{- with (index .Values.DaemonSet .name).updateStrategy }}
+  {{- with (index $data .name).updateStrategy }}
   updateStrategy:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.DaemonSet .name).selectorLabels }}
+  {{- with (index $data .name).selectorLabels }}
   selector:
     matchLabels:
       {{- tpl (toYaml .) $ | nindent 6 }}
   {{- end }}
   template:
     metadata:
-      {{- with (index .Values.DaemonSet .name).podAnnotations }}
+      {{- with (index $data .name).podAnnotations }}
       annotations:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with (index .Values.DaemonSet .name).selectorLabels }}
+      {{- with (index $data .name).selectorLabels }}
       labels:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
     spec:
-      {{- with (index .Values.DaemonSet .name).imagePullSecrets }}
+      {{- with (index $data .name).imagePullSecrets }}
       imagePullSecrets:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
-      serviceAccountName: {{ (index .Values.DaemonSet .name).serviceAccountName | default "default" }}
-      {{- with (index .Values.DaemonSet .name).podSecurityContext }}
+      serviceAccountName: {{ (index $data .name).serviceAccountName | default "default" }}
+      {{- with (index $data .name).podSecurityContext }}
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with (index .Values.DaemonSet .name).initContainers }}
+      {{- with (index $data .name).initContainers }}
       initContainers:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       containers:
       - name: {{ .name }}
-        {{- with (index .Values.DaemonSet .name).securityContext }}
+        {{- with (index $data .name).securityContext }}
         securityContext:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
-        image: "{{ (index .Values.DaemonSet .name).image.repository }}:{{ (index .Values.DaemonSet .name).image.tag }}"
-        imagePullPolicy: {{ (index .Values.DaemonSet .name).image.pullPolicy }}
-        {{- with (index .Values.DaemonSet .name).command }}
+        image: "{{ (index $data .name).image.repository }}:{{ (index $data .name).image.tag }}"
+        imagePullPolicy: {{ (index $data .name).image.pullPolicy }}
+        {{- with (index $data .name).command }}
         command:
           {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with (index .Values.DaemonSet .name).args }}
+        {{- with (index $data .name).args }}
         args:
           {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with (index .Values.DaemonSet .name).envFrom }}
+        {{- with (index $data .name).envFrom }}
         envFrom:
           {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- with (index .Values.DaemonSet .name).env }}
+        {{- with (index $data .name).env }}
         env:
           {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-        {{- if (index .Values.DaemonSet .name).service }}{{- if (index .Values.DaemonSet .name).service.ports }}
+        {{- if (index $data .name).service }}{{- if (index $data .name).service.ports }}
         ports:
-        {{- range (index .Values.DaemonSet .name).service.ports }}
+        {{- range (index $data .name).service.ports }}
         - name: {{ .name }}
           containerPort: {{ .containerPort | default .port }}
           protocol: {{ .protocol }}
         {{- end }}
         {{- end }}{{- end }}
-        {{- with (index .Values.DaemonSet .name).livenessProbe }}
+        {{- with (index $data .name).livenessProbe }}
         livenessProbe:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
-        {{- with (index .Values.DaemonSet .name).readinessProbe }}
+        {{- with (index $data .name).readinessProbe }}
         readinessProbe:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
-        {{- with (index .Values.DaemonSet .name).resources }}
+        {{- with (index $data .name).resources }}
         resources:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
-        {{- with (index .Values.DaemonSet .name).volumeMounts }}
+        {{- with (index $data .name).volumeMounts }}
         volumeMounts:
           {{- tpl (toYaml .) $ | nindent 8 }}
         {{- end }}
-      {{- with (index .Values.DaemonSet .name).volumes }}
+      {{- with (index $data .name).volumes }}
       volumes:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
-      {{- with (index .Values.DaemonSet .name).nodeSelector }}
+      {{- with (index $data .name).nodeSelector }}
       nodeSelector:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with (index .Values.DaemonSet .name).hostAliases }}
+      {{- with (index $data .name).hostAliases }}
       hostAliases:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
-      {{- with (index .Values.DaemonSet .name).affinity }}
+      {{- with (index $data .name).affinity }}
       affinity:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
-      {{- with (index .Values.DaemonSet .name).tolerations }}
+      {{- with (index $data .name).tolerations }}
       tolerations:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
-{{- if (index .Values.DaemonSet .name).service }}{{- if (index .Values.DaemonSet .name).service.ports }}
+{{- if (index $data .name).service }}{{- if (index $data .name).service.ports }}
 ---
-  {{- $_ := set .Values "Workload" .Values.DaemonSet }}
+  {{- $_ := set .Values "Workload" $data }}
   {{- $_ := set .Values "IsWorkload" true }}
   {{ include "library.Kubernetes.Service" (dict "name" .name "data" .data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
 {{- end }}{{- end }}
