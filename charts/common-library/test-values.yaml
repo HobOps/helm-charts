@@ -1,15 +1,3 @@
-#ConfigMap:
-#  test-configmap:
-#    annotations:
-#      annotation: test-configmap
-#    data:
-#      FOO: changeme
-#  test-file-configmap:
-#    data:
-#      service.conf: |
-#        [Service]
-#        foo=bar
-#
 #DaemonSet:
 #  test-daemonset:
 #    labels:
