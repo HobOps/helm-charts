@@ -1,0 +1,16 @@
+Ingress:
+  test-ingress-without-rendering:
+    annotations:
+      annotation: test-ingress-without-rendering
+    ingressClassName: nginx
+    rules:
+    - host: test1.example.com
+      http:
+        paths:
+        - path: /
+          backend:
+            service:
+              name: test-service
+              port:
+                number: 80
+          pathType: ImplementationSpecific
