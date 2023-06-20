@@ -1,19 +1,20 @@
 {{- define "library.Kubernetes.ConfigMap" }}
+{{- $data := .Values.ConfigMap }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.ConfigMap .name).annotations }}
+  {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.ConfigMap .name).labels }}
+  {{- with (index $data .name).labels }}
   labels:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-{{- with (index .Values.ConfigMap .name).data }}
+{{- with (index $data .name).data }}
 data:
   {{- tpl (toYaml .) $ | nindent 2 }}
 {{- end }}
