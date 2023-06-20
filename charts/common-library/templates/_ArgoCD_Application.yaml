@@ -1,39 +1,40 @@
 {{- define "library.ArgoCD.Application" }}
+{{- $data := .Values.Application }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.Application .name).annotations }}
+  {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.Application .name).labels }}
+  {{- with (index $data .name).labels }}
   labels:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
-  project: {{ (index .Values.Application .name).project | default "" }}
-  {{- with (index .Values.Application .name).source }}
+  project: {{ (index $data .name).project | default "" }}
+  {{- with (index $data .name).source }}
   source:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.Application .name).sources }}
+  {{- with (index $data .name).sources }}
   sources:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.Application .name).destination }}
+  {{- with (index $data .name).destination }}
   destination:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.Application .name).syncPolicy }}
+  {{- with (index $data .name).syncPolicy }}
   syncPolicy:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.Application .name).ignoreDifferences }}
+  {{- with (index $data .name).ignoreDifferences }}
   ignoreDifferences:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  revisionHistoryLimit: {{ (index .Values.Application .name).revisionHistoryLimit | default 10 }}
+  revisionHistoryLimit: {{ (index $data .name).revisionHistoryLimit | default 10 }}
 {{- end }}
