@@ -1,4 +1,5 @@
 {{- define "library.Kubernetes.Service" }}
+{{- $data := .Values.Service }}
 
 {{- /* externalTrafficPolicy */ -}}
 {{- if .Values.IsWorkload }}
@@ -6,8 +7,8 @@
     {{- $_ := set .Values "externalTrafficPolicy" (index .Values.Workload .name).service.externalTrafficPolicy }}
   {{- end }}
 {{- else }}
-  {{- if (index .Values.Service .name).externalTrafficPolicy }}
-    {{- $_ := set .Values "externalTrafficPolicy" (index .Values.Service .name).externalTrafficPolicy }}
+  {{- if (index $data .name).externalTrafficPolicy }}
+    {{- $_ := set .Values "externalTrafficPolicy" (index $data .name).externalTrafficPolicy }}
   {{- end }}
 {{- end }}
 
@@ -17,8 +18,8 @@
     {{- $_ := set .Values "ports" (index .Values.Workload .name).service.ports }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).ports }}
-    {{- $_ := set .Values "ports" (index .Values.Service .name).ports }}
+{{- if (index $data .name).ports }}
+    {{- $_ := set .Values "ports" (index $data .name).ports }}
 {{- end }}
 {{- end }}
 
@@ -28,8 +29,8 @@
     {{- $_ := set .Values "type" (index .Values.Workload .name).service.type }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).type }}
-    {{- $_ := set .Values "type" (index .Values.Service .name).type }}
+{{- if (index $data .name).type }}
+    {{- $_ := set .Values "type" (index $data .name).type }}
 {{- end }}
 {{- end }}
 
@@ -40,8 +41,8 @@
     {{- $_ := set .Values "externalName" (index .Values.Workload .name).service.externalName }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).externalName }}
-    {{- $_ := set .Values "externalName" (index .Values.Service .name).externalName }}
+{{- if (index $data .name).externalName }}
+    {{- $_ := set .Values "externalName" (index $data .name).externalName }}
 {{- end }}
 {{- end }}
 
@@ -51,8 +52,8 @@
     {{- $_ := set .Values "annotations" (index .Values.Workload .name).serviceAnnotations }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).annotations }}
-    {{- $_ := set .Values "annotations" (index .Values.Service .name).annotations }}
+{{- if (index $data .name).annotations }}
+    {{- $_ := set .Values "annotations" (index $data .name).annotations }}
 {{- end }}
 {{- end }}
 
@@ -62,8 +63,8 @@
     {{- $_ := set .Values "labels" (index .Values.Workload .name).serviceLabels }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).labels }}
-    {{- $_ := set .Values "labels" (index .Values.Service .name).labels }}
+{{- if (index $data .name).labels }}
+    {{- $_ := set .Values "labels" (index $data .name).labels }}
 {{- end }}
 {{- end }}
 
@@ -73,8 +74,8 @@
     {{- $_ := set .Values "selector" (index .Values.Workload .name).selectorLabels }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).selectorLabels }}
-    {{- $_ := set .Values "selector" (index .Values.Service .name).selectorLabels }}
+{{- if (index $data .name).selectorLabels }}
+    {{- $_ := set .Values "selector" (index $data .name).selectorLabels }}
 {{- end }}
 {{- end }}
 
@@ -84,8 +85,8 @@
     {{- $_ := set .Values "sessionAffinity" (index .Values.Workload .name).service.sessionAffinity }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).sessionAffinity }}
-    {{- $_ := set .Values "sessionAffinity" (index .Values.Service .name).sessionAffinity }}
+{{- if (index $data .name).sessionAffinity }}
+    {{- $_ := set .Values "sessionAffinity" (index $data .name).sessionAffinity }}
 {{- end }}
 {{- end }}
 
@@ -95,8 +96,8 @@
     {{- $_ := set .Values "sessionAffinityConfig" (index .Values.Workload .name).service.sessionAffinityConfig }}
 {{- end }}
 {{- else }}
-{{- if (index .Values.Service .name).sessionAffinityConfig }}
-    {{- $_ := set .Values "sessionAffinityConfig" (index .Values.Service .name).sessionAffinityConfig }}
+{{- if (index $data .name).sessionAffinityConfig }}
+    {{- $_ := set .Values "sessionAffinityConfig" (index $data .name).sessionAffinityConfig }}
 {{- end }}
 {{- end }}
 
