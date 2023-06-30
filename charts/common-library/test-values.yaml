@@ -285,15 +285,6 @@
 #      value: "true"
 #      effect: NoSchedule
 #
-#Secret:
-#  test-secret:
-#    annotations:
-#      annotation: test-secret
-#    data:
-#      FOO: changeme
-#    stringData:
-#      BAR: changeme
-#
 #
 #NetworkPolicy:
 #  test-networkpolicy:
