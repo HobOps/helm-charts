@@ -1,0 +1,25 @@
+
+Service:
+  test-service1:
+    labels:
+      labels: test-service1
+    annotations:
+      annotation: test-service1
+    selectorLabels:
+      selectorLabels: test-service1
+    type: ClusterIP
+    externalTrafficPolicy: Cluster
+    loadBalancerIP: 2.2.2.2
+    loadBalancerSourceRanges:
+    - 90.254.0.0/24
+    sessionAffinity: None
+    sessionAffinityConfig:
+      clientIP:
+        timeoutSeconds: 10800
+    ports:
+    - name: nginx1-service1
+      port: 99
+      protocol: TCP
+    - name: nginx2-service1
+      port: 999
+      protocol: TCP
