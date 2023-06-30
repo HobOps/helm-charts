@@ -1,47 +1,48 @@
 {{- define "library.Kubernetes.Ingress" }}
+{{- $data := .Values.Ingress }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.Ingress .name).annotations }}
+  {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
   {{- /* ingressClassName */ -}}
-  {{- if (hasKey (index .Values.Ingress .name) "ingressClassName") }}
-  ingressClassName: {{ (index .Values.Ingress .name).ingressClassName }}
+  {{- if (hasKey (index $data .name) "ingressClassName") }}
+  ingressClassName: {{ (index $data .name).ingressClassName }}
   {{- end -}}
 
   {{- /* rules */ -}}
-  {{- $env := (index .Values.Ingress .name).paths -}}
-  {{- if (index .Values.Ingress .name).render_ingress_rules }}
+  {{- $env := (index $data .name).paths -}}
+  {{- if (index $data .name).render_ingress_rules }}
   rules:
-  {{- range (index .Values.Ingress .name).hosts }}
+  {{- range (index $data .name).hosts }}
   - host: {{ . }}
     http:
       paths:
         {{- tpl (toYaml $env) $ | nindent 6 }}
   {{- end }}
   {{- else }}
-  {{- with (index .Values.Ingress .name).rules }}
+  {{- with (index $data .name).rules }}
   rules:
       {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end -}}
   {{- end -}}
 
   {{- /* tls */ -}}
-  {{- if (index .Values.Ingress .name).render_ingress_tls }}
+  {{- if (index $data .name).render_ingress_tls }}
   tls:
   - hosts:
-    {{- range (index .Values.Ingress .name).hosts }}
+    {{- range (index $data .name).hosts }}
     - {{ . }}
     {{- end }}
     secretName: {{ .name }}-tls
   {{ else }}
-  {{- with (index .Values.Ingress .name).tls }}
+  {{- with (index $data .name).tls }}
   tls:
       {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end -}}
