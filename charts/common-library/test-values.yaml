@@ -294,22 +294,6 @@
 #    stringData:
 #      BAR: changeme
 #
-#StorageClass:
-#  test-storageclass:
-#    annotations:
-#      annotation: test-storageclass
-#    provisioner: changeme
-#    allowVolumeExpansion: true
-#    reclaimPolicy: Delete
-#    volumeBindingMode: Immediate
-#    allowedTopologies:
-#    - matchLabelExpressions:
-#      - key: topology.gke.io/zone
-#        values:
-#        - us-central1-a
-#        - us-central1-b
-#    parameters:
-#      type: changeme
 #
 #NetworkPolicy:
 #  test-networkpolicy:
