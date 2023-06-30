@@ -1,24 +1,25 @@
 {{- define "library.Kubernetes.NetworkPolicy" }}
+{{- $data := .Values.NetworkPolicy }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.NetworkPolicy .name).annotations }}
+  {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
-  {{- with (index .Values.NetworkPolicy .name).podSelector }}
+  {{- with (index $data .name).podSelector }}
   podSelector:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index .Values.NetworkPolicy .name).policyTypes }}
+  {{- with (index $data .name).policyTypes }}
   policyTypes:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index .Values.NetworkPolicy .name).ingress }}
+  {{- with (index $data .name).ingress }}
   ingress:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
