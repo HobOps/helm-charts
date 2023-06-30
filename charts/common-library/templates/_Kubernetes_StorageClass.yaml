@@ -1,23 +1,24 @@
 {{- define "library.Kubernetes.StorageClass" }}
+{{- $data := .Values.StorageClass }}
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index .Values.StorageClass .name).annotations }}
+  {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-provisioner: {{ (index .Values.StorageClass .name).provisioner }}
-allowVolumeExpansion: {{ (index .Values.StorageClass .name).allowVolumeExpansion | default "true" }}
-reclaimPolicy: {{ (index .Values.StorageClass .name).reclaimPolicy | default "Delete" }}
-volumeBindingMode: {{ (index .Values.StorageClass .name).volumeBindingMode | default "Immediate" }}
-{{- with (index .Values.StorageClass .name).allowedTopologies }}
+provisioner: {{ (index $data .name).provisioner }}
+allowVolumeExpansion: {{ (index $data .name).allowVolumeExpansion | default "true" }}
+reclaimPolicy: {{ (index $data .name).reclaimPolicy | default "Delete" }}
+volumeBindingMode: {{ (index $data .name).volumeBindingMode | default "Immediate" }}
+{{- with (index $data .name).allowedTopologies }}
 allowedTopologies:
   {{- tpl (toYaml .) $ | nindent 0 }}
 {{- end }}
-{{- with (index .Values.StorageClass .name).parameters }}
+{{- with (index $data .name).parameters }}
 parameters:
   {{- tpl (toYaml .) $ | nindent 2 }}
 {{- end }}
