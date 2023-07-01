@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - 'feat/**'
+  workflow_dispatch:
 
 jobs:
   lint-test:
@@ -45,7 +46,13 @@ jobs:
           helm repo add hobops https://hobops-helm-charts.storage.googleapis.com
 
       - name: Run chart-testing (lint)
-        run: ct lint --lint-conf scripts/lintconf.yaml --target-branch ${{ github.event.repository.default_branch }}
+        run: |
+          ct lint --lint-conf scripts/lintconf.yaml --target-branch ${{ github.event.repository.default_branch }}
+
+      - name: Run testing in common-library
+        run: |
+          cd charts/common-library
+          make test_all
 
   publish:
     runs-on: ubuntu-latest

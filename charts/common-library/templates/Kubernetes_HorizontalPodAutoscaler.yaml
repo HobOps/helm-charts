@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.HorizontalPodAutoscaler }}
+  {{ include "library.Kubernetes.HorizontalPodAutoscaler" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

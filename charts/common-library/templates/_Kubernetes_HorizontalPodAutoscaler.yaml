@@ -1,0 +1,28 @@
+{{- define "library.Kubernetes.HorizontalPodAutoscaler" }}
+{{- $data := .Values.HorizontalPodAutoscaler }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with (index $data .name).scaleTargetRef }}
+  scaleTargetRef:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  minReplicas: {{ (index $data .name).minReplicas | default 1 }}
+  maxReplicas: {{ (index $data .name).maxReplicas | default 3 }}
+  {{- with (index $data .name).metrics }}
+  metrics:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+{{- end }}

@@ -1,8 +1,0 @@
-releases:
-  - name: example-app-dev
-    namespace: default
-    createNamespace: true
-    chart: ./example-app-dev1/
-    values:
-    - global:
-        latest_upgrade: {{ .Values.latest_upgrade }}
