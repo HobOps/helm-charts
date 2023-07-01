@@ -1,0 +1,36 @@
+{{- define "library.Batch.CronJob" }}
+{{- $data := .Values.CronJob }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+    name: {{ .name }}
+    namespace: {{ .Release.Namespace }}
+    {{- with (index $data .name).annotations }}
+    annotations:
+        {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+    {{- with (index $data .name).labels }}
+    labels:
+        {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}
+spec:
+    schedule: {{ (index $data .name).schedule }}
+    {{- with (index $data .name).jobTemplate }}
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    containers:
+                    {{- range .spec.template.spec.containers }}
+                    - name: {{ .name }}
+                      image: {{ .image }}
+                      imagePullPolicy: {{ .imagePullPolicy }}
+                      command:
+                        {{- range .command }}
+                        - {{ . }}
+                        {{- end }}
+                    {{- end }}
+                    restartPolicy: {{ .spec.template.spec.restartPolicy }}
+    {{- end }}
+{{- end }}
