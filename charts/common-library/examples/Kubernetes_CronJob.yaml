@@ -1,19 +1,32 @@
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-    name: busybox-cronjob
-spec:
-    schedule: "*/5 * * * *"
-    jobTemplate:
-        spec:
-            template:
-                spec:
-                    containers:
-                    - name: busybox-cronjob
-                      image: busybox:1.28
-                      imagePullPolicy: IfNotPresent
-                      command:
-                      - /bin/sh
-                      - -c
-                      - date; echo Hello from the Kubernetes cluster
-                    restartPolicy: OnFailure
+CronJob:
+  test-cronjob1:
+    labels:
+        labels: test-cronjob1
+    annotations:
+        annotation: test-cronjob1
+    selectorLabels:
+        selectorLabels: test-cronjob1
+    serviceAnnotations:
+        serviceAnnotations: test-cronjob1
+        serviceAccountName: test-cronjob1
+    podSecurityContext:
+        fsGroup: 2000
+    securityContext:
+        privileged: false
+    updateStrategy:
+        type: RollingUpdate
+    initContainers: {}
+    image:
+        repository: nginx
+        tag: latest
+        pullPolicy: IfNotPresent
+    imagePullSecrets:
+    - name: changeme
+    envFrom:
+    - configMapRef:
+          name: test-configmap
+    - secretRef:
+          name: test-secret
+    env:
+    - name: FUZZ
+      value: BUZZ
