@@ -44,4 +44,8 @@ spec:
   sourceRepos:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
+  {{- with (index $data .name).sourceNamespaces }}
+  sourceNamespaces:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
 {{- end }}
