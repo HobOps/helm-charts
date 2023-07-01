@@ -42,3 +42,6 @@ AppProject:
       server: https://kubernetes.default.svc
     sourceRepos:
     - '*'
+    sourceNamespaces:
+    - namespace1
+    - namespace2
