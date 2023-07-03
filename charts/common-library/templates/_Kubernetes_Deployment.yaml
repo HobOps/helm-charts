@@ -15,7 +15,9 @@ metadata:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
+  {{- if (index $data .name).replicas }}
   replicas: {{ (index $data .name).replicas }}
+  {{- end }}
   progressDeadlineSeconds: {{ (index $data .name).progressDeadlineSeconds | default 600 }}
   {{- with (index $data .name).strategy }}
   strategy:

@@ -15,7 +15,9 @@ metadata:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
 spec:
+  {{- if (index $data .name).replicas }}
   replicas: {{ (index $data .name).replicas }}
+  {{- end }}
   serviceName: {{ .name }}
   {{- with (index $data .name).updateStrategy }}
   updateStrategy:
