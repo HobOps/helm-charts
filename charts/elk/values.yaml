@@ -1,0 +1,209 @@
+common-library:
+  DaemonSet:
+    elk-sysctl:
+      selectorLabels:
+        app: elk-sysctl
+      image:
+        repository: busybox
+        tag: 1.26.2
+      nodeSelector: {}
+      command:
+      - sh
+      - -c
+      args:
+      - sysctl -w vm.max_map_count=262166 && while true; do sleep 86400; done
+      securityContext:
+        allowPrivilegeEscalation: true
+        capabilities: {}
+        privileged: true
+        readOnlyRootFilesystem: false
+        runAsNonRoot: false
+  StatefulSet:
+    elk:
+      annotations:
+        reloader.stakater.com/auto: "true"
+      replicas: 1
+      selectorLabels:
+        app: elk
+      image:
+        repository: sebp/elk
+        tag: 7.10.0
+      nodeSelector: {}
+      command:
+      - sh
+      - -c
+      args:
+      - /usr/local/bin/start.sh
+      env:
+      - name: LOGSTASH_START
+        value: '0'
+      - name: ES_HEAP_SIZE
+        value: 1024m
+      - name: ES_CONNECT_RETRY
+        value: '100'
+      - name: LS_HEAP_SIZE
+        value: 1024m
+      - name: NODE_OPTIONS
+        value: --max-old-space-size=512
+      - name: TZ
+        value: America/Mexico_City
+      service:
+        ports:
+        - name: kibana
+          port: 5601
+          protocol: TCP
+        - name: elasticsearch
+          port: 9200
+          protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 9200
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 2
+        successThreshold: 2
+        timeoutSeconds: 2
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /
+          port: 9200
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 2
+        successThreshold: 1
+        timeoutSeconds: 2
+      volumeMounts:
+      - mountPath: /var/lib/elasticsearch
+        name: elasticsearch-data
+      volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 32Gi
+    apm-server:
+      replicas: 1
+      selectorLabels:
+        app: apm-server
+      image:
+        repository: docker.elastic.co/apm/apm-server
+        tag: 7.10.0
+      service:
+        ports:
+        - name: apm-server
+          port: 8200
+          protocol: TCP
+      envFrom:
+      - secretRef:
+          name: apm-server-token
+      volumes:
+      - name: apm-server-conf
+        configMap:
+          name: apm-server-conf
+          defaultMode: 292
+      volumeMounts:
+      - mountPath: /usr/share/apm-server/apm-server.yml
+        name: apm-server-conf
+        subPath: apm-server.yml
+  ConfigMap:
+    apm-server-conf:
+      data:
+        apm-server.yml: |-
+          ################### APM Server Configuration #########################
+          apm-server:
+            host: "0.0.0.0:8200"
+            secret_token: '${APM_SECRET_TOKEN}'
+            ssl:
+              enabled: false
+            kibana:
+              enabled: true
+              host: "elk:5601"
+              ssl.enabled: false
+          #============================== Template =====================================
+          setup.template.enabled: true
+          setup.template.name: "apm-%{[observer.version]}"
+          setup.template.pattern: "apm-%{[observer.version]}-*"
+          setup.template.fields: "${path.config}/fields.yml"
+          setup.template.overwrite: true
+          setup.template.settings:
+            index:
+              number_of_shards: 1
+              codec: best_compression
+              number_of_routing_shards: 30
+              mapping.total_fields.limit: 2000
+          #-------------------------- Elasticsearch output ------------------------------
+          output.elasticsearch:
+            hosts: ["elk:9200"]
+            enabled: true
+            compression_level: 0
+            indices:
+            - index: "apm-%{[observer.version]}-sourcemap"
+              when.contains:
+                processor.event: "sourcemap"
+            - index: "apm-%{[observer.version]}-error-%{+yyyy.MM.dd}"
+              when.contains:
+                processor.event: "error"
+            - index: "apm-%{[observer.version]}-transaction-%{+yyyy.MM.dd}"
+              when.contains:
+                processor.event: "transaction"
+            - index: "apm-%{[observer.version]}-span-%{+yyyy.MM.dd}"
+              when.contains:
+                processor.event: "span"
+            - index: "apm-%{[observer.version]}-metric-%{+yyyy.MM.dd}"
+              when.contains:
+                processor.event: "metric"
+            - index: "apm-%{[observer.version]}-onboarding-%{+yyyy.MM.dd}"
+              when.contains:
+                processor.event: "onboarding"
+  Ingress:
+    elk:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/auth-realm: Authentication Required
+        nginx.ingress.kubernetes.io/auth-secret: elk-http-auth
+        nginx.ingress.kubernetes.io/auth-type: basic
+      render_ingress_rules: true
+      render_ingress_tls: true
+      hosts:
+      - logs.example.com
+      paths:
+      - path: /
+        backend:
+          service:
+            name: elk
+            port:
+              name: kibana
+        pathType: ImplementationSpecific
+    apm:
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt
+        kubernetes.io/ingress.class: nginx
+      render_ingress_rules: true
+      render_ingress_tls: true
+      hosts:
+      - elasticapm.example.com
+      paths:
+      - path: /
+        backend:
+          service:
+            name: apm
+            port:
+              name: apm
+        pathType: ImplementationSpecific
+  Secret:
+    # To create a new secret, run the following command:
+    # htpasswd -B -n admin
+    elk-http-auth:
+      stringData:
+        auth: admin:$2y$05$0VgWLiNLA0j919QZh8eFzujUBsC3dN8gDeS51hfFJK9yRI0rQv1y
+    apm-server-token:
+      stringData:
+        APM_SECRET_TOKEN: changeme
