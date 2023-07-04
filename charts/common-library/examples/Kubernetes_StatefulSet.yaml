@@ -78,10 +78,22 @@ StatefulSet:
       mountPath: /etc/service.conf
       subPath: service.conf
       readOnly: true
+    - name: data
+      mountPath: /data
+      readOnly: true
     volumes:
     - name: config-file
       configMap:
         name: test-file-configmap
+    volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+      - accessModes: [ "ReadWriteOnce" ]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 1Gi
     nodeSelector:
       node: changeme
     hostAliases:

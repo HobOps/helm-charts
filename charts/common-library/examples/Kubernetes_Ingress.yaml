@@ -14,3 +14,23 @@ Ingress:
               port:
                 number: 80
           pathType: ImplementationSpecific
+    tls:
+    - hosts:
+      - test1.example.com
+      secretName: test-ingress-without-rendering-tls
+  test-ingress-with-rendering:
+    annotations:
+      annotation: test-ingress-without-rendering
+    ingressClassName: nginx
+    render_ingress_rules: true
+    render_ingress_tls: true
+    hosts:
+    - test2.example.com
+    paths:
+    - path: /
+      backend:
+        service:
+          name: test-service
+          port:
+            number: 80
+      pathType: ImplementationSpecific
