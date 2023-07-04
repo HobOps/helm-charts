@@ -120,6 +120,10 @@ spec:
       tolerations:
         {{- tpl (toYaml .) $ | nindent 6 }}
       {{- end }}
+  {{- with (index $data .name).volumeClaimTemplates }}
+  volumeClaimTemplates:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
 {{- if (index $data .name).service }}{{- if (index $data .name).service.ports }}
 ---
   {{- $_ := set .Values "Workload" $data }}
