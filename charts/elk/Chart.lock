@@ -1,0 +1,6 @@
+dependencies:
+- name: common-library
+  repository: https://hobops-helm-charts.storage.googleapis.com
+  version: 1.1.26
+digest: sha256:32a967a1ce31fbe8579a18515a07506c3228e3b65f02c3f375268825002d287a
+generated: "2023-07-04T12:50:56.054525-06:00"
