@@ -194,9 +194,9 @@ common-library:
       - path: /
         backend:
           service:
-            name: apm
+            name: apm-server
             port:
-              name: apm
+              name: apm-server
         pathType: ImplementationSpecific
   Secret:
     # To create a new secret, run the following command:
