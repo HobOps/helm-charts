@@ -1,4 +1,4 @@
-name: Helm Lint and Publish Charts
+name: Helm-Chart-Testing
 
 on:
 #  push:
