@@ -13,7 +13,7 @@ common-library:
           - us-central1-b
       parameters:
         replication-type: regional-pd
-        type: pd-standard
+        type: pd-ssd
     regional-pd-standard:
       provisioner: pd.csi.storage.gke.io
       allowVolumeExpansion: true
@@ -27,4 +27,4 @@ common-library:
           - us-central1-b
       parameters:
         replication-type: regional-pd
-        type: pd-ssd
+        type: pd-standard
