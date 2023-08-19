@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.PersistentVolumeClaim }}
+  {{ include "library.Kubernetes.PersistentVolumeClaim" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

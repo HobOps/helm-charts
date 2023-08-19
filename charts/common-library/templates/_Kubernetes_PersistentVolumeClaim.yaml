@@ -1,0 +1,43 @@
+{{- define "library.Kubernetes.PersistentVolumeClaim" }}
+{{- $data := .Values.PersistentVolumeClaim }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with (index $data .name).accessModes }}
+  accessModes:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).selector }}
+  selector:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).resources }}
+  resources:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).storageClassName }}
+  storageClassName: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).volumeMode }}
+  volumeMode: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).volumeName }}
+  volumeName: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).dataSource }}
+  dataSource:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,29 @@
+PersistentVolumeClaim:
+  my-pvc:
+    annotations:
+      example.com/annotation: "value"
+    labels:
+      app: my-pvc
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+    storageClassName: standard
+    volumeMode: Filesystem
+  my-pvc-with-datasource:
+    annotations:
+      example.com/annotation: "value"
+    labels:
+      app: my-pvc-with-datasource
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+    storageClassName: standard
+    volumeMode: Filesystem
+    dataSource:
+      name: snapshot-latest
+      kind: VolumeSnapshot
+      apiGroup: snapshot.storage.k8s.io
