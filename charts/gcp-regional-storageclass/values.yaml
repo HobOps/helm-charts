@@ -1,0 +1,30 @@
+common-library:
+  StorageClass:
+    regional-pd-ssd:
+      provisioner: pd.csi.storage.gke.io
+      allowVolumeExpansion: true
+      reclaimPolicy: Delete
+      volumeBindingMode: Immediate
+      allowedTopologies:
+      - matchLabelExpressions:
+        - key: topology.gke.io/zone
+          values:
+          - us-central1-a
+          - us-central1-b
+      parameters:
+        replication-type: regional-pd
+        type: pd-standard
+    regional-pd-standard:
+      provisioner: pd.csi.storage.gke.io
+      allowVolumeExpansion: true
+      reclaimPolicy: Delete
+      volumeBindingMode: Immediate
+      allowedTopologies:
+      - matchLabelExpressions:
+        - key: topology.gke.io/zone
+          values:
+          - us-central1-a
+          - us-central1-b
+      parameters:
+        replication-type: regional-pd
+        type: pd-ssd
