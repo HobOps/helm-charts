@@ -33,22 +33,19 @@ common-library:
       - sh
       - -c
       args:
-      - /usr/local/bin/start.sh
-      env:
-      - name: LOGSTASH_START
-        value: '0'
-      - name: ES_HEAP_SIZE
-        value: 1024m
-      - name: ES_CONNECT_RETRY
-        value: '100'
-      - name: LS_HEAP_SIZE
-        value: 1024m
-      - name: NODE_OPTIONS
-        value: --max-old-space-size=512
-      - name: TZ
-        value: America/Mexico_City
+      - openssl pkcs8 -in /tls/tls.key -topk8 -out /tmp/tls-pkcs8.key -nocrypt;
+        chown logstash /tmp/tls-pkcs8.key; /usr/local/bin/start.sh
+      envFrom:
+      - configMapRef:
+          name: elk-config-vars
       service:
         ports:
+        - name: logstash
+          port: 5044
+          protocol: TCP
+        - name: logstash-tls
+          port: 5045
+          protocol: TCP
         - name: kibana
           port: 5601
           protocol: TCP
@@ -61,23 +58,38 @@ common-library:
           path: /
           port: 9200
           scheme: HTTP
-        initialDelaySeconds: 60
-        periodSeconds: 2
-        successThreshold: 2
-        timeoutSeconds: 2
+        initialDelaySeconds: 120
+        periodSeconds: 20
+        successThreshold: 1
+        timeoutSeconds: 10
       livenessProbe:
         failureThreshold: 3
         httpGet:
           path: /
           port: 9200
           scheme: HTTP
-        initialDelaySeconds: 60
-        periodSeconds: 2
+        initialDelaySeconds: 120
+        periodSeconds: 20
         successThreshold: 1
-        timeoutSeconds: 2
+        timeoutSeconds: 10
       volumeMounts:
       - mountPath: /var/lib/elasticsearch
         name: elasticsearch-data
+      - mountPath: /tls/
+        name: logstash-cert
+      - mountPath: /etc/logstash/conf.d/
+        name: logstash-conf
+      volumes:
+      - name: logstash-cert
+        secret:
+          defaultMode: 292
+          optional: false
+          secretName: elk-tls # This is the name of the secret also used by the ingress
+      - configMap:
+          defaultMode: 292
+          name: logstash-conf
+          optional: false
+        name: logstash-conf
       volumeClaimTemplates:
       - metadata:
           name: elasticsearch-data
@@ -113,6 +125,59 @@ common-library:
         name: apm-server-conf
         subPath: apm-server.yml
   ConfigMap:
+    logstash-conf:
+      data:
+        02-beats-input.conf: |-
+          input {
+            beats {
+              port => 5044
+              ssl => false
+            }
+            beats {
+              port => 5045
+              ssl => true
+              ssl_certificate => "/tls/tls.crt"
+              ssl_key => "/tmp/tls-pkcs8.key"
+            }
+          }
+        10-syslog.conf: |-
+          filter {
+            if [type] == "syslog" {
+              grok {
+                match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+                add_field => [ "received_at", "%{@timestamp}" ]
+                add_field => [ "received_from", "%{host}" ]
+              }
+              syslog_pri { }
+              date {
+                match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+              }
+            }
+          }
+        11-nginx.conf: |-
+          filter {
+            if [type] == "nginx-access" {
+              grok {
+                match => { "message" => "%{NGINXACCESS}" }
+              }
+            }
+          }
+        30-output.conf: |-
+          output {
+            elasticsearch {
+              hosts => ["elk"]
+              manage_template => false
+              index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+            }
+          }
+    elk-config-vars:
+      data:
+        LOGSTASH_START: "1"
+        ES_HEAP_SIZE: 1024m
+        LS_HEAP_SIZE: 1024m
+        ES_CONNECT_RETRY: "100"
+        NODE_OPTIONS: --max-old-space-size=512
+        TZ: Etc/UTC
     apm-server-conf:
       data:
         apm-server.yml: |-
