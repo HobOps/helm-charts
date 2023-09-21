@@ -95,6 +95,7 @@ StatefulSet:
             storage: 1Gi
     nodeSelector:
       node: changeme
+    hostNetwork: false
     hostAliases:
     - hostnames:
       - example.com

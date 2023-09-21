@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.ClusterRoleBinding }}
+  {{ include "library.Kubernetes.ClusterRoleBinding" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

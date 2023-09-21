@@ -11,3 +11,6 @@ make test_all
 ```
 make test file=examples/Kubernetes_Deployment.yaml
 ```
+
+# Changelog
+For information on what has changed in each version of this project, see the [CHANGELOG.md](CHANGELOG.md) file.

@@ -1,0 +1,16 @@
+ClusterRole:
+  test-clusterrole:
+    annotations:
+      annotation: test-clusterrole
+    labels:
+      label: test-clusterrole
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - namespaces
+      - pods
+      verbs:
+      - get
+      - watch
+      - list

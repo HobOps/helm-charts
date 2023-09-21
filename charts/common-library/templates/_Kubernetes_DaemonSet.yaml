@@ -104,6 +104,7 @@ spec:
       nodeSelector:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      hostNetwork: {{ (index $data .name).hostNetwork | default false }}
       {{- with (index $data .name).hostAliases }}
       hostAliases:
         {{- tpl (toYaml .) $ | nindent 6 }}

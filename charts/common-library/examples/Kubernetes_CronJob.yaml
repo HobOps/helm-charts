@@ -1,0 +1,28 @@
+CronJob:
+  my-cronjob:
+    schedule: "*/1 * * * *"
+    image: my-docker-image
+    args:
+    - arg1
+    - arg2
+#  my-cronjob-with-deadline:
+#    schedule: "*/5 * * * *"
+#    startingDeadlineSeconds: 200
+#    image: my-docker-image
+#    args:
+#    - arg1
+#    - arg2
+#  my-cronjob-with-concurrency:
+#    schedule: "*/10 * * * *"
+#    concurrencyPolicy: Forbid
+#    image: my-docker-image
+#    args:
+#    - arg1
+#    - arg2
+#  my-cronjob-suspended:
+#    schedule: "*/15 * * * *"
+#    suspend: true
+#    image: my-docker-image
+#    args:
+#    - arg1
+#    - arg2

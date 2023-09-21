@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.Certificate }}
+  {{ include "library.CertManager.Certificate" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

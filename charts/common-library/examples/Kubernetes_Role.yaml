@@ -1,0 +1,16 @@
+Role:
+  test-role:
+    annotations:
+      annotation: test-role
+    labels:
+      label: test-role
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - namespaces
+      - pods
+      verbs:
+      - get
+      - watch
+      - list

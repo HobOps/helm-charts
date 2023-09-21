@@ -1,8 +1,8 @@
-{{- define "library.CertManager.ClusterIssuer" }}
-{{- $data := .Values.ClusterIssuer }}
+{{- define "library.CertManager.Issuer" }}
+{{- $data := .Values.Issuer }}
 ---
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
+kind: Issuer
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}

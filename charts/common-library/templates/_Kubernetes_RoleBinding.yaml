@@ -1,0 +1,24 @@
+{{- define "library.Kubernetes.RoleBinding" }}
+{{- $data := .Values.RoleBinding }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .name }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ (index $data .name).roleRefName | default .name }}
+{{- with (index $data .name).subjects }}
+subjects:
+  {{- tpl (toYaml .) $ | nindent 0 }}
+{{- end }}
+{{- end }}

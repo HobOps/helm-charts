@@ -1,0 +1,16 @@
+ClusterRoleBinding:
+  test-clusterrolebinding:
+    annotations:
+      annotation: test-clusterrolebinding
+    subjects:
+    - kind: ServiceAccount
+      name: test-serviceaccount
+      namespace: test-namespace
+  test-clusterrolebinding-with-name-override:
+    annotations:
+      annotation: test-rolebinding
+    roleRefName: test-clusterrolebinding
+    subjects:
+    - kind: ServiceAccount
+      name: test-serviceaccount
+      namespace: test-namespace
