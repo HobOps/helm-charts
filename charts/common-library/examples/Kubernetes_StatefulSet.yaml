@@ -10,7 +10,6 @@ StatefulSet:
       selectorLabels: test-statefulset
     serviceAnnotations:
       serviceAnnotations: test-statefulset
-#    serviceAccountName: test-statefulset
     podSecurityContext:
       fsGroup: 2000
     securityContext:
@@ -89,7 +88,7 @@ StatefulSet:
     - metadata:
         name: data
       spec:
-      - accessModes: [ "ReadWriteOnce" ]
+        accessModes: [ "ReadWriteOnce" ]
         storageClassName: standard
         resources:
           requests:
