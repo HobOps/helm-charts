@@ -1,6 +1,0 @@
-dependencies:
-- name: common-library
-  repository: file://../common-library
-  version: 1.2.0
-digest: sha256:ca0a371fb6ce46b821593db9949d1942f2fdf40b54df1eff377ac094bc3d78fa
-generated: "2023-07-09T17:31:31.073192-06:00"

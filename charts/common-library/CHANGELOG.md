@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.1] - 2023-09-20
-### Disabled
-- Kubernetes CronJob
-
 ## [0.2.0] - 2023-09-20
 ### Added
 - Templates for:
@@ -28,3 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Breaking change: Updated the `acme` field in the `ClusterIssuer` template to match the style of other fields.
   This change requires updates to any existing configurations that use the `ClusterIssuer` template. Please see the
   file `examples/CertManager_ClusterIssuer.yaml` for an example of the new format.
+
+### Changed
+- Disabled CronJob template

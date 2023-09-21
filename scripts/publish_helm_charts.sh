@@ -5,6 +5,7 @@ export CHARTS_PATH="charts"
 export RELEASE_PATH="$(mktemp -d)"
 gsutil -m rsync gs://hobops-helm-charts/ "${RELEASE_PATH}/"
 for CHART in $(ls $CHARTS_PATH); do
+  echo helm package -u ${CHARTS_PATH}/${CHART} -d ${RELEASE_PATH};
   helm package -u ${CHARTS_PATH}/${CHART} -d ${RELEASE_PATH};
 done
 helm repo index ${RELEASE_PATH}

@@ -11,5 +11,5 @@ sources:
 - https://github.com/HobOps/helm-charts/tree/main/charts/filebeat
 dependencies:
 - name: common-library
-  version: 1.2.1
+  version: 1.2.0
   repository: https://hobops-helm-charts.storage.googleapis.com
