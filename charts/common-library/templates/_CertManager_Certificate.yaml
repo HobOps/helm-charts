@@ -1,0 +1,79 @@
+{{- define "library.CertManager.Certificate" }}
+{{- $data := .Values.Certificate }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  secretName: {{ (index $data .name).secretName }}
+  issuerRef:
+    name: {{ (index $data .name).issuerRef.name }}
+    kind: {{ (index $data .name).issuerRef.kind }}
+    {{- if (index $data .name).issuerRef.group }}
+    group: {{ (index $data .name).issuerRef.group }}
+    {{- end }}
+  commonName: {{ (index $data .name).commonName }}
+  {{- with (index $data .name).dnsNames }}
+  dnsNames:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  {{- with (index $data .name).ipAddresses }}
+  ipAddresses:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).uriSANs }}
+  uriSANs:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).emailSANs }}
+  emailSANs:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).duration }}
+  duration: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).renewBefore }}
+  renewBefore: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).privateKey }}
+  privateKey:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).usages }}
+  usages:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  {{- with (index $data .name).keyType }}
+  keyType: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).keySize }}
+  keySize: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).keyAlgorithm }}
+  keyAlgorithm: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).keyEncoding }}
+  keyEncoding: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).subject }}
+  subject:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).isCA }}
+  isCA: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).keystores }}
+  keystores:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,30 @@
+RoleBinding:
+  test-rolebinding:
+    annotations:
+      annotation: test-rolebinding
+    subjects:
+    - kind: User
+      name: "alice@example.com"
+      apiGroup: rbac.authorization.k8s.io
+  test-rolebinding-with-apigroups:
+    annotations:
+      annotation: test-rolebinding
+    subjects:
+    - kind: Group
+      name: "frontend-admins"
+      apiGroup: rbac.authorization.k8s.io
+  test-rolebinding-with-namespaces:
+    annotations:
+      annotation: test-rolebinding
+    subjects:
+    - kind: ServiceAccount
+      name: test-serviceaccount
+      namespace: test-namespace
+  test-rolebinding-with-name-override:
+    annotations:
+      annotation: test-rolebinding
+    roleRefName: test-rolebinding
+    subjects:
+    - kind: ServiceAccount
+      name: test-serviceaccount
+      namespace: test-namespace

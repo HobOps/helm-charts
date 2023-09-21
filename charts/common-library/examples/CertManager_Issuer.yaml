@@ -1,18 +1,18 @@
-ClusterIssuer:
+Issuer:
   # https://cert-manager.io/docs/configuration/acme/
-  clusterissuer-letsencrypt-staging:
+  issuer-letsencrypt-staging:
     annotations:
       test: annotation
     acme:
       email: changeme@example.com
       server: https://acme-staging-v02.api.letsencrypt.org/directory
       privateKeySecretRef:
-        name: changeme-clusterissuer-letsencrypt-staging-key
+        name: changeme-issuer-letsencrypt-staging-key
       solvers:
       - http01:
           ingress:
             class: nginx
-  clusterissuer-my-acme-server-with-eab:
+  issuer-my-acme-server-with-eab:
     annotations:
       test: annotation
     acme:
@@ -33,14 +33,14 @@ ClusterIssuer:
       enableDurationFeature: false
       enableRevocationFeature: false
   # https://cert-manager.io/docs/configuration/acme/dns01/
-  clusterissuer-letsencrypt-prod-with-dns:
+  issuer-letsencrypt-prod-with-dns:
     annotations:
       test: annotation
     acme:
       email: changeme@example.com
       server: https://acme-v02.api.letsencrypt.org/directory
       privateKeySecretRef:
-        name: changeme-clusterissuer-letsencrypt-prod-key
+        name: changeme-issuer-letsencrypt-prod-key
       solvers:
       - dns01:
           cloudflare:
@@ -52,7 +52,7 @@ ClusterIssuer:
           dnsZones:
           - 'example.com'
   # https://cert-manager.io/docs/configuration/ca/
-  clusterissuer-ca:
+  issuer-ca:
     annotations:
       test: annotation
     ca:
@@ -60,7 +60,7 @@ ClusterIssuer:
       crlDistributionPoints:
       - "http://example.com"
   # https://cert-manager.io/docs/configuration/vault/
-  clusterissuer-vault-with-token:
+  issuer-vault-with-token:
     annotations:
       test: annotation
     vault:
@@ -71,7 +71,7 @@ ClusterIssuer:
         tokenSecretRef:
           name: example-token-secret
           key: example-key
-  clusterissuer-vault-with-approle:
+  issuer-vault-with-approle:
     annotations:
       test: annotation
     vault:
@@ -85,7 +85,7 @@ ClusterIssuer:
           secretRef:
             name: cert-manager-vault-approle
             key: secretId
-  clusterissuer-vault-with-kubernetes-service-account:
+  issuer-vault-with-kubernetes-service-account:
     annotations:
       test: annotation
     vault:
@@ -98,12 +98,12 @@ ClusterIssuer:
           serviceAccountRef:
             name: vault-issuer
   # https://cert-manager.io/docs/configuration/selfsigned/
-  clusterissuer-selfsigned:
+  issuer-selfsigned:
     annotations:
       test: annotation
     selfSigned: {}
   # https://cert-manager.io/docs/configuration/venafi/
-  clusterissuer-venafi:
+  issuer-venafi:
     annotations:
       test: annotation
     venafi:

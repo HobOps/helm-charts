@@ -1,0 +1,40 @@
+{{- define "library.Kubernetes.CronJob" }}
+{{- $data := .Values.CronJob }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  schedule: {{ (index $data .name).schedule }}
+  {{- with (index $data .name).startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).concurrencyPolicy }}
+  concurrencyPolicy: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).suspend }}
+  suspend: {{ . }}
+  {{- end }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: {{ .name }}
+            image: {{ (index $data .name).image }}
+            {{- with (index $data .name).args }}
+            args:
+              {{- tpl (toYaml .) $ | nindent 14 }}
+            {{- end }}
+          restartPolicy: OnFailure
+{{- end }}

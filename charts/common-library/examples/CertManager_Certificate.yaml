@@ -1,0 +1,34 @@
+Certificate:
+  example-certificate:
+    secretName: example-secret
+    issuerRef:
+      name: example-issuer
+      kind: ClusterIssuer
+    commonName: www.example.com
+    dnsNames:
+    - www.example.com
+    - example.com
+    duration: 2160h
+    renewBefore: 360h
+    privateKey:
+      rotationPolicy: Always
+    usages:
+    - server auth
+    - client auth
+    keyType: RSA
+    keySize: 2048
+    keyAlgorithm: rsa
+    keyEncoding: pkcs1
+    subject:
+      organizations:
+        - example-org
+    isCA: false
+    keystores:
+      pkcs12:
+        create: true
+        passwordSecretRef:
+          name: example-secret
+      jks:
+        create: true
+        passwordSecretRef:
+          name: example-secret

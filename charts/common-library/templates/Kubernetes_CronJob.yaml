@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.CronJob }}
+  {{ include "library.Kubernetes.CronJob" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

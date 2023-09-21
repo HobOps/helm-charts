@@ -57,6 +57,7 @@ Job:
         name: test-file-configmap
     nodeSelector:
       node: changeme
+    hostNetwork: false
     hostAliases:
     - hostnames:
       - example.com
