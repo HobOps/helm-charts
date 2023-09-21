@@ -2,7 +2,7 @@ apiVersion: v2
 name: filebeat
 description: An easy way to deploy Filebeat to Kubernetes.
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: 1.16.0
 maintainers:
 - name: inetshell
@@ -11,5 +11,5 @@ sources:
 - https://github.com/HobOps/helm-charts/tree/main/charts/filebeat
 dependencies:
 - name: common-library
-  version: 1.2.0
+  version: 1.2.1
   repository: https://hobops-helm-charts.storage.googleapis.com
