@@ -33,8 +33,7 @@ common-library:
       - sh
       - -c
       args:
-      - openssl pkcs8 -in /tls/tls.key -topk8 -out /tmp/tls-pkcs8.key -nocrypt;
-        chown logstash /tmp/tls-pkcs8.key; /usr/local/bin/start.sh
+      - /usr/local/bin/start.sh
       envFrom:
       - configMapRef:
           name: elk-config-vars
@@ -84,7 +83,7 @@ common-library:
         secret:
           defaultMode: 292
           optional: false
-          secretName: elk-tls # This is the name of the secret also used by the ingress
+          secretName: logstash-cert
       - configMap:
           defaultMode: 292
           name: logstash-conf
@@ -124,6 +123,16 @@ common-library:
       - mountPath: /usr/share/apm-server/apm-server.yml
         name: apm-server-conf
         subPath: apm-server.yml
+  Service:
+    logstash-external:
+      selectorLabels:
+        app: elk
+      type: LoadBalancer
+      externalTrafficPolicy: Local
+      ports:
+      - name: logstash-tls
+        port: 5045
+        protocol: TCP
   ConfigMap:
     logstash-conf:
       data:
@@ -136,8 +145,10 @@ common-library:
             beats {
               port => 5045
               ssl => true
+              ssl_certificate_authorities => ["/tls/ca.crt"]
               ssl_certificate => "/tls/tls.crt"
-              ssl_key => "/tmp/tls-pkcs8.key"
+              ssl_key => "/tls/tls.key"
+              ssl_verify_mode => "force_peer"
             }
           }
         10-syslog.conf: |-
@@ -230,8 +241,6 @@ common-library:
   Ingress:
     elk:
       annotations:
-        cert-manager.io/cluster-issuer: letsencrypt
-        kubernetes.io/ingress.class: nginx
         nginx.ingress.kubernetes.io/auth-realm: Authentication Required
         nginx.ingress.kubernetes.io/auth-secret: elk-http-auth
         nginx.ingress.kubernetes.io/auth-type: basic
@@ -248,9 +257,7 @@ common-library:
               name: kibana
         pathType: ImplementationSpecific
     apm:
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt
-        kubernetes.io/ingress.class: nginx
+      annotations: {}
       render_ingress_rules: true
       render_ingress_tls: true
       hosts:
@@ -272,3 +279,6 @@ common-library:
     apm-server-token:
       stringData:
         APM_SECRET_TOKEN: changeme
+    logstash-cert:
+      type: kubernetes.io/tls
+      stringData: {}
