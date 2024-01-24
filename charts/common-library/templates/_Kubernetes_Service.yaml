@@ -34,7 +34,6 @@
 {{- end }}
 {{- end }}
 
-
 {{- /* externalName */ -}}
 {{- if .Values.IsWorkload }}
 {{- if (index .Values.Workload .name).service.externalName }}
@@ -98,6 +97,17 @@
 {{- else }}
 {{- if (index $data .name).sessionAffinityConfig }}
     {{- $_ := set .Values "sessionAffinityConfig" (index $data .name).sessionAffinityConfig }}
+{{- end }}
+{{- end }}
+
+{{- /* loadBalancerIP */ -}}
+{{- if .Values.IsWorkload }}
+{{- if (index .Values.Workload .name).service.loadBalancerIP }}
+    {{- $_ := set .Values "loadBalancerIP" (index .Values.Workload .name).service.loadBalancerIP }}
+{{- end }}
+{{- else }}
+{{- if (index $data .name).loadBalancerIP }}
+    {{- $_ := set .Values "loadBalancerIP" (index $data .name).loadBalancerIP }}
 {{- end }}
 {{- end }}
 

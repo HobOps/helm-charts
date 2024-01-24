@@ -101,7 +101,14 @@ Issuer:
   issuer-selfsigned:
     annotations:
       test: annotation
-    selfSigned: {}
+    selfSigned:
+      crlDistributionPoints: [] # NOTE: This is required for helm to do not remove the selfSigned block.
+  issuer-selfsigned-with-crl:
+    annotations:
+      test: annotation
+    selfSigned:
+      crlDistributionPoints:
+      - "https://example.com"
   # https://cert-manager.io/docs/configuration/venafi/
   issuer-venafi:
     annotations:
