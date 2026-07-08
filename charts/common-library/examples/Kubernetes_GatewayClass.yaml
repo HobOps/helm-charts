@@ -1,0 +1,6 @@
+GatewayClass:
+  envoy-gateway:
+    annotations:
+      annotation: envoy-gateway
+    controllerName: gateway.envoyproxy.io/gatewayclass-controller
+    description: Envoy Gateway controller
