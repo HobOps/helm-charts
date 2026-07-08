@@ -1,0 +1,31 @@
+{{- define "library.Kubernetes.HTTPRoute" }}
+{{- $data := .Values.HTTPRoute }}
+{{- $route := index $data .name }}
+---
+apiVersion: {{ $route.apiVersion | default "gateway.networking.k8s.io/v1" }}
+kind: HTTPRoute
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $route.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $route.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with $route.parentRefs }}
+  parentRefs:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  {{- with $route.hostnames }}
+  hostnames:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  {{- with $route.rules }}
+  rules:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+{{- end }}

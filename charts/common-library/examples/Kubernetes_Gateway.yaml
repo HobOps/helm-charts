@@ -1,0 +1,23 @@
+Gateway:
+  main-gateway:
+    annotations:
+      annotation: main-gateway
+    gatewayClassName: envoy-gateway
+    listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.example.com"
+      tls:
+        mode: Terminate
+        certificateRefs:
+        - name: example-tls
+      allowedRoutes:
+        namespaces:
+          from: All

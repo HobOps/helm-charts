@@ -1,0 +1,18 @@
+HTTPRoute:
+  test-httproute:
+    annotations:
+      annotation: test-httproute
+    parentRefs:
+    - name: main-gateway
+      namespace: gateway-system
+    hostnames:
+    - test1.example.com
+    - test2.example.com
+    rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+      - name: test-service
+        port: 80

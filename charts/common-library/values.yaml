@@ -1,4 +1,7 @@
 ClusterIssuer: {}
+Gateway: {}
+GatewayClass: {}
+HTTPRoute: {}
 ConfigMap: {}
 DaemonSet: {}
 Deployment: {}

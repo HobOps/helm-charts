@@ -1,0 +1,26 @@
+{{- define "library.Kubernetes.GatewayClass" }}
+{{- $data := .Values.GatewayClass }}
+{{- $gatewayClass := index $data .name }}
+---
+apiVersion: {{ $gatewayClass.apiVersion | default "gateway.networking.k8s.io/v1" }}
+kind: GatewayClass
+metadata:
+  name: {{ .name }}
+  {{- with $gatewayClass.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $gatewayClass.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  controllerName: {{ $gatewayClass.controllerName }}
+  {{- with $gatewayClass.description }}
+  description: {{ . }}
+  {{- end }}
+  {{- with $gatewayClass.parametersRef }}
+  parametersRef:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+{{- end }}
