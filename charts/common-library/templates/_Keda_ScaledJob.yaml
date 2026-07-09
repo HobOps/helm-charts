@@ -19,13 +19,27 @@ spec:
   jobTargetRef:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  pollingInterval: {{ (index $data .name).pollingInterval }}
-  successfulJobsHistoryLimit: {{ (index $data .name).successfulJobsHistoryLimit }}
-  failedJobsHistoryLimit: {{ (index $data .name).failedJobsHistoryLimit }}
-  envSourceContainerName: {{ (index $data .name).envSourceContainerName }}
-  minReplicaCount: {{ (index $data .name).minReplicaCount }}
-  maxReplicaCount: {{ (index $data .name).maxReplicaCount }}
-  rolloutStrategy: {{ (index $data .name).rolloutStrategy }}
+  {{- with (index $data .name).pollingInterval }}
+  pollingInterval: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).successfulJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).envSourceContainerName }}
+  envSourceContainerName: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).minReplicaCount }}
+  minReplicaCount: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).maxReplicaCount }}
+  maxReplicaCount: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).rolloutStrategy }}
+  rolloutStrategy: {{ . }}
+  {{- end }}
   {{- with (index $data .name).rollout }}
   rollout:
     {{- tpl (toYaml .) $ | nindent 4 }}
