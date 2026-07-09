@@ -139,8 +139,9 @@ pre-commit install --hook-type pre-push
 | Trigger | Jobs |
 |---------|------|
 | PR to `main` (`feat/` / `fix/` / `revert-*`) | `preflight` → `lint` → `kind-test` |
-| Push to `main` (after merge) | `publish` → GCS + GitHub Release `common-library-vX.Y.Z` |
-| `workflow_dispatch` | same as publish |
+| Push to `main` (after merge) | `lint` → `kind-test` → `publish` (GCS + GitHub Release) |
+
+`publish` runs only when tests on `main` succeed (not manual).
 
 | Job | What |
 |-----|------|

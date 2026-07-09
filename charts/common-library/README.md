@@ -87,7 +87,7 @@ make test_kind_all
 GitHub Actions workflow: [`.github/workflows/common-library.yml`](../../.github/workflows/common-library.yml).
 
 - **Pull request** (`feat/` / `fix/` / `revert-*`): branch name, commitlint, semver, `make test_all`, Kind tests.
-- **Push to `main`**: publish `common-library` to GCS and create GitHub Release tag `common-library-v<version>`.
+- **Push to `main`**: re-run lint + Kind tests; if they pass, publish to GCS and create GitHub Release tag `common-library-v<version>`.
 
 ## Changelog
 
