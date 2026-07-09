@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-07-08
+
+### Fixed
+- Kubernetes Service: omit empty `nodePort` so ClusterIP Services are valid for cluster apply
+
+### Added
+- `ci/` Kind fixtures and `make test_kind` for template-vs-cluster comparison (starts with Deployment)
+
 ## [1.3.0] - 2026-07-08
 
 ### Added
