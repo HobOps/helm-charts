@@ -58,3 +58,11 @@
 # - `LOCAL_PATH_STORAGE_CLASS` (default `standard`; assert only)
 # - `GATEWAY_API_VERSION` (default `v1.5.1`)
 # - Chart versions: edit `helmfile.yaml` (pinned for reproducible CI)
+#
+# ## Kubernetes version
+#
+# Gateway API v1.5.x CRDs require Kubernetes **>= 1.31** (`isIP` CEL library and
+# `ValidatingAdmissionPolicy`). CI uses `helm/kind-action` v1.14.0 (kind v0.31 /
+# kubectl v1.35). Locally, create Kind with a matching node image, e.g.:
+#
+#   kind create cluster --name common-library-ci --image kindest/node:v1.32.2

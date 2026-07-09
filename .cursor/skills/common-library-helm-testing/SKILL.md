@@ -82,7 +82,8 @@ make test_all
 ../../.github/prereq/install-all.sh
 
 # Kind: install ci fixture and compare
-kind create cluster --name common-library-ci   # once
+# Needs K8s >=1.31 for Gateway API v1.5.x CRDs (CI uses kind-action v1.14.0)
+kind create cluster --name common-library-ci --image kindest/node:v1.32.2
 kubectl config use-context kind-common-library-ci
 make test_kind file=ci/Kubernetes_Deployment.yaml
 make test_kind_all
@@ -154,6 +155,7 @@ Repo merge policy: **squash-and-merge only**. Commitlint intentionally checks on
 
 ## Known pitfalls
 
+- Gateway API v1.5.x needs Kubernetes **>= 1.31** (`isIP` CEL + VAP). CI pins `helm/kind-action` v1.14.0; older kind (~1.29) fails CRD install with `undeclared reference to 'isIP'` / missing `ValidatingAdmissionPolicy`.
 - Empty `nodePort:` on Service breaks Kind apply—omit the field when unset.
 - Role / RoleBinding must set `metadata.namespace` to the release namespace.
 - `make test_all` iterates non-`_` templates; orphan `examples/` (e.g. disabled CronJob) are not run and can hide gaps.
