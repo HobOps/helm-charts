@@ -1,0 +1,24 @@
+# Kind-schedulable fixture for RoleBinding (Role + SA companions; roleRefName defaults to binding name).
+ServiceAccount:
+  ci-rolebinding:
+    automountServiceAccountToken: false
+
+Role:
+  ci-rolebinding:
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - pods
+      verbs:
+      - get
+      - list
+
+RoleBinding:
+  ci-rolebinding:
+    annotations:
+      hobops.io/ci: "true"
+    subjects:
+    - kind: ServiceAccount
+      name: ci-rolebinding
+      namespace: common-library-ci

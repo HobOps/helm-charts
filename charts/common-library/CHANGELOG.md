@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2026-07-08
+
+### Fixed
+- Kubernetes Service: omit empty `nodePort` so ClusterIP Services are valid for cluster apply
+- Kubernetes Role / RoleBinding: set `metadata.namespace` to the release namespace
+- CertManager ClusterIssuer: render `selfSigned` as a YAML object (empty `{}` was dropped by Helm `with`)
+
+### Added
+- `ci/` Kind fixtures and `make test_kind` / `make test_kind_all` for template-vs-cluster comparison
+- `--resources auto` discovery in `compare-helm-vs-cluster.py`
+- `.github/prereq` Kind operator bootstrap: Gateway API CRDs + helmfile (Traefik with Gateway API, cert-manager); relies on Kind’s built-in local-path StorageClass
+- Unified `.github/workflows/common-library.yml`: PR CI (preflight/lint/Kind) and main publish (GCS + GitHub Release `common-library-vX.Y.Z`)
+
 ## [1.3.0] - 2026-07-08
 
 ### Added

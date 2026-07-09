@@ -1,0 +1,37 @@
+# Kind-schedulable fixture for Job (+ companion ConfigMap).
+ConfigMap:
+  ci-job-config:
+    data:
+      APP_ENV: ci
+
+Job:
+  ci-job:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-job
+    selectorLabels:
+      app: ci-job
+    restartPolicy: Never
+    backoffLimit: 1
+    completions: 1
+    parallelism: 1
+    image:
+      repository: busybox
+      tag: "1.36"
+      pullPolicy: IfNotPresent
+    envFrom:
+    - configMapRef:
+        name: ci-job-config
+    command:
+    - /bin/sh
+    - -c
+    args:
+    - echo ok
+    resources:
+      requests:
+        memory: 16Mi
+        cpu: 10m
+      limits:
+        memory: 32Mi
+        cpu: 50m

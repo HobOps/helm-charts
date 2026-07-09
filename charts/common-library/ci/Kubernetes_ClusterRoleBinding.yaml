@@ -1,0 +1,24 @@
+# Kind-schedulable fixture for ClusterRoleBinding (ClusterRole + SA companions).
+ServiceAccount:
+  ci-clusterrolebinding:
+    automountServiceAccountToken: false
+
+ClusterRole:
+  ci-clusterrolebinding:
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - namespaces
+      verbs:
+      - get
+      - list
+
+ClusterRoleBinding:
+  ci-clusterrolebinding:
+    annotations:
+      hobops.io/ci: "true"
+    subjects:
+    - kind: ServiceAccount
+      name: ci-clusterrolebinding
+      namespace: common-library-ci

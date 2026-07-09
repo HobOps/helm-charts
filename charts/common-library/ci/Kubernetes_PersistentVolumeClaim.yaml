@@ -1,0 +1,47 @@
+# Kind-schedulable fixture for PersistentVolumeClaim (+ consumer Deployment so local-path binds).
+PersistentVolumeClaim:
+  ci-pvc:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-pvc
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 64Mi
+    storageClassName: standard
+    volumeMode: Filesystem
+
+Deployment:
+  ci-pvc:
+    labels:
+      app: ci-pvc
+    annotations:
+      hobops.io/ci: "true"
+    selectorLabels:
+      app: ci-pvc
+    replicas: 1
+    image:
+      repository: busybox
+      tag: "1.36"
+      pullPolicy: IfNotPresent
+    command:
+    - /bin/sh
+    - -c
+    args:
+    - sleep 3600
+    resources:
+      requests:
+        memory: 16Mi
+        cpu: 10m
+      limits:
+        memory: 32Mi
+        cpu: 50m
+    volumeMounts:
+    - name: data
+      mountPath: /data
+    volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: ci-pvc

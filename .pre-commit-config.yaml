@@ -1,0 +1,35 @@
+# Install:
+#   pip install pre-commit
+#   pre-commit install --install-hooks
+#   pre-commit install --hook-type commit-msg
+#   pre-commit install --hook-type pre-push
+#
+# Commit lint uses commitlint (https://commitlint.js.org/) via the hook below.
+# CI runs the same rules with: npx commitlint --from <base> --to <head>
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+repos:
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v9.22.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies:
+          - "@commitlint/config-conventional@19.8.1"
+
+  - repo: local
+    hooks:
+      - id: check-branch-name
+        name: check branch name (feat/*, fix/*, revert-*, main)
+        entry: scripts/check-branch-name.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
+      - id: check-chart-semver
+        name: check common-library Chart.yaml semver bump
+        entry: scripts/check-chart-semver.py --local
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]

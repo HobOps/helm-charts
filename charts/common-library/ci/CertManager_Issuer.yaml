@@ -1,0 +1,7 @@
+# Kind fixture for cert-manager Issuer (selfSigned; no ACME).
+Issuer:
+  ci-issuer:
+    annotations:
+      hobops.io/ci: "true"
+    selfSigned:
+      crlDistributionPoints: []

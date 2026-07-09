@@ -140,10 +140,12 @@ spec:
   ports:
   {{- range .Values.ports }}
   - name: {{ .name }}
-    nodePort: {{ .nodePort | default "" }}
+    {{- if .nodePort }}
+    nodePort: {{ .nodePort }}
+    {{- end }}
     port: {{ .port }}
     protocol: {{ .protocol }}
-    targetPort:  {{ .targetPort | default .port }}
+    targetPort: {{ .targetPort | default .port }}
   {{- end }}
   {{- with .Values.selector }}
   selector:

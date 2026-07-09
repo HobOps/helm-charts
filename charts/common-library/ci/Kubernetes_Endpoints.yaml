@@ -1,0 +1,22 @@
+# Kind-schedulable fixture for Endpoints (+ companion headless-style Service name match).
+Service:
+  ci-endpoints:
+    annotations:
+      hobops.io/ci: "true"
+    type: ClusterIP
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+
+Endpoints:
+  ci-endpoints:
+    annotations:
+      hobops.io/ci: "true"
+    subsets:
+    - addresses:
+      - ip: 10.0.0.1
+      ports:
+      - name: http
+        port: 80
+        protocol: TCP

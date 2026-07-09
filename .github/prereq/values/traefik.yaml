@@ -1,0 +1,38 @@
+# Traefik values for Kind common-library CI.
+# IngressClass + Gateway API provider (CRDs installed separately; see install-gateway-api-crds.sh).
+providers:
+  kubernetesIngress:
+    enabled: true
+    publishedService:
+      enabled: true
+  kubernetesGateway:
+    enabled: true
+    # Standard channel only (HTTPRoute / Gateway / GatewayClass).
+    experimentalChannel: false
+    statusAddress:
+      service:
+        enabled: true
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+  name: traefik
+
+# Traefik deploys a default GatewayClass (+ optional Gateway) when kubernetesGateway is on.
+gatewayClass:
+  enabled: true
+  name: traefik
+
+gateway:
+  enabled: true
+  listeners:
+    web:
+      port: 8000
+      protocol: HTTP
+      # Allow HTTPRoutes from any namespace (common-library CI fixtures).
+      namespacePolicy:
+        from: All
+
+service:
+  spec:
+    type: ClusterIP

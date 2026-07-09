@@ -1,0 +1,8 @@
+# Kind fixture for cert-manager ClusterIssuer (selfSigned; no ACME).
+# Use a non-empty selfSigned map so Helm `with` does not drop the block.
+ClusterIssuer:
+  ci-clusterissuer:
+    annotations:
+      hobops.io/ci: "true"
+    selfSigned:
+      crlDistributionPoints: []

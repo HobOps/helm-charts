@@ -1,0 +1,14 @@
+# Kind-schedulable fixture for standalone Service.
+Service:
+  ci-service:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-service
+    selectorLabels:
+      app: ci-service
+    type: ClusterIP
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP

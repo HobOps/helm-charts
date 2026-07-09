@@ -1,0 +1,29 @@
+# Kind fixture for Ingress (+ companion Service) with Traefik IngressClass.
+Service:
+  ci-ingress:
+    annotations:
+      hobops.io/ci: "true"
+    selectorLabels:
+      app: ci-ingress
+    type: ClusterIP
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+
+Ingress:
+  ci-ingress:
+    annotations:
+      hobops.io/ci: "true"
+    ingressClassName: traefik
+    rules:
+    - host: ci-ingress.example.local
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: ci-ingress
+              port:
+                number: 80

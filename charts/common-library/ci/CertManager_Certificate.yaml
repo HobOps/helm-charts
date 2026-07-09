@@ -1,0 +1,25 @@
+# Kind fixture for cert-manager Certificate (+ companion selfSigned Issuer).
+Issuer:
+  ci-certificate-issuer:
+    annotations:
+      hobops.io/ci: "true"
+    selfSigned:
+      crlDistributionPoints: []
+
+Certificate:
+  ci-certificate:
+    annotations:
+      hobops.io/ci: "true"
+    secretName: ci-certificate-tls
+    issuerRef:
+      name: ci-certificate-issuer
+      kind: Issuer
+    commonName: ci-certificate.example.local
+    dnsNames:
+    - ci-certificate.example.local
+    duration: 2160h
+    renewBefore: 360h
+    usages:
+    - server auth
+    - client auth
+    isCA: false

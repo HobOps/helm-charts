@@ -1,0 +1,32 @@
+# Kind-schedulable fixture for StatefulSet (+ companion Service, emptyDir instead of PVC templates).
+StatefulSet:
+  ci-statefulset:
+    labels:
+      app: ci-statefulset
+    annotations:
+      hobops.io/ci: "true"
+    selectorLabels:
+      app: ci-statefulset
+    replicas: 1
+    image:
+      repository: nginx
+      tag: alpine
+      pullPolicy: IfNotPresent
+    service:
+      ports:
+      - name: http
+        port: 80
+        protocol: TCP
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 10m
+      limits:
+        memory: 64Mi
+        cpu: 100m
+    volumeMounts:
+    - name: data
+      mountPath: /data
+    volumes:
+    - name: data
+      emptyDir: {}

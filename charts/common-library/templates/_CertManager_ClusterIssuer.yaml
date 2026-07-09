@@ -24,7 +24,8 @@ spec:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
   {{- with (index $data .name).selfSigned }}
-  selfSigned: {{ . }}
+  selfSigned:
+    {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
   {{- with (index $data .name).venafi }}
   venafi:
