@@ -14,7 +14,7 @@ Helm template library for HobOps charts.
    - `fix: omit empty nodePort on Service`
    - `chore: update common-library README`
 5. Run tests locally (see [Testing](#testing)).
-6. Open a PR to `main`.
+6. Open a PR to `main` (squash-and-merge only; commitlint checks the latest commit).
 
 ### Adding a template
 
@@ -30,7 +30,8 @@ Helm template library for HobOps charts.
 | Rule | Expectation |
 |------|-------------|
 | Branch | `feat/<name>`, `fix/<name>`, `revert-<pr>-<name>`, or `main` |
-| Commit | Conventional Commits via commitlint (`feat:`, `fix:`, `chore:`, …) |
+| Commit | Conventional Commits via commitlint on the **latest commit** (`feat:`, `fix:`, `chore:`, …) |
+| Merge | Squash-and-merge only |
 | Version | If `charts/common-library/**` changes, `Chart.yaml` `version` must increase |
 
 Install local hooks from the **repo root**:

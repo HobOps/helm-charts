@@ -50,28 +50,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
 
       - name: Install commitlint
         run: npm ci
 
+      # Squash-and-merge only: lint the tip commit (matches the eventual squash subject).
       - name: Check conventional commits
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          BEFORE_SHA: ${{ github.event.before }}
-          AFTER_SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          if [[ "${EVENT_NAME}" == "pull_request" ]]; then
-            npx commitlint --from "${BASE_SHA}" --to "${HEAD_SHA}" --verbose
-          elif [[ "${EVENT_NAME}" == "push" && "${BEFORE_SHA}" != "0000000000000000000000000000000000000000" ]]; then
-            npx commitlint --from "${BEFORE_SHA}" --to "${AFTER_SHA}" --verbose
-          else
-            npx commitlint --last --verbose
-          fi
+        run: npx commitlint --last --verbose
 
       - name: Check common-library Chart.yaml semver bump
         env:
