@@ -4,9 +4,9 @@ description: >-
   Test and update HobOps common-library Helm templates using examples/, ci/
   Kind fixtures, make test/test_all/test_kind, commitlint, branch/semver
   preflight, .github/prereq Kind operators, and
-  helm-common-library-testing.yml. Use when changing charts/common-library,
-  adding Kubernetes_ templates, Gateway API/Ingress resources, or verifying
-  Kind CI for helm-charts.
+  common-library.yml. Use when changing charts/common-library, adding
+  Kubernetes_ templates, Gateway API/Ingress resources, or verifying Kind CI
+  for helm-charts.
 ---
 
 # common-library Helm testing
@@ -17,7 +17,7 @@ Repo: `helm-charts`. Chart root: `charts/common-library`.
 
 - Adding or changing templates under `charts/common-library/templates/`
 - Adding `examples/` or `ci/` fixtures
-- Debugging `make test`, `make test_kind`, or `.github/workflows/helm-common-library-testing.yml`
+- Debugging `make test`, `make test_kind`, or `.github/workflows/common-library.yml`
 - Preparing a `feat/` / `fix/` / `revert-*` PR that touches common-library
 
 ## Layout
@@ -134,14 +134,20 @@ pre-commit install --hook-type commit-msg
 pre-commit install --hook-type pre-push
 ```
 
-## CI: helm-common-library-testing.yml
+## CI: common-library.yml
 
-Triggers on paths under `charts/common-library/**`, `.github/prereq/**`, and related scripts/config; PRs to `main` when head is `feat/`, `fix/`, or `revert-`; also `push` to `main` and `workflow_dispatch`.
+| Trigger | Jobs |
+|---------|------|
+| PR to `main` (`feat/` / `fix/` / `revert-*`) | `preflight` → `lint` → `kind-test` |
+| Push to `main` (after merge) | `publish` → GCS + GitHub Release `common-library-vX.Y.Z` |
+| `workflow_dispatch` | same as publish |
 
 | Job | What |
 |-----|------|
-| `preflight` | branch name (PRs), `commitlint --last`, chart semver |
-| `kind-test` | `mamezou-tech/setup-helmfile` + Kind + `.github/prereq/install-all.sh` + `make test_kind_all` |
+| `preflight` | branch name, `commitlint --last`, chart semver |
+| `lint` | `helm lint` + `make test_all` |
+| `kind-test` | setup-helmfile + Kind + prereqs + `make test_kind_all` |
+| `publish` | `publish_helm_charts.sh` (GCS) + `create_github_release.sh` |
 
 Repo merge policy: **squash-and-merge only**. Commitlint intentionally checks only the tip commit.
 
@@ -160,4 +166,5 @@ Repo merge policy: **squash-and-merge only**. Commitlint intentionally checks on
 - New/changed Kind fixtures: `make test_kind` OK (with prereqs installed)
 - Semver bumped when chart files change
 - Tip commit passes `npx commitlint --last`
-- PR from allowed branch prefix; CI `preflight` + `kind-test` green
+- PR from allowed branch prefix; CI `preflight` + `lint` + `kind-test` green
+- After merge to `main`: GCS publish + GitHub Release tag `common-library-v<Chart.yaml version>`

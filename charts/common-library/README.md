@@ -82,6 +82,13 @@ make test_kind_all
 
 `make test_kind` runs `helm upgrade --install`, then [`scripts/compare-helm-vs-cluster.py`](../../scripts/compare-helm-vs-cluster.py) to normalize and diff rendered objects.
 
+## CI / release
+
+GitHub Actions workflow: [`.github/workflows/common-library.yml`](../../.github/workflows/common-library.yml).
+
+- **Pull request** (`feat/` / `fix/` / `revert-*`): branch name, commitlint, semver, `make test_all`, Kind tests.
+- **Push to `main`**: publish `common-library` to GCS and create GitHub Release tag `common-library-v<version>`.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
