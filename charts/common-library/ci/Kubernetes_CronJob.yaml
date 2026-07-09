@@ -1,0 +1,34 @@
+# Kind fixture for CronJob (suspended so it does not spawn Jobs during CI).
+CronJob:
+  ci-cronjob:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-cronjob
+    schedule: "0 0 1 1 *"
+    concurrencyPolicy: Forbid
+    suspend: true
+    successfulJobsHistoryLimit: 1
+    failedJobsHistoryLimit: 1
+    selectorLabels:
+      app: ci-cronjob
+    restartPolicy: OnFailure
+    backoffLimit: 1
+    completions: 1
+    parallelism: 1
+    image:
+      repository: busybox
+      tag: "1.36"
+      pullPolicy: IfNotPresent
+    command:
+    - /bin/sh
+    - -c
+    args:
+    - echo ok
+    resources:
+      requests:
+        memory: 16Mi
+        cpu: 10m
+      limits:
+        memory: 32Mi
+        cpu: 50m

@@ -1,4 +1,5 @@
 ClusterIssuer: {}
+CronJob: {}
 Gateway: {}
 GatewayClass: {}
 HTTPRoute: {}
