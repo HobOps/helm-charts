@@ -81,7 +81,7 @@ make test_all
 # Kind prereqs (once per cluster)
 ../../.github/prereq/install-all.sh
 
-# Kind: install ci fixture and compare
+# Kind: apply ci fixture and compare (API-server acceptance, not reconciliation)
 # Needs K8s >=1.31 for Gateway API v1.5.x CRDs (CI uses kind-action v1.14.0)
 kind create cluster --name common-library-ci --image kindest/node:v1.32.2
 kubectl config use-context kind-common-library-ci
@@ -94,30 +94,29 @@ make test_kind_all
 - `RELEASE=common-library-ci`
 - `NAMESPACE=common-library-ci`
 - `RESOURCES=auto` (discovers kind/name from `helm template`)
-- `WAIT_FLAGS=--wait --timeout 2m`
+- `WAIT_FLAGS=` empty (no `--wait`; controllers are not installed)
 
 Do **not** run Kind tests against production kube contexts. Prefer `kind-common-library-ci`.
 
 ### Extending Kind coverage
 
-1. Add `ci/<Prefix>_<Kind>.yaml` (minimal, schedulable; include companion objects in the same file).
+1. Add `ci/<Prefix>_<Kind>.yaml` (minimal; include companion objects in the same file).
 2. Prefer `RESOURCES=auto`; override only if you need a subset.
 3. `make test_kind_all` / workflow already picks up new `ci/*.yaml` files.
-4. Add a helmfile release (+ `values/<name>.yaml`) in `.github/prereq/` when a new operator is required.
+4. For new CRD groups (Argo CD, ESO, KEDA): add a CRDs-only installer under `.github/prereq/` and call it from `install-all.sh`. Full operators via `helmfile.yaml` are optional local e2e only.
 
-## Kind prereqs (minimum operators)
+## Kind prereqs (CRDs + stubs)
 
-| Operator | Covers | How |
-|----------|--------|-----|
+| Piece | Covers | How |
+|-------|--------|-----|
 | Kind local-path | PVC / StorageClass `standard` | Shipped by Kind (assert only) |
-| Gateway API CRDs | Gateway / GatewayClass / HTTPRoute types | `.github/prereq/install-gateway-api-crds.sh` |
-| Traefik | Ingress + Gateway API controller | helmfile release (`values/traefik.yaml`) |
-| cert-manager | Certificate / Issuer / ClusterIssuer | helmfile release (`values/cert-manager.yaml`) |
+| Gateway API CRDs | Gateway / GatewayClass / HTTPRoute types | `install-gateway-api-crds.sh` |
+| cert-manager CRDs | Certificate / Issuer / ClusterIssuer | `install-cert-manager-crds.sh` |
+| Class stubs | `IngressClass/traefik`, `GatewayClass/traefik` | `install-stubs.sh` (no Traefik) |
 
-Orchestrator: `.github/prereq/install-all.sh` (storage assert + Gateway CRDs + `helmfile sync`).
-Add future operators as releases in `.github/prereq/helmfile.yaml`.
+Orchestrator: `.github/prereq/install-all.sh`. Goal is API-server schema validation, not controller Ready.
 
-Still need separate operators later: Argo CD, External Secrets, KEDA.
+Still need CRD installers later for Kind coverage of: Argo CD, External Secrets, KEDA.
 
 ## Preflight (repo root)
 
@@ -140,15 +139,15 @@ pre-commit install --hook-type pre-push
 | Trigger | Jobs |
 |---------|------|
 | PR to `main` (`feat/` / `fix/` / `revert-*`) | `preflight` → `lint` → `kind-test` |
-| Push to `main` (after merge) | `lint` → `kind-test` → `publish` (GCS + GitHub Release) |
+| Push to `main` (after merge) | `lint` → `publish` (GCS + GitHub Release) |
 
-`publish` runs only when tests on `main` succeed (not manual).
+`kind-test` is PR-only (branch protection should require it). `publish` runs on main after `lint`.
 
 | Job | What |
 |-----|------|
 | `preflight` | branch name, `commitlint --last`, chart semver |
 | `lint` | `helm lint` + `make test_all` |
-| `kind-test` | setup-helmfile + Kind + prereqs + `make test_kind_all` |
+| `kind-test` | Kind + CRD/stub prereqs + `make test_kind_all` |
 | `publish` | `publish_helm_charts.sh` (GCS) + `create_github_release.sh` |
 
 Repo merge policy: **squash-and-merge only**. Commitlint intentionally checks only the tip commit.
@@ -160,7 +159,8 @@ Repo merge policy: **squash-and-merge only**. Commitlint intentionally checks on
 - Role / RoleBinding must set `metadata.namespace` to the release namespace.
 - `make test_all` iterates non-`_` templates; orphan `examples/` (e.g. disabled CronJob) are not run and can hide gaps.
 - Compare script strips API defaults (uid, status, helm labels, ClusterIP, PVC/cert-manager annotations, etc.); if diffs are noisy, extend normalization in `scripts/compare-helm-vs-cluster.py`, don’t weaken the fixture.
-- PVC fixtures need a consumer Pod on Kind (`WaitForFirstConsumer`); `test_kind` deletes the namespace between fixtures to clear PVC finalizers.
+- PVC fixtures may stay Pending without a scheduled consumer; that is fine for apply/compare. `test_kind` deletes the namespace between fixtures to clear PVC finalizers.
+- Without controllers, Certificate/Ingress/Gateway will not become Ready; Kind CI only asserts apply + template-vs-cluster compare.
 - After Kind tests, restore kubectl context if needed: `kubectl config use-context <prod-context>`.
 
 ## Done criteria

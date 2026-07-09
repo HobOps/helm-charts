@@ -1,10 +1,13 @@
-# Kind prereq operators for common-library CI.
-# Install: ./.github/prereq/install-all.sh
-# Or:      helmfile -f .github/prereq/helmfile.yaml sync
+# OPTIONAL full-operator install for local reconciliation e2e.
+# CI uses CRDs + stubs via install-all.sh (no helmfile).
 #
-# Gateway API CRDs are installed by install-gateway-api-crds.sh before sync
-# (Traefik chart no longer ships them). Traefik provides the Gateway controller.
+#   ./.github/prereq/install-gateway-api-crds.sh
+#   helmfile -f .github/prereq/helmfile.yaml sync
+#
+# Traefik chart no longer ships Gateway API CRDs — install them first.
 # Add future operators (Argo CD, ESO, KEDA) as releases below.
+#
+# Kept for optional local use; not invoked by common-library.yml.
 
 helmDefaults:
   wait: true

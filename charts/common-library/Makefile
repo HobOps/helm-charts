@@ -11,15 +11,17 @@ test:
 	helm lint . -f $(file) --quiet; \
 	helm template test-release . -f $(file);
 
-# Kind integration: install CI fixture and compare live objects to helm template.
-# Requires Kind prereqs (see .github/prereq/install-all.sh): Traefik, cert-manager, Gateway API CRDs.
+# Kind integration: apply CI fixture and compare live objects to helm template.
+# Validates API-server acceptance (schema/CEL), not controller reconciliation.
+# Requires Kind prereqs (see .github/prereq/install-all.sh): CRDs + class stubs.
 # Usage:
 #   make test_kind file=ci/Kubernetes_Deployment.yaml
 #   make test_kind_all
 RELEASE ?= common-library-ci
 NAMESPACE ?= common-library-ci
 RESOURCES ?= auto
-WAIT_FLAGS ?= --wait --timeout 2m
+# No --wait: controllers are not installed; Pending/Unready is expected for some kinds.
+WAIT_FLAGS ?=
 
 test_kind:
 	set -e; \
