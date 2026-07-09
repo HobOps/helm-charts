@@ -28,7 +28,7 @@ Repo: `helm-charts`. Chart root: `charts/common-library`.
 | `templates/*.yaml` (no `_`) | Wrappers that `range` over `.Values.<Kind>` |
 | `examples/` | Full-feature values for `helm lint` + `helm template` |
 | `ci/` | Kind-schedulable fixtures for install + template-vs-cluster compare |
-| `.github/prereq/` | Kind bootstrap: Gateway API CRDs + `helmfile.yaml` (Traefik, cert-manager, …) |
+| `.github/prereq/` | Kind bootstrap: Gateway API + cert-manager CRDs + class stubs |
 | `scripts/compare-helm-vs-cluster.py` | Normalize and diff live objects vs `helm template` |
 | `scripts/check-branch-name.sh` | `feat/` \| `fix/` \| `revert-<pr>-*` \| `main` |
 | `scripts/check-chart-semver.py` | Require Chart.yaml bump when chart changes |
@@ -103,7 +103,7 @@ Do **not** run Kind tests against production kube contexts. Prefer `kind-common-
 1. Add `ci/<Prefix>_<Kind>.yaml` (minimal; include companion objects in the same file).
 2. Prefer `RESOURCES=auto`; override only if you need a subset.
 3. `make test_kind_all` / workflow already picks up new `ci/*.yaml` files.
-4. For new CRD groups (Argo CD, ESO, KEDA): add a CRDs-only installer under `.github/prereq/` and call it from `install-all.sh`. Full operators via `helmfile.yaml` are optional local e2e only.
+4. For new CRD groups (Argo CD, ESO, KEDA): add a CRDs-only installer under `.github/prereq/` and call it from `install-all.sh`.
 
 ## Kind prereqs (CRDs + stubs)
 

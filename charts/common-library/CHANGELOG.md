@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Kind CI validates API-server acceptance only: CRDs + IngressClass/GatewayClass stubs (no Traefik/cert-manager controllers)
 - `make test_kind` no longer waits for controllers (`WAIT_FLAGS` empty by default)
+- Removed unused helmfile operator bootstrap from `.github/prereq`
 
 ## [1.3.1] - 2026-07-08
 

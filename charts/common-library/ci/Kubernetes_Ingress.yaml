@@ -1,4 +1,4 @@
-# Kind fixture for Ingress (+ companion Service) with Traefik IngressClass.
+# Kind fixture for Ingress (+ companion Service) with IngressClass/traefik stub.
 Service:
   ci-ingress:
     annotations:

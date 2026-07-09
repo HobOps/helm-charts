@@ -26,20 +26,12 @@ accept/reject chart fixtures (schema, CEL, unknown fields). Controllers
 | `install-cert-manager-crds.sh` | cert-manager CRDs |
 | `install-stubs.sh` | IngressClass + GatewayClass stubs |
 | `_lib.sh` | Shared bash helpers |
-| `helmfile.yaml` | Optional full-operator install (not used by CI) |
-| `values/<release>.yaml` | Values for optional helmfile releases |
 
-## Optional full operators
+## Extending coverage
 
-If you later want reconciliation e2e (certificate issued, route programmed),
-use helmfile instead of (or after) the CRD-only path:
-
-```bash
-cd .github/prereq
-helmfile sync
-```
-
-Candidates not yet declared: Argo CD, External Secrets, KEDA.
+For new CRD groups (Argo CD, External Secrets, KEDA), add a CRDs-only installer
+script and call it from `install-all.sh`. Do not add full operators unless you
+intentionally want reconciliation e2e.
 
 ## Environment overrides
 
