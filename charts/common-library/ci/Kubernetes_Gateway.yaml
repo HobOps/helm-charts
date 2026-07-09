@@ -1,0 +1,15 @@
+# Kind fixture for Gateway (uses Ingress/Gateway class stub from prereqs).
+Gateway:
+  ci-gateway:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-gateway
+    gatewayClassName: traefik
+    listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same

@@ -1,0 +1,7 @@
+# Kind fixture for GatewayClass (cluster-scoped; no controller required).
+GatewayClass:
+  ci-gatewayclass:
+    annotations:
+      hobops.io/ci: "true"
+    controllerName: hobops.io/ci-stub
+    description: Kind CI GatewayClass stub
