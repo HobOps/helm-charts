@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Install Kubernetes Gateway API CRDs (standard channel).
-# Required before enabling Traefik providers.kubernetesGateway (chart no longer ships them).
+# Used by Kind CI for API-server schema validation of Gateway / HTTPRoute / etc.
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 # shellcheck source=.github/prereq/_lib.sh
 source "${ROOT_DIR}/.github/prereq/_lib.sh"
 
-# Traefik v3.7 / chart 41.x recommends Gateway API v1.5.1 standard channel.
+# Pin to a Gateway API release compatible with Kind CI (K8s >= 1.31).
 GATEWAY_API_VERSION="${GATEWAY_API_VERSION:-v1.5.1}"
 GATEWAY_API_URL="${GATEWAY_API_MANIFEST_URL:-https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml}"
 

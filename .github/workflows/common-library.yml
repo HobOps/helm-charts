@@ -1,22 +1,10 @@
 name: Common Library
 
 on:
+  # No path filters on PR: required status checks must always report for branch protection.
   pull_request:
     branches:
       - main
-    paths:
-      - "charts/common-library/**"
-      - "scripts/compare-helm-vs-cluster.py"
-      - "scripts/check-branch-name.sh"
-      - "scripts/check-chart-semver.py"
-      - "scripts/publish_helm_charts.sh"
-      - "scripts/create_github_release.sh"
-      - "scripts/lintconf.yaml"
-      - "commitlint.config.js"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/prereq/**"
-      - ".github/workflows/common-library.yml"
   push:
     branches:
       - main
@@ -43,11 +31,9 @@ jobs:
   # PR-only gates: branch name, commitlint tip, Chart.yaml semver bump
   # ---------------------------------------------------------------------------
   preflight:
-    if: >
-      github.event_name == 'pull_request' &&
-      (startsWith(github.head_ref, 'feat/') ||
-       startsWith(github.head_ref, 'fix/') ||
-       startsWith(github.head_ref, 'revert-'))
+    # Always run on PR so the check reports for branch protection.
+    # check-branch-name.sh fails non-feat/fix/revert branches.
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -78,11 +64,9 @@ jobs:
   # Tests: run on PR and again on push to main (gate for publish)
   # ---------------------------------------------------------------------------
   lint:
+    # PR gate + cheap post-merge sanity before publish.
     if: >
-      (github.event_name == 'pull_request' &&
-       (startsWith(github.head_ref, 'feat/') ||
-        startsWith(github.head_ref, 'fix/') ||
-        startsWith(github.head_ref, 'revert-'))) ||
+      github.event_name == 'pull_request' ||
       (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
@@ -104,18 +88,13 @@ jobs:
           make test_all
 
   kind-test:
-    # preflight is PR-only (skipped on main); still require it when present.
+    # PR-only: branch protection should require this check before merge.
+    # Re-running Kind on main is redundant once the PR already passed.
     if: >
       always() &&
-      needs.lint.result == 'success' &&
-      (needs.preflight.result == 'success' || needs.preflight.result == 'skipped') &&
-      (
-        (github.event_name == 'pull_request' &&
-         (startsWith(github.head_ref, 'feat/') ||
-          startsWith(github.head_ref, 'fix/') ||
-          startsWith(github.head_ref, 'revert-'))) ||
-        (github.event_name == 'push' && github.ref == 'refs/heads/main')
-      )
+      github.event_name == 'pull_request' &&
+      needs.preflight.result == 'success' &&
+      needs.lint.result == 'success'
     runs-on: ubuntu-latest
     needs: [preflight, lint]
     steps:
@@ -124,17 +103,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up helmfile and Helm
-        uses: mamezou-tech/setup-helmfile@c04e83ec7650bf2ec910864bcb409479cf56d8e6 # v2.2.0
+      - name: Set up Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4
         with:
-          helmfile-version: "v1.7.0"
-          helm-version: "v3.14.4"
-          install-kubectl: "no"
-          install-helm: "yes"
-          install-helm-plugins: "no"
+          version: v3.14.4
 
       # Gateway API v1.5.1 needs K8s >=1.31 (CEL isIP + ValidatingAdmissionPolicy).
-      # kind-action v1.10.0 defaults to kind v0.22 / ~1.29 and fails CRD apply.
       - name: Create KinD cluster
         uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
         with:
@@ -142,24 +116,24 @@ jobs:
           kubectl_version: v1.35.0
           cluster_name: common-library-ci
 
-      - name: Install Kind prereqs (Gateway CRDs + helmfile)
+      - name: Install Kind prereqs (CRDs + class stubs)
         run: ./.github/prereq/install-all.sh
 
-      - name: Install common-library CI fixtures and compare
+      - name: Apply common-library CI fixtures and compare
         working-directory: charts/common-library
         run: make test_kind_all
 
   # ---------------------------------------------------------------------------
-  # Publish only after merge to main and successful tests
+  # Publish after merge to main once lint succeeds (Kind already gated the PR).
   # ---------------------------------------------------------------------------
   publish:
     if: >
       always() &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      needs.kind-test.result == 'success'
+      needs.lint.result == 'success'
     runs-on: ubuntu-latest
-    needs: [kind-test]
+    needs: [lint]
     permissions:
       contents: write
     steps:

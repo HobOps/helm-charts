@@ -65,29 +65,32 @@ make test file=examples/Kubernetes_Deployment.yaml
 ### Kind integration (ci)
 
 Requires a reachable Kubernetes cluster (`kubectl` context), Helm, and Kind prereqs
-([`.github/prereq`](../../.github/prereq)): Kind local-path (built-in) + helmfile releases (Traefik, cert-manager) + Gateway API CRDs.
+([`.github/prereq`](../../.github/prereq)): Gateway API CRDs, cert-manager CRDs, and
+IngressClass/GatewayClass stubs (no controllers).
 
 ```bash
-# Create a local Kind cluster (once)
-kind create cluster --name common-library-ci
+# Create a local Kind cluster (once; needs K8s >= 1.31 for Gateway API v1.5.x)
+kind create cluster --name common-library-ci --image kindest/node:v1.32.2
 kubectl config use-context kind-common-library-ci
 
-# Install minimum operators (once per cluster; downloads helmfile if missing)
+# Install CRDs + class stubs (once per cluster)
 ../../.github/prereq/install-all.sh
 
-# Install a CI fixture (or all) and assert live objects match helm template
+# Apply a CI fixture (or all) and assert live objects match helm template
 make test_kind file=ci/Kubernetes_Deployment.yaml
 make test_kind_all
 ```
 
-`make test_kind` runs `helm upgrade --install`, then [`scripts/compare-helm-vs-cluster.py`](../../scripts/compare-helm-vs-cluster.py) to normalize and diff rendered objects.
+`make test_kind` runs `helm upgrade --install` (no `--wait`), then
+[`scripts/compare-helm-vs-cluster.py`](../../scripts/compare-helm-vs-cluster.py) to
+normalize and diff rendered objects.
 
 ## CI / release
 
 GitHub Actions workflow: [`.github/workflows/common-library.yml`](../../.github/workflows/common-library.yml).
 
-- **Pull request** (`feat/` / `fix/` / `revert-*`): branch name, commitlint, semver, `make test_all`, Kind tests.
-- **Push to `main`**: re-run lint + Kind tests; if they pass, publish to GCS and create GitHub Release tag `common-library-v<version>`.
+- **Pull request**: branch name, commitlint, semver, `make test_all`, Kind tests.
+- **Push to `main`**: `lint` then publish to GCS and create GitHub Release tag `common-library-v<version>`.
 
 ## Changelog
 
