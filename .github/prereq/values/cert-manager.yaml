@@ -1,0 +1,3 @@
+# cert-manager values for Kind common-library CI.
+crds:
+  enabled: true

@@ -1,0 +1,9 @@
+# Kind-schedulable fixture for StorageClass (no topology constraints).
+StorageClass:
+  ci-storageclass:
+    annotations:
+      hobops.io/ci: "true"
+    provisioner: rancher.io/local-path
+    allowVolumeExpansion: false
+    reclaimPolicy: Delete
+    volumeBindingMode: WaitForFirstConsumer

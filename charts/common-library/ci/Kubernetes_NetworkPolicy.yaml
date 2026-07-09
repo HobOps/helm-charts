@@ -1,0 +1,18 @@
+# Kind-schedulable fixture for NetworkPolicy.
+NetworkPolicy:
+  ci-networkpolicy:
+    annotations:
+      hobops.io/ci: "true"
+    podSelector:
+      matchLabels:
+        app: ci-networkpolicy
+    policyTypes:
+    - Ingress
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: ci-networkpolicy-client
+      ports:
+      - protocol: TCP
+        port: 80

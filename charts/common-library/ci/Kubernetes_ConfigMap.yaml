@@ -1,0 +1,12 @@
+# Kind-schedulable fixture for ConfigMap.
+ConfigMap:
+  ci-configmap:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-configmap
+    data:
+      APP_ENV: ci
+      service.conf: |
+        [Service]
+        foo=bar

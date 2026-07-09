@@ -5,6 +5,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
   {{- with (index $data .name).annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}

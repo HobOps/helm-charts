@@ -1,0 +1,42 @@
+# Kind-schedulable fixture for HPA (+ companion Deployment scale target).
+# Metrics server is not required for object create/compare; scaling may stay inactive.
+Deployment:
+  ci-hpa:
+    labels:
+      app: ci-hpa
+    annotations:
+      hobops.io/ci: "true"
+    selectorLabels:
+      app: ci-hpa
+    replicas: 1
+    image:
+      repository: nginx
+      tag: alpine
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 10m
+      limits:
+        memory: 64Mi
+        cpu: 100m
+
+HorizontalPodAutoscaler:
+  ci-hpa:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-hpa
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: ci-hpa
+    minReplicas: 1
+    maxReplicas: 2
+    metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80

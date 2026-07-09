@@ -10,6 +10,8 @@ Usage:
     --release common-library-ci \\
     --namespace common-library-ci \\
     --resources deployment/ci-deployment,service/ci-deployment
+
+  Pass --resources auto to discover kind/name pairs from helm template output.
 """
 
 from __future__ import annotations
@@ -33,7 +35,14 @@ DROP_META = {
     "selfLink",
     "ownerReferences",
 }
-DROP_ANNOT_PREFIXES = ("kubectl.kubernetes.io/", "deployment.kubernetes.io/")
+DROP_ANNOT_PREFIXES = (
+    "kubectl.kubernetes.io/",
+    "deployment.kubernetes.io/",
+    "pv.kubernetes.io/",
+    "volume.kubernetes.io/",
+    "volume.beta.kubernetes.io/",
+    "cert-manager.io/",
+)
 DROP_ANNOT_EXACT = {
     "meta.helm.sh/release-name",
     "meta.helm.sh/release-namespace",
@@ -105,6 +114,9 @@ def scrub_meta(meta: dict[str, Any] | None) -> dict[str, Any] | None:
         meta["labels"] = labels
     else:
         meta.pop("labels", None)
+    # Cluster-scoped objects may still carry a namespace from helm; drop empty/noise.
+    if not meta.get("namespace"):
+        meta.pop("namespace", None)
     return meta
 
 
@@ -153,7 +165,7 @@ def scrub_service_spec(spec: dict[str, Any] | None) -> dict[str, Any] | None:
     return spec
 
 
-def scrub_deployment(doc: dict[str, Any]) -> dict[str, Any]:
+def scrub_pod_template(doc: dict[str, Any]) -> dict[str, Any]:
     spec = doc.get("spec") or {}
     template = spec.get("template") or {}
     if "metadata" in template:
@@ -161,6 +173,13 @@ def scrub_deployment(doc: dict[str, Any]) -> dict[str, Any]:
     if "spec" in template:
         template["spec"] = scrub_pod_spec(template["spec"])
     spec["template"] = template
+    doc["spec"] = spec
+    return doc
+
+
+def scrub_deployment(doc: dict[str, Any]) -> dict[str, Any]:
+    doc = scrub_pod_template(doc)
+    spec = doc.get("spec") or {}
 
     strategy = spec.get("strategy") or {}
     rolling = strategy.get("rollingUpdate") or {}
@@ -172,8 +191,104 @@ def scrub_deployment(doc: dict[str, Any]) -> dict[str, Any]:
         spec.pop("strategy", None)
     if spec.get("revisionHistoryLimit") == 10:
         spec.pop("revisionHistoryLimit", None)
+    if spec.get("progressDeadlineSeconds") == 600:
+        spec.pop("progressDeadlineSeconds", None)
 
     doc["spec"] = spec
+    return doc
+
+
+def scrub_daemonset(doc: dict[str, Any]) -> dict[str, Any]:
+    doc = scrub_pod_template(doc)
+    spec = doc.get("spec") or {}
+    strategy = spec.get("updateStrategy") or {}
+    rolling = strategy.get("rollingUpdate") or {}
+    if strategy.get("type") == "RollingUpdate" and rolling.get("maxUnavailable") == 1 and "maxSurge" not in rolling:
+        # Keep explicit updateStrategy from values; only drop pure API defaults when empty-ish.
+        pass
+    if spec.get("revisionHistoryLimit") == 10:
+        spec.pop("revisionHistoryLimit", None)
+    doc["spec"] = spec
+    return doc
+
+
+def scrub_statefulset(doc: dict[str, Any]) -> dict[str, Any]:
+    doc = scrub_pod_template(doc)
+    spec = doc.get("spec") or {}
+    if spec.get("podManagementPolicy") == "OrderedReady":
+        spec.pop("podManagementPolicy", None)
+    if spec.get("revisionHistoryLimit") == 10:
+        spec.pop("revisionHistoryLimit", None)
+    strategy = spec.get("updateStrategy") or {}
+    rolling = strategy.get("rollingUpdate") or {}
+    if strategy.get("type") == "RollingUpdate" and rolling.get("partition") == 0 and len(rolling) == 1:
+        strategy.pop("rollingUpdate", None)
+    doc["spec"] = spec
+    return doc
+
+
+def scrub_job(doc: dict[str, Any]) -> dict[str, Any]:
+    doc = scrub_pod_template(doc)
+    spec = doc.get("spec") or {}
+    # Job pods default restartPolicy is Never when set by the template; keep as rendered.
+    template_spec = ((spec.get("template") or {}).get("spec")) or {}
+    if template_spec.get("restartPolicy") == "Never":
+        pass
+    if spec.get("completionMode") == "NonIndexed":
+        spec.pop("completionMode", None)
+    if spec.get("suspend") is False:
+        spec.pop("suspend", None)
+    doc["spec"] = spec
+    return doc
+
+
+def scrub_pvc(doc: dict[str, Any]) -> dict[str, Any]:
+    spec = doc.get("spec") or {}
+    # volumeName / storageClass defaults appear after binding; drop cluster-assigned volumeName.
+    spec.pop("volumeName", None)
+    doc["spec"] = spec
+    return doc
+
+
+def scrub_secret(doc: dict[str, Any]) -> dict[str, Any]:
+    # Live Secrets never retain stringData; dry-run usually converts to data.
+    doc.pop("stringData", None)
+    if doc.get("type") == "Opaque":
+        # Keep type for comparison consistency.
+        pass
+    return doc
+
+
+def scrub_serviceaccount(doc: dict[str, Any]) -> dict[str, Any]:
+    if doc.get("secrets") == []:
+        doc.pop("secrets", None)
+    if doc.get("imagePullSecrets") == []:
+        doc.pop("imagePullSecrets", None)
+    return doc
+
+
+def scrub_hpa(doc: dict[str, Any]) -> dict[str, Any]:
+    spec = doc.get("spec") or {}
+    if spec.get("behavior") == {}:
+        spec.pop("behavior", None)
+    doc["spec"] = spec
+    return doc
+
+
+def scrub_certificate(doc: dict[str, Any]) -> dict[str, Any]:
+    spec = doc.get("spec") or {}
+    # cert-manager may inject revisionHistoryLimit / privateKey defaults after apply.
+    if spec.get("revisionHistoryLimit") == 1:
+        spec.pop("revisionHistoryLimit", None)
+    private_key = spec.get("privateKey") or {}
+    if private_key.get("rotationPolicy") == "Never" and len(private_key) == 1:
+        spec.pop("privateKey", None)
+    doc["spec"] = spec
+    return doc
+
+
+def scrub_ingress(doc: dict[str, Any]) -> dict[str, Any]:
+    # Controllers may add defaultBackend / class annotations; compare core spec only.
     return doc
 
 
@@ -185,8 +300,27 @@ def normalize(doc: dict[str, Any]) -> dict[str, Any]:
     kind = doc.get("kind")
     if kind == "Deployment":
         return scrub_deployment(doc)
+    if kind == "DaemonSet":
+        return scrub_daemonset(doc)
+    if kind == "StatefulSet":
+        return scrub_statefulset(doc)
+    if kind == "Job":
+        return scrub_job(doc)
     if kind == "Service" and "spec" in doc:
         doc["spec"] = scrub_service_spec(doc["spec"])
+        return doc
+    if kind == "PersistentVolumeClaim":
+        return scrub_pvc(doc)
+    if kind == "Secret":
+        return scrub_secret(doc)
+    if kind == "ServiceAccount":
+        return scrub_serviceaccount(doc)
+    if kind == "HorizontalPodAutoscaler":
+        return scrub_hpa(doc)
+    if kind == "Certificate":
+        return scrub_certificate(doc)
+    if kind == "Ingress":
+        return scrub_ingress(doc)
     return doc
 
 
@@ -196,6 +330,22 @@ def find_resource(items: list[dict[str, Any]], kind: str, name: str) -> dict[str
         if (item.get("kind") or "").lower() == kind_l and (item.get("metadata") or {}).get("name") == name:
             return item
     return None
+
+
+def discover_resources(items: list[dict[str, Any]]) -> list[str]:
+    discovered: list[str] = []
+    seen: set[str] = set()
+    for item in items:
+        kind = item.get("kind")
+        name = (item.get("metadata") or {}).get("name")
+        if not kind or not name or kind == "List":
+            continue
+        key = f"{kind.lower()}/{name}"
+        if key in seen:
+            continue
+        seen.add(key)
+        discovered.append(key)
+    return discovered
 
 
 def dump_sorted(path: Path, doc: dict[str, Any]) -> None:
@@ -208,13 +358,14 @@ def main() -> int:
     parser.add_argument("--values", required=True)
     parser.add_argument("--release", required=True)
     parser.add_argument("--namespace", required=True)
-    parser.add_argument("--resources", required=True, help="kind/name[,kind/name...]")
+    parser.add_argument(
+        "--resources",
+        required=True,
+        help="kind/name[,kind/name...] or 'auto' to discover from helm template",
+    )
     args = parser.parse_args()
 
     require_bins("helm", "kubectl")
-    resources = [item.strip() for item in args.resources.split(",") if item.strip()]
-    if not resources:
-        raise SystemExit("--resources must include at least one kind/name")
 
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = Path(tmp)
@@ -241,6 +392,13 @@ def main() -> int:
         )
         expected_json.write_text(dry_run.stdout)
         expected_items = as_items(json.loads(dry_run.stdout))
+
+        if args.resources.strip().lower() == "auto":
+            resources = discover_resources(expected_items)
+        else:
+            resources = [item.strip() for item in args.resources.split(",") if item.strip()]
+        if not resources:
+            raise SystemExit("--resources must include at least one kind/name (or auto with rendered objects)")
 
         live = run(["kubectl", "get", *resources, "-n", args.namespace, "-o", "json"])
         live_json.write_text(live.stdout)

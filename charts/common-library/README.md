@@ -64,18 +64,23 @@ make test file=examples/Kubernetes_Deployment.yaml
 
 ### Kind integration (ci)
 
-Requires a reachable Kubernetes cluster (`kubectl` context) and Helm.
+Requires a reachable Kubernetes cluster (`kubectl` context), Helm, and Kind prereqs
+([`.github/prereq`](../../.github/prereq)): Kind local-path (built-in) + helmfile releases (Traefik, cert-manager) + Gateway API CRDs.
 
 ```bash
 # Create a local Kind cluster (once)
 kind create cluster --name common-library-ci
 kubectl config use-context kind-common-library-ci
 
-# Install the CI fixture and assert live objects match helm template
+# Install minimum operators (once per cluster; downloads helmfile if missing)
+../../.github/prereq/install-all.sh
+
+# Install a CI fixture (or all) and assert live objects match helm template
 make test_kind file=ci/Kubernetes_Deployment.yaml
+make test_kind_all
 ```
 
-`make test_kind` runs `helm upgrade --install`, then [`scripts/compare-helm-vs-cluster.py`](../../scripts/compare-helm-vs-cluster.py) to normalize and diff Deployment/Service specs.
+`make test_kind` runs `helm upgrade --install`, then [`scripts/compare-helm-vs-cluster.py`](../../scripts/compare-helm-vs-cluster.py) to normalize and diff rendered objects.
 
 ## Changelog
 

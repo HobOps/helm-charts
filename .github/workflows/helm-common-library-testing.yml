@@ -12,7 +12,8 @@ on:
       - "commitlint.config.js"
       - "package.json"
       - "package-lock.json"
-      - ".github/workflows/helm-chart-testing.yml"
+      - ".github/prereq/**"
+      - ".github/workflows/helm-common-library-testing.yml"
   pull_request:
     branches:
       - main
@@ -24,7 +25,8 @@ on:
       - "commitlint.config.js"
       - "package.json"
       - "package-lock.json"
-      - ".github/workflows/helm-chart-testing.yml"
+      - ".github/prereq/**"
+      - ".github/workflows/helm-common-library-testing.yml"
   workflow_dispatch:
 
 jobs:
@@ -86,14 +88,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v4
+      # Installs helmfile + Helm (kubectl comes from kind-action).
+      - name: Set up helmfile and Helm
+        uses: mamezou-tech/setup-helmfile@v2.2.0
         with:
-          version: v3.14.4
+          helmfile-version: "v1.7.0"
+          helm-version: "v3.14.4"
+          install-kubectl: "no"
+          install-helm: "yes"
+          install-helm-plugins: "no"
 
       - name: Create KinD cluster
         uses: helm/kind-action@v1.10.0
 
-      - name: Install common-library CI fixture and compare
+      - name: Install Kind prereqs (Gateway CRDs + helmfile)
+        run: ./.github/prereq/install-all.sh
+
+      - name: Install common-library CI fixtures and compare
         working-directory: charts/common-library
-        run: make test_kind file=ci/Kubernetes_Deployment.yaml
+        run: make test_kind_all
