@@ -112,11 +112,12 @@ Do **not** run Kind tests against production kube contexts. Prefer `kind-common-
 | Kind local-path | PVC / StorageClass `standard` | Shipped by Kind (assert only) |
 | Gateway API CRDs | Gateway / GatewayClass / HTTPRoute types | `install-gateway-api-crds.sh` |
 | cert-manager CRDs | Certificate / Issuer / ClusterIssuer | `install-cert-manager-crds.sh` |
+| Argo CD CRDs | Application / AppProject / ApplicationSet | `install-argocd-crds.sh` |
+| External Secrets CRDs | ExternalSecret / SecretStore / PushSecret / … | `install-external-secrets-crds.sh` |
+| KEDA CRDs | ScaledObject / ScaledJob / TriggerAuthentication | `install-keda-crds.sh` |
 | Class stubs | `IngressClass/traefik`, `GatewayClass/traefik` | `install-stubs.sh` (no Traefik) |
 
 Orchestrator: `.github/prereq/install-all.sh`. Goal is API-server schema validation, not controller Ready.
-
-Still need CRD installers later for Kind coverage of: Argo CD, External Secrets, KEDA.
 
 ## Preflight (repo root)
 

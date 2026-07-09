@@ -8,7 +8,10 @@
 #   1. Assert Kind StorageClass (local-path as "standard"; Kind ships this)
 #   2. Gateway API CRDs
 #   3. cert-manager CRDs
-#   4. IngressClass + GatewayClass stubs (no Traefik)
+#   4. Argo CD CRDs
+#   5. External Secrets CRDs
+#   6. KEDA CRDs
+#   7. IngressClass + GatewayClass stubs (no Traefik)
 #
 # Usage:
 #   ./.github/prereq/install-all.sh
@@ -41,6 +44,9 @@ log "Installing Kind prereqs for common-library testing (CRDs + stubs)"
 assert_kind_storage
 "${PREREQ_DIR}/install-gateway-api-crds.sh"
 "${PREREQ_DIR}/install-cert-manager-crds.sh"
+"${PREREQ_DIR}/install-argocd-crds.sh"
+"${PREREQ_DIR}/install-external-secrets-crds.sh"
+"${PREREQ_DIR}/install-keda-crds.sh"
 "${PREREQ_DIR}/install-stubs.sh"
 
 if ! kubectl get ingressclass traefik >/dev/null 2>&1; then
@@ -54,6 +60,15 @@ if ! kubectl get crd certificates.cert-manager.io >/dev/null 2>&1; then
 fi
 if ! kubectl get crd gateways.gateway.networking.k8s.io >/dev/null 2>&1; then
   die "Gateway API CRDs are not available"
+fi
+if ! kubectl get crd applications.argoproj.io >/dev/null 2>&1; then
+  die "Argo CD CRDs are not available"
+fi
+if ! kubectl get crd externalsecrets.external-secrets.io >/dev/null 2>&1; then
+  die "External Secrets CRDs are not available"
+fi
+if ! kubectl get crd scaledobjects.keda.sh >/dev/null 2>&1; then
+  die "KEDA CRDs are not available"
 fi
 
 log "All Kind prereqs installed"

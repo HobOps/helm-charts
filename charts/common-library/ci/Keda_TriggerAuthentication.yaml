@@ -1,0 +1,9 @@
+# Kind fixture for KEDA TriggerAuthentication.
+TriggerAuthentication:
+  ci-triggerauth:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-triggerauth
+    podIdentity:
+      provider: none

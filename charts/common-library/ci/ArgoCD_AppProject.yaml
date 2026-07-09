@@ -1,0 +1,17 @@
+# Kind fixture for Argo CD AppProject.
+AppProject:
+  ci-appproject:
+    annotations:
+      hobops.io/ci: "true"
+    description: Kind CI AppProject
+    destinations:
+    - namespace: common-library-ci
+      server: https://kubernetes.default.svc
+    sourceRepos:
+    - https://github.com/argoproj/argocd-example-apps.git
+    clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    namespaceResourceWhitelist:
+    - group: apps
+      kind: Deployment
