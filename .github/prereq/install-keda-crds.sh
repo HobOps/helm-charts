@@ -21,10 +21,9 @@ fi
 log "Installing KEDA CRDs (${KEDA_VERSION})"
 kubectl apply --server-side --force-conflicts -f "${KEDA_CRDS_URL}"
 
-kubectl wait --for=condition=Established \
+wait_crd_established \
   crd/scaledobjects.keda.sh \
   crd/scaledjobs.keda.sh \
-  crd/triggerauthentications.keda.sh \
-  --timeout=120s
+  crd/triggerauthentications.keda.sh
 
 log "KEDA CRDs ready"

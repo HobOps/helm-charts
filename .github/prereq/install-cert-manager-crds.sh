@@ -22,10 +22,9 @@ fi
 log "Installing cert-manager CRDs (${CERT_MANAGER_VERSION})"
 kubectl apply --server-side --force-conflicts -f "${CERT_MANAGER_CRDS_URL}"
 
-kubectl wait --for=condition=Established \
+wait_crd_established \
   crd/certificates.cert-manager.io \
   crd/issuers.cert-manager.io \
-  crd/clusterissuers.cert-manager.io \
-  --timeout=120s
+  crd/clusterissuers.cert-manager.io
 
 log "cert-manager CRDs ready"

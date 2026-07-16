@@ -23,12 +23,11 @@ fi
 log "Installing External Secrets CRDs (${EXTERNAL_SECRETS_VERSION})"
 kubectl apply --server-side --force-conflicts -f "${EXTERNAL_SECRETS_CRDS_URL}"
 
-kubectl wait --for=condition=Established \
+CRD_WAIT_TIMEOUT_S=180 wait_crd_established \
   crd/externalsecrets.external-secrets.io \
   crd/secretstores.external-secrets.io \
   crd/clustersecretstores.external-secrets.io \
   crd/clusterexternalsecrets.external-secrets.io \
-  crd/pushsecrets.external-secrets.io \
-  --timeout=180s
+  crd/pushsecrets.external-secrets.io
 
 log "External Secrets CRDs ready"

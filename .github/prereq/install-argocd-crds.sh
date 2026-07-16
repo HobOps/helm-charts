@@ -21,12 +21,9 @@ fi
 log "Installing Argo CD CRDs (${ARGOCD_VERSION})"
 kubectl apply --server-side --force-conflicts -k "${ARGOCD_CRDS_URL}"
 
-# Wait one CRD at a time; batch wait can race while status.conditions is still nil.
-for crd in \
-  applications.argoproj.io \
-  appprojects.argoproj.io \
-  applicationsets.argoproj.io; do
-  kubectl wait --for=condition=Established "crd/${crd}" --timeout=120s
-done
+wait_crd_established \
+  crd/applications.argoproj.io \
+  crd/appprojects.argoproj.io \
+  crd/applicationsets.argoproj.io
 
 log "Argo CD CRDs ready"
