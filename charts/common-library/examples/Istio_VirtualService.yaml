@@ -1,0 +1,25 @@
+VirtualService:
+  test-app:
+    annotations:
+      argocd.argoproj.io/sync-wave: "4"
+    labels:
+      app.kubernetes.io/part-of: test-app
+    gateways:
+    - flightdeck/flightdeck
+    hosts:
+    - test-app.example.com
+    http:
+    - match:
+      - uri:
+          prefix: /
+      route:
+      - destination:
+          host: test-app-web
+          port:
+            number: 3000
+      headers:
+        request:
+          set:
+            x-request-start: t=%START_TIME(%s.%3f)%
+      retries:
+        attempts: 0

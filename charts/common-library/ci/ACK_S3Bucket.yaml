@@ -1,0 +1,19 @@
+# Kind fixture for ACK S3 Bucket.
+S3Bucket:
+  ci-s3bucket:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-s3bucket
+    name: common-library-ci-bucket
+    versioning:
+      status: Enabled
+    tagging:
+      tagSet:
+      - key: Managed-by
+        value: common-library-ci
+    encryption:
+      rules:
+      - bucketKeyEnabled: true
+        applyServerSideEncryptionByDefault:
+          sseAlgorithm: AES256

@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.PodDisruptionBudget }}
+  {{ include "library.Kubernetes.PodDisruptionBudget" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

@@ -18,7 +18,7 @@ spec:
   {{- if (index $data .name).replicas }}
   replicas: {{ (index $data .name).replicas }}
   {{- end }}
-  serviceName: {{ .name }}
+  serviceName: {{ (index $data .name).serviceName | default .name }}
   {{- with (index $data .name).updateStrategy }}
   updateStrategy:
     {{- tpl (toYaml .) $ | nindent 4 }}
@@ -53,13 +53,13 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
       containers:
-      - name: {{ .name }}
+      - name: {{ (index $data .name).containerName | default .name }}
         {{- with (index $data .name).securityContext }}
         securityContext:
           {{- tpl (toYaml .) $ | nindent 10 }}
         {{- end }}
-        image: "{{ (index $data .name).image.repository }}:{{ (index $data .name).image.tag }}"
-        imagePullPolicy: {{ (index $data .name).image.pullPolicy }}
+        image: "{{ tpl (index $data .name).image.repository $ }}:{{ tpl (index $data .name).image.tag $ }}"
+        imagePullPolicy: {{ tpl ((index $data .name).image.pullPolicy | default "IfNotPresent") $ }}
         {{- with (index $data .name).command }}
         command:
           {{- tpl (toYaml .) $ | nindent 8 }}

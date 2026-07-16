@@ -1,0 +1,32 @@
+{{- define "library.ACK.IAMRole" }}
+{{- $data := .Values.IAMRole }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "iam.services.k8s.aws/v1alpha1" }}
+kind: Role
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  name: {{ tpl $entry.name $ }}
+  {{- with $entry.assumeRolePolicyDocument }}
+  assumeRolePolicyDocument: |
+    {{- tpl . $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.policies }}
+  policies:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.tags }}
+  tags:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}

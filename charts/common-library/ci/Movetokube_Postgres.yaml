@@ -1,0 +1,11 @@
+# Kind fixture for Movetokube Postgres.
+Postgres:
+  ci-postgres:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-postgres
+    database: common-library-ci-db
+    dropOnDelete: false
+    extensions:
+    - pgcrypto

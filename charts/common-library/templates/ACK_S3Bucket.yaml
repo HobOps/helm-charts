@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.S3Bucket }}
+  {{ include "library.ACK.S3Bucket" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

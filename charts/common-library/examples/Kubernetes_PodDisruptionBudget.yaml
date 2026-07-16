@@ -1,0 +1,19 @@
+PodDisruptionBudget:
+  test-pdb-min-available:
+    annotations:
+      argocd.argoproj.io/sync-wave: "4"
+    labels:
+      app.kubernetes.io/component: web
+    minAvailable: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: web
+  test-pdb-max-unavailable:
+    annotations:
+      argocd.argoproj.io/sync-wave: "4"
+    labels:
+      app.kubernetes.io/component: worker
+    maxUnavailable: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: worker

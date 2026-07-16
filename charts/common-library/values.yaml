@@ -10,3 +10,12 @@ Job: {}
 Secret: {}
 StatefulSet: {}
 StorageClass: {}
+Namespace: {}
+PodDisruptionBudget: {}
+Postgres: {}
+PostgresUser: {}
+IAMRole: {}
+IAMPolicy: {}
+SecretsManagerSecret: {}
+S3Bucket: {}
+VirtualService: {}

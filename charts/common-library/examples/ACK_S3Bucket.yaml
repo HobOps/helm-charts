@@ -1,0 +1,48 @@
+S3Bucket:
+  test-app-aws-bucket:
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+      services.k8s.aws/region: us-east-1
+      services.k8s.aws/adoption-policy: adopt-or-create
+      services.k8s.aws/adoption-fields: |
+        {
+          "name": "test-app-staging-bucket"
+        }
+      services.k8s.aws/deletion-policy: retain
+    labels:
+      app.kubernetes.io/part-of: test-app
+    name: test-app-staging-bucket
+    cors:
+      corsRules:
+      - allowedHeaders:
+        - '*'
+        allowedMethods:
+        - PUT
+        - POST
+        - GET
+        allowedOrigins:
+        - "https://example.com"
+        exposeHeaders:
+        - Origin
+        - Content-Type
+        - Content-MD5
+        - Content-Disposition
+        - ETag
+        maxAgeSeconds: 3600
+    versioning:
+      status: Enabled
+    tagging:
+      tagSet:
+      - key: Site
+        value: test-app
+      - key: Configuration
+        value: staging
+      - key: Application
+        value: Test App
+      - key: Managed-by
+        value: kubernetes
+    encryption:
+      rules:
+      - bucketKeyEnabled: true
+        applyServerSideEncryptionByDefault:
+          sseAlgorithm: AES256

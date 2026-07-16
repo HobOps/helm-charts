@@ -1,0 +1,43 @@
+{{- define "library.ACK.S3Bucket" }}
+{{- $data := .Values.S3Bucket }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "s3.services.k8s.aws/v1alpha1" }}
+kind: Bucket
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  name: {{ tpl $entry.name $ }}
+  {{- with $entry.cors }}
+  cors:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.versioning }}
+  versioning:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.tagging }}
+  tagging:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.encryption }}
+  encryption:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.lifecycle }}
+  lifecycle:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.policy }}
+  policy: {{ tpl . $ | quote }}
+  {{- end }}
+{{- end }}

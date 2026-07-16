@@ -1,0 +1,28 @@
+{{- define "library.Movetokube.PostgresUser" }}
+{{- $data := .Values.PostgresUser }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "db.movetokube.com/v1alpha1" }}
+kind: PostgresUser
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  database: {{ tpl $entry.database $ }}
+  privileges: {{ tpl $entry.privileges $ }}
+  role: {{ tpl $entry.role $ }}
+  secretName: {{ tpl $entry.secretName $ }}
+  {{- /* toYaml without tpl: preserve movetokube placeholders like {{.Role}} */}}
+  {{- with $entry.secretTemplate }}
+  secretTemplate:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

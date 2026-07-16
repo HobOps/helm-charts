@@ -1,0 +1,28 @@
+IAMPolicy:
+  test-app-aws-policy:
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+    labels:
+      app.kubernetes.io/part-of: test-app
+    name: test-app-staging-test-policy
+    policyDocument: |
+      {
+          "Statement": [
+              {
+                  "Action": [
+                      "secretsmanager:GetSecretValue",
+                      "secretsmanager:DescribeSecret"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:secretsmanager:us-east-1:123456789012:secret:ack-secret-test-*",
+                  "Sid": "ReadAppSecret"
+              },
+              {
+                  "Action": "kms:Decrypt",
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:kms:us-east-1:123456789012:key/example",
+                  "Sid": "DecryptAppSecret"
+              }
+          ],
+          "Version": "2012-10-17"
+      }

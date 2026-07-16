@@ -8,7 +8,8 @@ Run against a Kind cluster (local or GitHub Actions `helm/kind-action`):
 
 This installs **CRDs + lightweight stubs only** — enough for the API server to
 accept/reject chart fixtures (schema, CEL, unknown fields). Controllers
-(Traefik, cert-manager, Argo CD, External Secrets, KEDA, …) are **not** installed.
+(Traefik, cert-manager, Argo CD, External Secrets, KEDA, ACK, Istio,
+Movetokube, …) are **not** installed.
 
 ## What gets installed
 
@@ -18,7 +19,10 @@ accept/reject chart fixtures (schema, CEL, unknown fields). Controllers
 4. Argo CD CRDs
 5. External Secrets CRDs
 6. KEDA CRDs
-7. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
+7. ACK CRDs (IAM Policy/Role, S3 Bucket, Secrets Manager Secret)
+8. Istio CRDs (includes VirtualService)
+9. Movetokube CRDs (Postgres, PostgresUser)
+10. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
 
 ## Layout
 
@@ -30,6 +34,9 @@ accept/reject chart fixtures (schema, CEL, unknown fields). Controllers
 | `install-argocd-crds.sh` | Argo CD CRDs |
 | `install-external-secrets-crds.sh` | External Secrets CRDs |
 | `install-keda-crds.sh` | KEDA CRDs |
+| `install-ack-crds.sh` | ACK IAM / S3 / Secrets Manager CRDs |
+| `install-istio-crds.sh` | Istio CRDs |
+| `install-movetokube-crds.sh` | Movetokube Postgres CRDs |
 | `install-stubs.sh` | IngressClass + GatewayClass stubs |
 | `_lib.sh` | Shared bash helpers |
 
@@ -40,6 +47,11 @@ accept/reject chart fixtures (schema, CEL, unknown fields). Controllers
 - `ARGOCD_VERSION` (default `v3.4.4`)
 - `EXTERNAL_SECRETS_VERSION` (default `v2.7.0`)
 - `KEDA_VERSION` (default `v2.20.1`)
+- `ACK_IAM_VERSION` (default `v1.7.3`)
+- `ACK_S3_VERSION` (default `v1.8.1`)
+- `ACK_SECRETSMANAGER_VERSION` (default `v1.3.2`)
+- `ISTIO_VERSION` (default `1.30.2`)
+- `MOVETOKUBE_VERSION` (default `ext-postgres-operator-3.0.0`)
 - `INGRESS_CLASS_NAME` / `GATEWAY_CLASS_NAME` (default `traefik`)
 - `LOCAL_PATH_STORAGE_CLASS` (default `standard`; assert only)
 
