@@ -1,0 +1,42 @@
+# Kind fixture for HTTPRoute (+ companion Service and Gateway).
+Service:
+  ci-httproute:
+    annotations:
+      hobops.io/ci: "true"
+    selectorLabels:
+      app: ci-httproute
+    type: ClusterIP
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+
+Gateway:
+  ci-httproute:
+    annotations:
+      hobops.io/ci: "true"
+    gatewayClassName: traefik
+    listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+
+HTTPRoute:
+  ci-httproute:
+    annotations:
+      hobops.io/ci: "true"
+    parentRefs:
+    - name: ci-httproute
+    hostnames:
+    - ci-httproute.example.local
+    rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+      - name: ci-httproute
+        port: 80

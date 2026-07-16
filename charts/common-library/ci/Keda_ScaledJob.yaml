@@ -1,0 +1,33 @@
+# Kind fixture for KEDA ScaledJob.
+ScaledJob:
+  ci-scaledjob:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-scaledjob
+    pollingInterval: 30
+    successfulJobsHistoryLimit: 1
+    failedJobsHistoryLimit: 1
+    maxReplicaCount: 1
+    jobTargetRef:
+      backoffLimit: 1
+      completions: 1
+      parallelism: 1
+      template:
+        spec:
+          containers:
+          - name: ci-scaledjob
+            image: busybox:1.36
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - echo ok
+          restartPolicy: Never
+    triggers:
+    - type: cron
+      metadata:
+        timezone: UTC
+        start: 0 0 * * *
+        end: 0 1 * * *
+        desiredReplicas: "1"

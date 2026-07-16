@@ -23,10 +23,9 @@ fi
 log "Installing Gateway API CRDs (${GATEWAY_API_VERSION})"
 kubectl apply --server-side --force-conflicts -f "${GATEWAY_API_URL}"
 
-kubectl wait --for=condition=Established \
+wait_crd_established \
   crd/gateways.gateway.networking.k8s.io \
   crd/gatewayclasses.gateway.networking.k8s.io \
-  crd/httproutes.gateway.networking.k8s.io \
-  --timeout=120s
+  crd/httproutes.gateway.networking.k8s.io
 
 log "Gateway API CRDs ready"

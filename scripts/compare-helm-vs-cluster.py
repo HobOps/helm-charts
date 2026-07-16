@@ -242,6 +242,30 @@ def scrub_job(doc: dict[str, Any]) -> dict[str, Any]:
     return doc
 
 
+def scrub_cronjob(doc: dict[str, Any]) -> dict[str, Any]:
+    spec = doc.get("spec") or {}
+    job_template = spec.get("jobTemplate") or {}
+    job_spec = job_template.get("spec") or {}
+    # Reuse Job/pod scrubbing on the nested jobTemplate.spec.
+    nested = scrub_job({"spec": job_spec}).get("spec") or {}
+    if nested.get("completionMode") == "NonIndexed":
+        nested.pop("completionMode", None)
+    job_template["spec"] = nested
+    if "metadata" in job_template:
+        job_template["metadata"] = scrub_meta(job_template.get("metadata")) or {}
+    spec["jobTemplate"] = job_template
+    if spec.get("suspend") is False:
+        spec.pop("suspend", None)
+    if spec.get("concurrencyPolicy") == "Allow":
+        spec.pop("concurrencyPolicy", None)
+    if spec.get("successfulJobsHistoryLimit") == 3:
+        spec.pop("successfulJobsHistoryLimit", None)
+    if spec.get("failedJobsHistoryLimit") == 1:
+        spec.pop("failedJobsHistoryLimit", None)
+    doc["spec"] = spec
+    return doc
+
+
 def scrub_pvc(doc: dict[str, Any]) -> dict[str, Any]:
     spec = doc.get("spec") or {}
     # volumeName / storageClass defaults appear after binding; drop cluster-assigned volumeName.
@@ -306,6 +330,8 @@ def normalize(doc: dict[str, Any]) -> dict[str, Any]:
         return scrub_statefulset(doc)
     if kind == "Job":
         return scrub_job(doc)
+    if kind == "CronJob":
+        return scrub_cronjob(doc)
     if kind == "Service" and "spec" in doc:
         doc["spec"] = scrub_service_spec(doc["spec"])
         return doc

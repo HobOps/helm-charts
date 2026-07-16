@@ -1,0 +1,46 @@
+# Kind fixture for KEDA ScaledObject (+ companion Deployment).
+Deployment:
+  ci-scaledobject:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-scaledobject
+    selectorLabels:
+      app: ci-scaledobject
+    replicas: 1
+    image:
+      repository: busybox
+      tag: "1.36"
+      pullPolicy: IfNotPresent
+    command:
+    - /bin/sh
+    - -c
+    args:
+    - sleep 3600
+    resources:
+      requests:
+        memory: 16Mi
+        cpu: 10m
+      limits:
+        memory: 32Mi
+        cpu: 50m
+
+ScaledObject:
+  ci-scaledobject:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-scaledobject
+    pollingInterval: 30
+    cooldownPeriod: 60
+    minReplicaCount: 0
+    maxReplicaCount: 2
+    scaleTargetRef:
+      name: ci-scaledobject
+    triggers:
+    - type: cron
+      metadata:
+        timezone: UTC
+        start: 0 0 * * *
+        end: 0 1 * * *
+        desiredReplicas: "1"

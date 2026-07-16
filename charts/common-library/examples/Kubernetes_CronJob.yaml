@@ -1,28 +1,86 @@
 CronJob:
-  my-cronjob:
-    schedule: "*/1 * * * *"
-    image: my-docker-image
+  test-cronjob:
+    annotations:
+      annotation: test-cronjob
+    labels:
+      app: test-cronjob
+    schedule: "*/5 * * * *"
+    timeZone: UTC
+    startingDeadlineSeconds: 200
+    concurrencyPolicy: Forbid
+    suspend: false
+    successfulJobsHistoryLimit: 3
+    failedJobsHistoryLimit: 1
+    podAnnotations:
+      podAnnotations: test-cronjob
+    selectorLabels:
+      app: test-cronjob
+    restartPolicy: OnFailure
+    serviceAccountName: test-cronjob
+    backoffLimit: 1
+    completions: 1
+    parallelism: 1
+    podSecurityContext:
+      fsGroup: 2000
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+    image:
+      repository: alpine
+      tag: latest
+      pullPolicy: IfNotPresent
+    imagePullSecrets:
+    - name: changeme
+    envFrom:
+    - configMapRef:
+        name: test-configmap
+    - secretRef:
+        name: test-secret
+    env:
+    - name: FUZZ
+      value: BUZZ
+    command:
+    - /bin/sh
+    - -c
     args:
-    - arg1
-    - arg2
-#  my-cronjob-with-deadline:
-#    schedule: "*/5 * * * *"
-#    startingDeadlineSeconds: 200
-#    image: my-docker-image
-#    args:
-#    - arg1
-#    - arg2
-#  my-cronjob-with-concurrency:
-#    schedule: "*/10 * * * *"
-#    concurrencyPolicy: Forbid
-#    image: my-docker-image
-#    args:
-#    - arg1
-#    - arg2
-#  my-cronjob-suspended:
-#    schedule: "*/15 * * * *"
-#    suspend: true
-#    image: my-docker-image
-#    args:
-#    - arg1
-#    - arg2
+    - echo ok
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 100m
+      limits:
+        memory: 200Mi
+        cpu: 200m
+    volumeMounts:
+    - name: config-file
+      mountPath: /etc/service.conf
+      subPath: service.conf
+      readOnly: true
+    volumes:
+    - name: config-file
+      configMap:
+        name: test-file-configmap
+    nodeSelector:
+      node: changeme
+    hostNetwork: false
+    hostAliases:
+    - hostnames:
+      - example.com
+      ip: 1.1.1.1
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: "topology.kubernetes.io/zone"
+              operator: In
+              values: ["us-central1-a", "us-central1-b"]
+    tolerations:
+    - key: reserved-pool
+      operator: Equal
+      value: "true"
+      effect: NoSchedule

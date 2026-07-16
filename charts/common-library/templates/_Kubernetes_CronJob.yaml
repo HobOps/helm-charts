@@ -1,0 +1,116 @@
+{{- define "library.Kubernetes.CronJob" }}
+{{- $data := .Values.CronJob }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with (index $data .name).annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with (index $data .name).labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  schedule: {{ (index $data .name).schedule | quote }}
+  {{- with (index $data .name).timeZone }}
+  timeZone: {{ . | quote }}
+  {{- end }}
+  {{- with (index $data .name).startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).concurrencyPolicy }}
+  concurrencyPolicy: {{ . }}
+  {{- end }}
+  {{- if hasKey (index $data .name) "suspend" }}
+  suspend: {{ (index $data .name).suspend }}
+  {{- end }}
+  {{- with (index $data .name).successfulJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with (index $data .name).failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ . }}
+  {{- end }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ (index $data .name).backoffLimit | default 1 }}
+      completions: {{ (index $data .name).completions | default 1 }}
+      parallelism: {{ (index $data .name).parallelism | default 1 }}
+      template:
+        metadata:
+          {{- with (index $data .name).podAnnotations }}
+          annotations:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          {{- with (index $data .name).selectorLabels }}
+          labels:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+        spec:
+          {{- with (index $data .name).imagePullSecrets }}
+          imagePullSecrets:
+            {{- tpl (toYaml .) $ | nindent 10 }}
+          {{- end }}
+          serviceAccountName: {{ (index $data .name).serviceAccountName | default "default" }}
+          restartPolicy: {{ (index $data .name).restartPolicy | default "OnFailure" }}
+          {{- with (index $data .name).podSecurityContext }}
+          securityContext:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          containers:
+          - name: {{ .name }}
+            {{- with (index $data .name).securityContext }}
+            securityContext:
+              {{- tpl (toYaml .) $ | nindent 14 }}
+            {{- end }}
+            image: "{{ (index $data .name).image.repository }}:{{ (index $data .name).image.tag }}"
+            imagePullPolicy: {{ (index $data .name).image.pullPolicy }}
+            {{- with (index $data .name).command }}
+            command:
+              {{- tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
+            {{- with (index $data .name).args }}
+            args:
+              {{- tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
+            {{- with (index $data .name).envFrom }}
+            envFrom:
+              {{- tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
+            {{- with (index $data .name).env }}
+            env:
+              {{- tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
+            {{- with (index $data .name).resources }}
+            resources:
+              {{- tpl (toYaml .) $ | nindent 14 }}
+            {{- end }}
+            {{- with (index $data .name).volumeMounts }}
+            volumeMounts:
+              {{- tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
+          {{- with (index $data .name).volumes }}
+          volumes:
+            {{- tpl (toYaml .) $ | nindent 10 }}
+          {{- end }}
+          {{- with (index $data .name).nodeSelector }}
+          nodeSelector:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          hostNetwork: {{ (index $data .name).hostNetwork | default false }}
+          {{- with (index $data .name).hostAliases }}
+          hostAliases:
+            {{- tpl (toYaml .) $ | nindent 10 }}
+          {{- end }}
+          {{- with (index $data .name).affinity }}
+          affinity:
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          {{- with (index $data .name).tolerations }}
+          tolerations:
+            {{- tpl (toYaml .) $ | nindent 10 }}
+          {{- end }}
+{{- end }}

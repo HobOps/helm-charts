@@ -1,0 +1,20 @@
+# Kind fixture for Argo CD Application.
+Application:
+  ci-application:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-application
+    project: default
+    source:
+      repoURL: https://github.com/argoproj/argocd-example-apps.git
+      targetRevision: HEAD
+      path: guestbook
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: common-library-ci
+    syncPolicy:
+      automated:
+        prune: false
+        selfHeal: false
+    revisionHistoryLimit: 2
