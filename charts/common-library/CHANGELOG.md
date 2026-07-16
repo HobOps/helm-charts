@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-07-16
+
+### Added
+- Kubernetes Namespace template
+- Kubernetes PodDisruptionBudget template
+- Movetokube Postgres and PostgresUser templates (`db.movetokube.com`)
+- ACK IAM Role and IAM Policy templates (`iam.services.k8s.aws`)
+- ACK Secrets Manager Secret template (`secretsmanager.services.k8s.aws`)
+- ACK S3 Bucket template (`s3.services.k8s.aws`) for ActiveStorage / app buckets
+- Istio VirtualService template (`networking.istio.io/v1`)
+- Kind CI CRDs + fixtures for ACK, Istio, and Movetokube resources
+
+### Changed
+- Kubernetes Deployment: import common-library-v2 fields — `revisionHistoryLimit`,
+  `terminationGracePeriodSeconds`, `topologySpreadConstraints`, `containerName`,
+  `lifecycle`, and `tpl` on image repository/tag/pullPolicy
+- Kubernetes Job: import common-library-v2 fields — `containerName` and `tpl` on image fields
+- Kubernetes StatefulSet: optional `serviceName` / `containerName`, and `tpl` on image fields
+- Kubernetes HorizontalPodAutoscaler: support optional `behavior` (scaleUp/scaleDown)
+- Kind compare script: use `Kind.group/name` refs so ACK Role/Secret do not collide with RBAC/core
+- IngressClass/GatewayClass stub installer is idempotent when stubs already exist
+
 ## [1.4.0] - 2026-07-09
 
 ### Added

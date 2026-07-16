@@ -337,7 +337,7 @@ def normalize(doc: dict[str, Any]) -> dict[str, Any]:
         return doc
     if kind == "PersistentVolumeClaim":
         return scrub_pvc(doc)
-    if kind == "Secret":
+    if kind == "Secret" and api_group(doc.get("apiVersion")) is None:
         return scrub_secret(doc)
     if kind == "ServiceAccount":
         return scrub_serviceaccount(doc)
@@ -350,11 +350,54 @@ def normalize(doc: dict[str, Any]) -> dict[str, Any]:
     return doc
 
 
-def find_resource(items: list[dict[str, Any]], kind: str, name: str) -> dict[str, Any] | None:
+def api_group(api_version: str | None) -> str | None:
+    """Return API group for a Group/Version string, or None for core (v1)."""
+    if not api_version or "/" not in api_version:
+        return None
+    group, _version = api_version.split("/", 1)
+    return group or None
+
+
+def resource_ref(item: dict[str, Any]) -> str | None:
+    """Build a kubectl-get ref that disambiguates colliding Kind names.
+
+    Core resources stay as ``kind/name``. Grouped APIs use ``Kind.group/name``
+    so ACK Role/Secret do not resolve to RBAC Role / core Secret.
+    """
+    kind = item.get("kind")
+    name = (item.get("metadata") or {}).get("name")
+    if not kind or not name or kind == "List":
+        return None
+    group = api_group(item.get("apiVersion"))
+    if group:
+        return f"{kind}.{group}/{name}"
+    return f"{kind.lower()}/{name}"
+
+
+def parse_resource_ref(resource: str) -> tuple[str, str | None, str]:
+    """Parse ``kind/name`` or ``Kind.group/name`` into (kind, group, name)."""
+    kind_part, name = resource.split("/", 1)
+    if "." in kind_part:
+        kind, group = kind_part.split(".", 1)
+        return kind, group, name
+    return kind_part, None, name
+
+
+def find_resource(
+    items: list[dict[str, Any]],
+    kind: str,
+    name: str,
+    group: str | None = None,
+) -> dict[str, Any] | None:
     kind_l = kind.lower()
     for item in items:
-        if (item.get("kind") or "").lower() == kind_l and (item.get("metadata") or {}).get("name") == name:
-            return item
+        if (item.get("kind") or "").lower() != kind_l:
+            continue
+        if (item.get("metadata") or {}).get("name") != name:
+            continue
+        if group is not None and api_group(item.get("apiVersion")) != group:
+            continue
+        return item
     return None
 
 
@@ -362,12 +405,8 @@ def discover_resources(items: list[dict[str, Any]]) -> list[str]:
     discovered: list[str] = []
     seen: set[str] = set()
     for item in items:
-        kind = item.get("kind")
-        name = (item.get("metadata") or {}).get("name")
-        if not kind or not name or kind == "List":
-            continue
-        key = f"{kind.lower()}/{name}"
-        if key in seen:
+        key = resource_ref(item)
+        if not key or key in seen:
             continue
         seen.add(key)
         discovered.append(key)
@@ -432,9 +471,9 @@ def main() -> int:
 
         failed = False
         for resource in resources:
-            kind, name = resource.split("/", 1)
-            expected = find_resource(expected_items, kind, name)
-            actual = find_resource(live_items, kind, name)
+            kind, group, name = parse_resource_ref(resource)
+            expected = find_resource(expected_items, kind, name, group)
+            actual = find_resource(live_items, kind, name, group)
 
             if expected is None:
                 print(f"FAIL: {kind}/{name} not found in helm template output", file=sys.stderr)

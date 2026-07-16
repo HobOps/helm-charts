@@ -1,0 +1,7 @@
+# Kind-schedulable fixture for Namespace (cluster-scoped).
+Namespace:
+  common-library-ci-ns-example:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app.kubernetes.io/part-of: common-library-ci

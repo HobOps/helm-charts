@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.PostgresUser }}
+  {{ include "library.Movetokube.PostgresUser" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

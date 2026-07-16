@@ -15,6 +15,23 @@ Deployment:
     securityContext:
       privileged: false
     progressDeadlineSeconds: 300
+    revisionHistoryLimit: 3
+    containerName: main
+    terminationGracePeriodSeconds: 60
+    topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          selectorLabels: test-deployment
+    lifecycle:
+      preStop:
+        exec:
+          command:
+          - /bin/sh
+          - -c
+          - sleep 5
     strategy:
       type: RollingUpdate
       rollingUpdate:

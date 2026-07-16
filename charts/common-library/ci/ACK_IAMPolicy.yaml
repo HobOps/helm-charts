@@ -1,0 +1,19 @@
+# Kind fixture for ACK IAM Policy.
+IAMPolicy:
+  ci-iampolicy:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-iampolicy
+    name: common-library-ci-policy
+    policyDocument: |
+      {
+          "Version": "2012-10-17",
+          "Statement": [
+              {
+                  "Effect": "Allow",
+                  "Action": "s3:ListBucket",
+                  "Resource": "*"
+              }
+          ]
+      }

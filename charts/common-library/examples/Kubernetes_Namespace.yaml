@@ -1,0 +1,12 @@
+Namespace:
+  test-namespace:
+    annotations:
+      argocd.argoproj.io/sync-wave: "0"
+    labels:
+      app.kubernetes.io/part-of: test-app
+  test-namespace-without-annotations:
+    labels:
+      app.kubernetes.io/part-of: test-app
+  test-namespace-without-labels:
+    annotations:
+      argocd.argoproj.io/sync-wave: "0"

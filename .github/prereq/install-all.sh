@@ -11,7 +11,10 @@
 #   4. Argo CD CRDs
 #   5. External Secrets CRDs
 #   6. KEDA CRDs
-#   7. IngressClass + GatewayClass stubs (no Traefik)
+#   7. ACK CRDs (IAM / S3 / Secrets Manager)
+#   8. Istio CRDs
+#   9. Movetokube CRDs
+#  10. IngressClass + GatewayClass stubs (no Traefik)
 #
 # Usage:
 #   ./.github/prereq/install-all.sh
@@ -47,6 +50,9 @@ assert_kind_storage
 "${PREREQ_DIR}/install-argocd-crds.sh"
 "${PREREQ_DIR}/install-external-secrets-crds.sh"
 "${PREREQ_DIR}/install-keda-crds.sh"
+"${PREREQ_DIR}/install-ack-crds.sh"
+"${PREREQ_DIR}/install-istio-crds.sh"
+"${PREREQ_DIR}/install-movetokube-crds.sh"
 "${PREREQ_DIR}/install-stubs.sh"
 
 if ! kubectl get ingressclass traefik >/dev/null 2>&1; then
@@ -69,6 +75,15 @@ if ! kubectl get crd externalsecrets.external-secrets.io >/dev/null 2>&1; then
 fi
 if ! kubectl get crd scaledobjects.keda.sh >/dev/null 2>&1; then
   die "KEDA CRDs are not available"
+fi
+if ! kubectl get crd policies.iam.services.k8s.aws >/dev/null 2>&1; then
+  die "ACK IAM CRDs are not available"
+fi
+if ! kubectl get crd virtualservices.networking.istio.io >/dev/null 2>&1; then
+  die "Istio CRDs are not available"
+fi
+if ! kubectl get crd postgres.db.movetokube.com >/dev/null 2>&1; then
+  die "Movetokube CRDs are not available"
 fi
 
 log "All Kind prereqs installed"

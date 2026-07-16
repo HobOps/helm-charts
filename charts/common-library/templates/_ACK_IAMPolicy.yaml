@@ -1,0 +1,24 @@
+{{- define "library.ACK.IAMPolicy" }}
+{{- $data := .Values.IAMPolicy }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "iam.services.k8s.aws/v1alpha1" }}
+kind: Policy
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  name: {{ tpl $entry.name $ }}
+  {{- with $entry.policyDocument }}
+  policyDocument: |
+    {{- tpl . $ | nindent 4 }}
+  {{- end }}
+{{- end }}

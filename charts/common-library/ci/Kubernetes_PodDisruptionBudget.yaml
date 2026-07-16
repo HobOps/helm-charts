@@ -1,0 +1,32 @@
+# Kind-schedulable fixture for PodDisruptionBudget (+ companion Deployment).
+Deployment:
+  ci-pdb:
+    labels:
+      app: ci-pdb
+    annotations:
+      hobops.io/ci: "true"
+    selectorLabels:
+      app: ci-pdb
+    replicas: 2
+    image:
+      repository: nginx
+      tag: alpine
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 10m
+      limits:
+        memory: 64Mi
+        cpu: 100m
+
+PodDisruptionBudget:
+  ci-pdb:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-pdb
+    minAvailable: 1
+    selector:
+      matchLabels:
+        app: ci-pdb

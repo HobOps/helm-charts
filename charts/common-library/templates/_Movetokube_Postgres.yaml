@@ -1,0 +1,27 @@
+{{- define "library.Movetokube.Postgres" }}
+{{- $data := .Values.Postgres }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "db.movetokube.com/v1alpha1" }}
+kind: Postgres
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  database: {{ tpl $entry.database $ }}
+  {{- if hasKey $entry "dropOnDelete" }}
+  dropOnDelete: {{ $entry.dropOnDelete }}
+  {{- end }}
+  {{- with $entry.extensions }}
+  extensions:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}

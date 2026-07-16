@@ -1,0 +1,22 @@
+# Kind fixture for Movetokube PostgresUser (+ companion Postgres).
+Postgres:
+  ci-postgresuser-db:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-postgresuser
+    database: common-library-ci-user-db
+    dropOnDelete: false
+
+PostgresUser:
+  ci-postgresuser:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-postgresuser
+    database: ci-postgresuser-db
+    privileges: OWNER
+    role: common-library-ci-user
+    secretName: ci-postgresuser-credentials
+    secretTemplate:
+      DATABASE_URL: "postgres://{{.Role}}:{{.Password}}@{{.Host}}:5432/{{.Database}}"

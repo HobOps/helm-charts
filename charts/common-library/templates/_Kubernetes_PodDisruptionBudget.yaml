@@ -1,0 +1,29 @@
+{{- define "library.Kubernetes.PodDisruptionBudget" }}
+{{- $data := .Values.PodDisruptionBudget }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "policy/v1" }}
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if hasKey $entry "minAvailable" }}
+  minAvailable: {{ $entry.minAvailable }}
+  {{- end }}
+  {{- if hasKey $entry "maxUnavailable" }}
+  maxUnavailable: {{ $entry.maxUnavailable }}
+  {{- end }}
+  {{- with $entry.selector }}
+  selector:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- end }}

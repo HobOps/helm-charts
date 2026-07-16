@@ -1,0 +1,26 @@
+# Kind fixture for ACK IAM Role.
+IAMRole:
+  ci-iamrole:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-iamrole
+    name: common-library-ci-role
+    assumeRolePolicyDocument: |
+      {
+          "Version": "2012-10-17",
+          "Statement": [
+              {
+                  "Effect": "Allow",
+                  "Principal": {
+                      "Service": "ec2.amazonaws.com"
+                  },
+                  "Action": "sts:AssumeRole"
+              }
+          ]
+      }
+    policies:
+    - "arn:aws:iam::123456789012:policy/common-library-ci-policy"
+    tags:
+    - key: Managed-by
+      value: common-library-ci

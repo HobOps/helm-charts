@@ -1,0 +1,25 @@
+PostgresUser:
+  app-user:
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+      postgres.db.movetokube.com/instance: ext-postgres-operator-aurora
+    labels:
+      app.kubernetes.io/part-of: test-app
+    database: aurora-db
+    privileges: OWNER
+    role: test-app-app-user
+    secretName: db-credentials
+    secretTemplate:
+      DATABASE_URL: "postgres://{{.Role}}:{{.Password}}@{{.Host}}:5432/{{.Database}}"
+  solidqueue-user:
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+      postgres.db.movetokube.com/instance: ext-postgres-operator
+    labels:
+      app.kubernetes.io/part-of: test-app
+    database: solidqueue-db
+    privileges: OWNER
+    role: test-app-user
+    secretName: solidqueue-db-credentials
+    secretTemplate:
+      SOLID_DATABASE_URL: "postgres://{{.Role}}:{{.Password}}@{{.Host}}:5432/{{.Database}}"

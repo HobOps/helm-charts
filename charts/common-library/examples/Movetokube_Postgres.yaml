@@ -1,0 +1,20 @@
+Postgres:
+  aurora-db:
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+      postgres.db.movetokube.com/instance: ext-postgres-operator-aurora
+    labels:
+      app.kubernetes.io/part-of: test-app
+    database: test-app-db
+    dropOnDelete: false
+    extensions:
+    - pg_stat_statements
+    - pgcrypto
+  solidqueue-db:
+    annotations:
+      argocd.argoproj.io/sync-wave: "1"
+      postgres.db.movetokube.com/instance: ext-postgres-operator
+    labels:
+      app.kubernetes.io/part-of: test-app
+    database: test-app-solidqueue-db
+    dropOnDelete: true

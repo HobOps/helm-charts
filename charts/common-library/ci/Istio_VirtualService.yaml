@@ -1,0 +1,20 @@
+# Kind fixture for Istio VirtualService.
+VirtualService:
+  ci-virtualservice:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-virtualservice
+    gateways:
+    - mesh
+    hosts:
+    - ci-virtualservice.example.com
+    http:
+    - match:
+      - uri:
+          prefix: /
+      route:
+      - destination:
+          host: ci-virtualservice
+          port:
+            number: 80
