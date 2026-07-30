@@ -1,0 +1,11 @@
+# Kind fixture for Prometheus Operator ScrapeConfig.
+ScrapeConfig:
+  ci-scrapeconfig:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-scrapeconfig
+    scrapeInterval: 60s
+    staticConfigs:
+    - targets:
+      - example.com:9100

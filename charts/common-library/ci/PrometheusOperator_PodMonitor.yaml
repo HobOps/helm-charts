@@ -1,0 +1,14 @@
+# Kind fixture for Prometheus Operator PodMonitor.
+PodMonitor:
+  ci-podmonitor:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-podmonitor
+    selector:
+      matchLabels:
+        app: ci-podmonitor
+    podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 60s

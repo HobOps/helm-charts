@@ -1,0 +1,18 @@
+# Kind fixture for Prometheus Operator Prometheus.
+# No controller: object stays unreconciled; API-server accept is enough.
+Prometheus:
+  ci-prometheus:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-prometheus
+    replicas: 1
+    serviceMonitorSelector: {}
+    podMonitorSelector: {}
+    probeSelector: {}
+    ruleSelector: {}
+    scrapeConfigSelector: {}
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 10m

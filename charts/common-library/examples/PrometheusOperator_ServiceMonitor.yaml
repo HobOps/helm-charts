@@ -1,0 +1,17 @@
+ServiceMonitor:
+  example-app:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      team: frontend
+    jobLabel: app
+    selector:
+      matchLabels:
+        app: example-app
+    namespaceSelector:
+      matchNames:
+      - default
+    endpoints:
+    - port: web
+      interval: 30s
+      path: /metrics

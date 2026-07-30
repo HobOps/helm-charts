@@ -1,0 +1,20 @@
+PrometheusRule:
+  example-rules:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      role: alert-rules
+      prometheus: k8s
+    groups:
+    - name: example.rules
+      rules:
+      - alert: ExampleTargetDown
+        expr: up{job="example"} == 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Example target is down
+          description: Target of job example has been down for more than 5 minutes.
+      - record: instance:up:sum
+        expr: sum by (instance) (up)

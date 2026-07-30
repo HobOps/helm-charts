@@ -1,0 +1,20 @@
+{{- define "library.PrometheusOperator.AlertmanagerConfig" }}
+{{- $data := .Values.AlertmanagerConfig }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "monitoring.coreos.com/v1alpha1" }}
+kind: AlertmanagerConfig
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml (omit $entry "annotations" "labels" "apiVersion")) $ | nindent 2 }}
+{{- end }}

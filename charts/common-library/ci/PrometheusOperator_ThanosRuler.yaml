@@ -1,0 +1,11 @@
+# Kind fixture for Prometheus Operator ThanosRuler.
+ThanosRuler:
+  ci-thanosruler:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-thanosruler
+    replicas: 1
+    queryEndpoints:
+    - dnssrv+_http._tcp.thanos-querier.monitoring.svc.cluster.local
+    ruleSelector: {}

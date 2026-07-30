@@ -19,3 +19,13 @@ IAMPolicy: {}
 SecretsManagerSecret: {}
 S3Bucket: {}
 VirtualService: {}
+ServiceMonitor: {}
+PodMonitor: {}
+Probe: {}
+PrometheusRule: {}
+Prometheus: {}
+Alertmanager: {}
+ThanosRuler: {}
+PrometheusAgent: {}
+ScrapeConfig: {}
+AlertmanagerConfig: {}

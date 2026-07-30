@@ -1,0 +1,12 @@
+# Kind fixture for Prometheus Operator Alertmanager.
+Alertmanager:
+  ci-alertmanager:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-alertmanager
+    replicas: 1
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 10m
