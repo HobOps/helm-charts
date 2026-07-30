@@ -1,0 +1,18 @@
+ScrapeConfig:
+  example-static:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      team: sre
+    scrapeInterval: 30s
+    metricsPath: /metrics
+    staticConfigs:
+    - targets:
+      - example.com:9100
+      labels:
+        env: prod
+    relabelings:
+    - action: replace
+      sourceLabels:
+      - __address__
+      targetLabel: instance

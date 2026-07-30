@@ -1,0 +1,14 @@
+Alertmanager:
+  example:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: alertmanager
+    replicas: 3
+    alertmanagerConfigSelector:
+      matchLabels:
+        alertmanagerConfig: example
+    resources:
+      requests:
+        memory: 100Mi
+        cpu: 50m

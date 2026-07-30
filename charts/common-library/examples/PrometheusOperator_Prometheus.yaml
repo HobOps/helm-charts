@@ -1,0 +1,23 @@
+Prometheus:
+  example:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: prometheus
+    replicas: 2
+    retention: 15d
+    serviceAccountName: prometheus
+    serviceMonitorSelector:
+      matchLabels:
+        team: frontend
+    podMonitorSelector:
+      matchLabels:
+        team: frontend
+    ruleSelector:
+      matchLabels:
+        prometheus: k8s
+    resources:
+      requests:
+        memory: 400Mi
+        cpu: 100m
+    enableAdminAPI: false

@@ -1,0 +1,19 @@
+Probe:
+  example-blackbox:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      team: sre
+    jobName: blackbox-http
+    interval: 60s
+    module: http_2xx
+    prober:
+      url: blackbox-exporter.monitoring.svc:9115
+      path: /probe
+      scheme: http
+    targets:
+      staticConfig:
+        static:
+        - https://example.com
+        labels:
+          env: prod

@@ -1,0 +1,11 @@
+# Kind fixture for Prometheus Operator PrometheusAgent.
+PrometheusAgent:
+  ci-prometheusagent:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-prometheusagent
+    replicas: 1
+    serviceMonitorSelector: {}
+    remoteWrite:
+    - url: http://example.com/api/v1/write

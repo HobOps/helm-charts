@@ -1,0 +1,14 @@
+ThanosRuler:
+  example:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: thanos-ruler
+    replicas: 1
+    queryEndpoints:
+    - dnssrv+_http._tcp.thanos-querier.monitoring.svc.cluster.local
+    ruleSelector:
+      matchLabels:
+        role: alert-rules
+    alertmanagersUrl:
+    - http://alertmanager-operated.monitoring.svc:9093

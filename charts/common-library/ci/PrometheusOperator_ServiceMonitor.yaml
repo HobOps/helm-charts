@@ -1,0 +1,14 @@
+# Kind fixture for Prometheus Operator ServiceMonitor.
+ServiceMonitor:
+  ci-servicemonitor:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-servicemonitor
+    selector:
+      matchLabels:
+        app: ci-servicemonitor
+    endpoints:
+    - port: http
+      path: /metrics
+      interval: 60s

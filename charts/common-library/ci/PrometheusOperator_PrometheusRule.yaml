@@ -1,0 +1,17 @@
+# Kind fixture for Prometheus Operator PrometheusRule.
+PrometheusRule:
+  ci-prometheusrules:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-prometheusrules
+    groups:
+    - name: ci.rules
+      rules:
+      - alert: CiAlwaysFiring
+        expr: vector(1) == 0
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: CI fixture alert (never fires)

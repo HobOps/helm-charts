@@ -1,0 +1,13 @@
+PrometheusAgent:
+  example:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: prometheus-agent
+    replicas: 1
+    serviceAccountName: prometheus-agent
+    serviceMonitorSelector:
+      matchLabels:
+        team: frontend
+    remoteWrite:
+    - url: https://remotewrite.example.com/api/v1/write

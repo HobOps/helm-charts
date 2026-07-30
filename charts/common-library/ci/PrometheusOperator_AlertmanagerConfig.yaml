@@ -1,0 +1,16 @@
+# Kind fixture for Prometheus Operator AlertmanagerConfig.
+AlertmanagerConfig:
+  ci-alertmanagerconfig:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-alertmanagerconfig
+      alertmanagerConfig: ci
+    route:
+      receiver: webhook
+      groupBy:
+      - alertname
+    receivers:
+    - name: webhook
+      webhookConfigs:
+      - url: http://example.com/hook

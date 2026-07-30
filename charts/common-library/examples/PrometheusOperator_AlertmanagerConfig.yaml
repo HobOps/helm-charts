@@ -1,0 +1,27 @@
+AlertmanagerConfig:
+  example:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      alertmanagerConfig: example
+    route:
+      groupBy:
+      - job
+      groupWait: 30s
+      groupInterval: 5m
+      repeatInterval: 12h
+      receiver: webhook
+    receivers:
+    - name: webhook
+      webhookConfigs:
+      - url: http://example.com/hook
+    inhibitRules:
+    - equal:
+      - namespace
+      - alertname
+      sourceMatch:
+      - name: severity
+        value: critical
+      targetMatch:
+      - name: severity
+        value: warning

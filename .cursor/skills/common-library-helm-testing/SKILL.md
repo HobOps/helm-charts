@@ -115,6 +115,7 @@ Do **not** run Kind tests against production kube contexts. Prefer `kind-common-
 | Argo CD CRDs | Application / AppProject / ApplicationSet | `install-argocd-crds.sh` |
 | External Secrets CRDs | ExternalSecret / SecretStore / PushSecret / … | `install-external-secrets-crds.sh` |
 | KEDA CRDs | ScaledObject / ScaledJob / TriggerAuthentication | `install-keda-crds.sh` |
+| Prometheus Operator CRDs | ServiceMonitor / PodMonitor / Probe / PrometheusRule / Prometheus / Alertmanager / ThanosRuler / PrometheusAgent / ScrapeConfig / AlertmanagerConfig | `install-prometheus-operator-crds.sh` |
 | Class stubs | `IngressClass/traefik`, `GatewayClass/traefik` | `install-stubs.sh` (no Traefik) |
 
 Orchestrator: `.github/prereq/install-all.sh`. Goal is API-server schema validation, not controller Ready.

@@ -1,0 +1,15 @@
+# Kind fixture for Prometheus Operator Probe.
+Probe:
+  ci-probe:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-probe
+    interval: 60s
+    module: http_2xx
+    prober:
+      url: blackbox-exporter.monitoring.svc:9115
+    targets:
+      staticConfig:
+        static:
+        - https://example.com
