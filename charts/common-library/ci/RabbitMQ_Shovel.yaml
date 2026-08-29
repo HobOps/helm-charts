@@ -1,0 +1,26 @@
+RabbitmqCluster:
+  ci-topology-rmq:
+    annotations:
+      hobops.io/ci: "true"
+    replicas: 1
+    persistence:
+      storage: "0"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+Shovel:
+  ci-shovel:
+    annotations:
+      hobops.io/ci: "true"
+    name: ci-shovel
+    uriSecret:
+      name: ci-shovel-secret
+    srcQueue: source-queue
+    destQueue: destination-queue
+    rabbitmqClusterReference:
+      name: ci-topology-rmq

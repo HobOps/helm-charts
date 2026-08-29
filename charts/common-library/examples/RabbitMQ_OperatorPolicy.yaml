@@ -1,0 +1,14 @@
+OperatorPolicy:
+  example-operator-policy:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    name: example-operator-policy
+    vhost: vhost
+    pattern: "^abc"
+    applyTo: queues
+    definition:
+      expires: 1800000
+    rabbitmqClusterReference:
+      name: example-rabbitmq

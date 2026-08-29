@@ -1,0 +1,27 @@
+RabbitmqCluster:
+  ci-topology-rmq:
+    annotations:
+      hobops.io/ci: "true"
+    replicas: 1
+    persistence:
+      storage: "0"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+TopicPermission:
+  ci-topic-permission:
+    annotations:
+      hobops.io/ci: "true"
+    vhost: vhost
+    user: guest
+    permissions:
+      exchange: amq.topic
+      write: ".*"
+      read: ".*"
+    rabbitmqClusterReference:
+      name: ci-topology-rmq

@@ -1,0 +1,14 @@
+Federation:
+  example-federation:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    name: origin
+    vhost: vhost
+    uriSecret:
+      name: federation-uri
+    ackMode: on-confirm
+    deletionPolicy: retain
+    rabbitmqClusterReference:
+      name: example-rabbitmq

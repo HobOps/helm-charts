@@ -1,0 +1,23 @@
+RabbitmqCluster:
+  ci-topology-rmq:
+    annotations:
+      hobops.io/ci: "true"
+    replicas: 1
+    persistence:
+      storage: "0"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+SuperStream:
+  ci-superstream:
+    annotations:
+      hobops.io/ci: "true"
+    name: ci-orders
+    partitions: 2
+    rabbitmqClusterReference:
+      name: ci-topology-rmq

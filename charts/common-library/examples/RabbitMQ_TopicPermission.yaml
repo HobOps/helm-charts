@@ -1,0 +1,14 @@
+TopicPermission:
+  example-topic-permission:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    vhost: vhost
+    user: example-user
+    permissions:
+      exchange: amq.topic
+      write: ".*"
+      read: ".*"
+    rabbitmqClusterReference:
+      name: example-rabbitmq

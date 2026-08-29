@@ -23,7 +23,8 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 8. Istio CRDs (includes VirtualService)
 9. Movetokube CRDs (Postgres, PostgresUser)
 10. Prometheus Operator CRDs (`monitoring.coreos.com`)
-11. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
+11. RabbitMQ Cluster + Messaging Topology Operator CRDs (`rabbitmq.com`)
+12. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
 
 ## Layout
 
@@ -39,6 +40,7 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 | `install-istio-crds.sh` | Istio CRDs |
 | `install-movetokube-crds.sh` | Movetokube Postgres CRDs |
 | `install-prometheus-operator-crds.sh` | Prometheus Operator CRDs |
+| `install-rabbitmq-operator-crds.sh` | RabbitMQ Cluster + Topology Operator CRDs |
 | `install-stubs.sh` | IngressClass + GatewayClass stubs |
 | `_lib.sh` | Shared bash helpers |
 
@@ -55,6 +57,8 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 - `ISTIO_VERSION` (default `1.30.2`)
 - `MOVETOKUBE_VERSION` (default `ext-postgres-operator-3.0.0`)
 - `PROMETHEUS_OPERATOR_VERSION` (default `v0.93.0`)
+- `RABBITMQ_CLUSTER_OPERATOR_VERSION` (default `v2.22.5`)
+- `RABBITMQ_TOPOLOGY_OPERATOR_VERSION` (default `v1.20.2`)
 - `INGRESS_CLASS_NAME` / `GATEWAY_CLASS_NAME` (default `traefik`)
 - `LOCAL_PATH_STORAGE_CLASS` (default `standard`; assert only)
 

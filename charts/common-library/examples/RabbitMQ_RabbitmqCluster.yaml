@@ -1,0 +1,43 @@
+RabbitmqCluster:
+  example-rabbitmq:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    replicas: 1
+    image: rabbitmq:3.13.7-management
+    persistence:
+      storageClassName: standard
+      storage: 10Gi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    secretBackend:
+      externalSecret:
+        name: rabbitmq-credentials
+    rabbitmq:
+      additionalConfig: |
+        default_vhost = vhost
+        default_permissions.configure = .*
+        default_permissions.read = .*
+        default_permissions.write = .*
+    service:
+      type: ClusterIP
+    override:
+      statefulSet:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: rabbitmq
+                  startupProbe:
+                    tcpSocket:
+                      port: amqp
+                    failureThreshold: 30
+                    initialDelaySeconds: 10
+                    periodSeconds: 10
+                    timeoutSeconds: 5

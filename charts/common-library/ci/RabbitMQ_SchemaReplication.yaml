@@ -1,0 +1,24 @@
+RabbitmqCluster:
+  ci-topology-rmq:
+    annotations:
+      hobops.io/ci: "true"
+    replicas: 1
+    persistence:
+      storage: "0"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+SchemaReplication:
+  ci-schema-replication:
+    annotations:
+      hobops.io/ci: "true"
+    endpoints: upstream-rabbitmq:5672
+    upstreamSecret:
+      name: ci-schema-replication-creds
+    rabbitmqClusterReference:
+      name: ci-topology-rmq

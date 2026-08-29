@@ -29,3 +29,17 @@ ThanosRuler: {}
 PrometheusAgent: {}
 ScrapeConfig: {}
 AlertmanagerConfig: {}
+RabbitmqCluster: {}
+Vhost: {}
+Exchange: {}
+Queue: {}
+Binding: {}
+User: {}
+Permission: {}
+TopicPermission: {}
+Policy: {}
+OperatorPolicy: {}
+Federation: {}
+Shovel: {}
+SchemaReplication: {}
+SuperStream: {}

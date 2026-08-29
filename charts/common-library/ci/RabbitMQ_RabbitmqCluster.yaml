@@ -1,0 +1,23 @@
+# Kind fixture: RabbitmqCluster (CRDs only; no controller).
+# persistence.storage=0 avoids PVC scheduling without a controller.
+RabbitmqCluster:
+  ci-rabbitmq:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-rabbitmq
+    replicas: 1
+    persistence:
+      storage: "0"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+    rabbitmq:
+      additionalConfig: |
+        default_vhost = vhost
+    service:
+      type: ClusterIP
