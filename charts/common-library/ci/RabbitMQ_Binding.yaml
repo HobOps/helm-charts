@@ -1,0 +1,56 @@
+RabbitmqCluster:
+  ci-topology-rmq:
+    annotations:
+      hobops.io/ci: "true"
+    replicas: 1
+    persistence:
+      storage: "0"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+Vhost:
+  ci-vhost:
+    annotations:
+      hobops.io/ci: "true"
+    name: vhost
+    rabbitmqClusterReference:
+      name: ci-topology-rmq
+
+Exchange:
+  ci-events-ex:
+    annotations:
+      hobops.io/ci: "true"
+    name: ci_events_exchange
+    vhost: vhost
+    type: direct
+    durable: true
+    rabbitmqClusterReference:
+      name: ci-topology-rmq
+
+Queue:
+  ci-events-q:
+    annotations:
+      hobops.io/ci: "true"
+    name: ci_events_queue
+    vhost: vhost
+    type: classic
+    durable: true
+    rabbitmqClusterReference:
+      name: ci-topology-rmq
+
+Binding:
+  ci-events-binding:
+    annotations:
+      hobops.io/ci: "true"
+    vhost: vhost
+    source: ci_events_exchange
+    destination: ci_events_queue
+    destinationType: queue
+    routingKey: ci_events_routing_key
+    rabbitmqClusterReference:
+      name: ci-topology-rmq

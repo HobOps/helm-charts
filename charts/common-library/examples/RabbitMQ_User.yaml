@@ -1,0 +1,10 @@
+User:
+  example-user:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    tags:
+      - management
+    rabbitmqClusterReference:
+      name: example-rabbitmq

@@ -1,0 +1,14 @@
+Shovel:
+  example-shovel:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    name: example-shovel
+    uriSecret:
+      name: shovel-secret
+    srcQueue: source-queue
+    destQueue: destination-queue
+    deletionPolicy: retain
+    rabbitmqClusterReference:
+      name: example-rabbitmq

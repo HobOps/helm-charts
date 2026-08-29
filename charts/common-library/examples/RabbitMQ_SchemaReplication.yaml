@@ -1,0 +1,11 @@
+SchemaReplication:
+  example-schema-replication:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    endpoints: upstream-rabbitmq:5672
+    upstreamSecret:
+      name: schema-replication-creds
+    rabbitmqClusterReference:
+      name: example-rabbitmq

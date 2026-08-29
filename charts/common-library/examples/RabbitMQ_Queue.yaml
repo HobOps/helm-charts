@@ -1,0 +1,17 @@
+Queue:
+  example-events-q:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    name: app_events_queue
+    vhost: vhost
+    type: classic
+    durable: true
+    autoDelete: false
+    arguments:
+      x-dead-letter-exchange: app_events_dead_letter_exchange
+      x-dead-letter-routing-key: app_events_dead_letter_routing_key
+      x-message-ttl: 1296000000
+    rabbitmqClusterReference:
+      name: example-rabbitmq

@@ -1,0 +1,15 @@
+Policy:
+  example-policy:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    name: example-policy
+    vhost: vhost
+    pattern: "^app."
+    applyTo: queues
+    priority: 1
+    definition:
+      expires: 1800000
+    rabbitmqClusterReference:
+      name: example-rabbitmq

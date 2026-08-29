@@ -95,3 +95,24 @@ GitHub Actions workflow: [`.github/workflows/common-library.yml`](../../.github/
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
+
+## Notes (v1.8+)
+
+### ExternalSecret `target.template`
+
+`target.template` is rendered with `toYaml` (no Helm `tpl`) so External Secrets
+Operator placeholders like `{{ .RABBITMQ_USER }}` are preserved. Other fields
+(`secretStoreRef`, `data`, `dataFrom`, `target.name`) still support Helm `tpl`.
+
+### RabbitMQ operators
+
+Values keys (`rabbitmq.com`):
+
+- Cluster: `RabbitmqCluster` (`v1beta1`)
+- Topology: `Vhost`, `Exchange`, `Queue`, `Binding`, `User`, `Permission`,
+  `TopicPermission`, `Policy`, `OperatorPolicy`, `Federation`, `Shovel`,
+  `SchemaReplication` (`v1beta1`), `SuperStream` (`v1alpha1`)
+
+Spec fields are passed through (same pattern as PrometheusRule). Controllers
+are not part of this chart — install Cluster + Messaging Topology operators
+separately.

@@ -1,0 +1,20 @@
+{{- define "library.RabbitMQ.Exchange" }}
+{{- $data := .Values.Exchange }}
+{{- $entry := index $data .name }}
+---
+apiVersion: {{ $entry.apiVersion | default "rabbitmq.com/v1beta1" }}
+kind: Exchange
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml (omit $entry "annotations" "labels" "apiVersion")) $ | nindent 2 }}
+{{- end }}

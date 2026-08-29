@@ -1,0 +1,10 @@
+SuperStream:
+  example-superstream:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    name: orders
+    partitions: 3
+    rabbitmqClusterReference:
+      name: example-rabbitmq

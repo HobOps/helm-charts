@@ -1,0 +1,13 @@
+Binding:
+  example-events-binding:
+    annotations:
+      hobops.io/example: "true"
+    labels:
+      app: example-rabbitmq
+    vhost: vhost
+    source: app_events_exchange
+    destination: app_events_queue
+    destinationType: queue
+    routingKey: app_events_routing_key
+    rabbitmqClusterReference:
+      name: example-rabbitmq

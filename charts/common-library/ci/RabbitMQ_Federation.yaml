@@ -1,0 +1,25 @@
+RabbitmqCluster:
+  ci-topology-rmq:
+    annotations:
+      hobops.io/ci: "true"
+    replicas: 1
+    persistence:
+      storage: "0"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+Federation:
+  ci-federation:
+    annotations:
+      hobops.io/ci: "true"
+    name: ci-origin
+    vhost: vhost
+    uriSecret:
+      name: ci-federation-uri
+    rabbitmqClusterReference:
+      name: ci-topology-rmq

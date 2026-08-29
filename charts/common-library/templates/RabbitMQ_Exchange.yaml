@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.Exchange }}
+  {{ include "library.RabbitMQ.Exchange" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}
