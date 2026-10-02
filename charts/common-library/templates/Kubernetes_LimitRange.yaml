@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.LimitRange }}
+  {{ include "library.Kubernetes.LimitRange" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

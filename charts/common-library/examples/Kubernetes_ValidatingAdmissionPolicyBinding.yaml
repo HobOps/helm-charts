@@ -1,0 +1,15 @@
+ValidatingAdmissionPolicyBinding:
+  tenant-lb-no-ip-pinning:
+    policyName: tenant-lb-no-ip-pinning
+    validationActions: ["Deny", "Audit"]
+    matchResources:
+      namespaceSelector:
+        matchLabels:
+          tenant: "true"
+  tenant-no-host-network:
+    policyName: tenant-no-host-network
+    validationActions: ["Deny"]
+    matchResources:
+      namespaceSelector:
+        matchLabels:
+          tenant: "true"

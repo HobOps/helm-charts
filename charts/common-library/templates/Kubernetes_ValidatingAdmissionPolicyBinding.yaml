@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.ValidatingAdmissionPolicyBinding }}
+  {{ include "library.Kubernetes.ValidatingAdmissionPolicyBinding" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

@@ -1,0 +1,30 @@
+ValidatingAdmissionPolicy:
+  tenant-lb-no-ip-pinning:
+    annotations:
+      annotation: tenant-lb-no-ip-pinning
+    failurePolicy: Fail
+    matchConstraints:
+      resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["services"]
+    validations:
+    - expression: >-
+        object.spec.type != 'LoadBalancer' ||
+        (!has(object.metadata.annotations) ||
+         !('lbipam.cilium.io/ips' in object.metadata.annotations)) &&
+        !has(object.spec.loadBalancerIP)
+      message: Tenants cannot pin LoadBalancer IPs; an IP is assigned from the namespace pool.
+      reason: Forbidden
+  tenant-no-host-network:
+    failurePolicy: Fail
+    matchConstraints:
+      resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+    validations:
+    - expression: "!has(object.spec.hostNetwork) || object.spec.hostNetwork == false"
+      message: hostNetwork is not allowed in tenant namespaces.

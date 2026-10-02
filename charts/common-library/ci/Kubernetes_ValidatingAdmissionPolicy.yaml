@@ -1,0 +1,22 @@
+# Kind fixture for ValidatingAdmissionPolicy (cluster-scoped). Defaults the API
+# server would add (failurePolicy, matchPolicy, selectors, rule scope) are set
+# explicitly so render and live objects match. Harmless: only bound to
+# namespaces labelled hobops.io/ci-tenant=true (see the Binding fixture).
+ValidatingAdmissionPolicy:
+  ci-vap:
+    labels:
+      hobops.io/ci: "true"
+    failurePolicy: Fail
+    matchConstraints:
+      matchPolicy: Equivalent
+      namespaceSelector: {}
+      objectSelector: {}
+      resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["services"]
+        scope: "*"
+    validations:
+    - expression: "object.spec.type != 'LoadBalancer' || !has(object.spec.loadBalancerIP)"
+      message: loadBalancerIP is not allowed

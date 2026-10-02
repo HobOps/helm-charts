@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-10-02
+
+### Added
+- Kubernetes templates:
+  - `ReferenceGrant` (`gateway.networking.k8s.io/v1`): cross-namespace references
+    for shared Gateways (certificates, backends in other namespaces)
+  - `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding`
+    (`admissionregistration.k8s.io/v1`, cluster-scoped): native CEL admission
+    rules without an extra controller
+  - `ResourceQuota` and `LimitRange` (`v1`): per-namespace limits, including
+    `services.loadbalancers`
+- Kind CI fixtures for the templates above (API-server defaults and canonical
+  quantities set explicitly so render and live objects match)
+
 ## [1.10.0] - 2026-10-02
 
 ### Added
