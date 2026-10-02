@@ -22,3 +22,25 @@ Service:
     - name: nginx2-service1
       port: 999
       protocol: TCP
+  test-service2:
+    labels:
+      lb-pool: public
+    annotations:
+      lbipam.cilium.io/ips: "38.58.138.130,2806:419:2:1180::10"
+    selectorLabels:
+      selectorLabels: test-service2
+    type: LoadBalancer
+    ipFamilyPolicy: RequireDualStack
+    ipFamilies:
+    - IPv4
+    - IPv6
+    externalTrafficPolicy: Local
+    loadBalancerClass: io.cilium/bgp-control-plane
+    allocateLoadBalancerNodePorts: false
+    loadBalancerSourceRanges:
+    - 0.0.0.0/0
+    - ::/0
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP

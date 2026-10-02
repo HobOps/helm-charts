@@ -1,144 +1,76 @@
 {{- define "library.Kubernetes.Service" }}
 {{- $data := .Values.Service }}
 
-{{- /* externalTrafficPolicy */ -}}
+{{- /* Per-service values are read into locals, never stored in .Values:
+       storing them there leaked fields from one service into the next one
+       rendered in the same release (e.g. loadBalancerIP, sessionAffinityConfig).
+       Workloads keep their layout: service fields under .service, and
+       serviceAnnotations / serviceLabels / selectorLabels at the top level. */ -}}
+{{- $svc := dict }}
+{{- $annotations := dict }}
+{{- $labels := dict }}
+{{- $selector := dict }}
 {{- if .Values.IsWorkload }}
-  {{- if (index .Values.Workload .name).service.externalTrafficPolicy }}
-    {{- $_ := set .Values "externalTrafficPolicy" (index .Values.Workload .name).service.externalTrafficPolicy }}
-  {{- end }}
+  {{- $workload := index .Values.Workload .name | default dict }}
+  {{- $svc = $workload.service | default dict }}
+  {{- $annotations = $workload.serviceAnnotations | default dict }}
+  {{- $labels = $workload.serviceLabels | default dict }}
+  {{- $selector = $workload.selectorLabels | default dict }}
 {{- else }}
-  {{- if (index $data .name).externalTrafficPolicy }}
-    {{- $_ := set .Values "externalTrafficPolicy" (index $data .name).externalTrafficPolicy }}
-  {{- end }}
+  {{- $svc = index $data .name | default dict }}
+  {{- $annotations = $svc.annotations | default dict }}
+  {{- $labels = $svc.labels | default dict }}
+  {{- $selector = $svc.selectorLabels | default dict }}
 {{- end }}
-
-{{- /* ports */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).service.ports }}
-    {{- $_ := set .Values "ports" (index .Values.Workload .name).service.ports }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).ports }}
-    {{- $_ := set .Values "ports" (index $data .name).ports }}
-{{- end }}
-{{- end }}
-
-{{- /* type */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).service.type }}
-    {{- $_ := set .Values "type" (index .Values.Workload .name).service.type }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).type }}
-    {{- $_ := set .Values "type" (index $data .name).type }}
-{{- end }}
-{{- end }}
-
-{{- /* externalName */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).service.externalName }}
-    {{- $_ := set .Values "externalName" (index .Values.Workload .name).service.externalName }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).externalName }}
-    {{- $_ := set .Values "externalName" (index $data .name).externalName }}
-{{- end }}
-{{- end }}
-
-{{- /* annotations */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).serviceAnnotations }}
-    {{- $_ := set .Values "annotations" (index .Values.Workload .name).serviceAnnotations }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).annotations }}
-    {{- $_ := set .Values "annotations" (index $data .name).annotations }}
-{{- end }}
-{{- end }}
-
-{{- /* labels */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).serviceLabels }}
-    {{- $_ := set .Values "labels" (index .Values.Workload .name).serviceLabels }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).labels }}
-    {{- $_ := set .Values "labels" (index $data .name).labels }}
-{{- end }}
-{{- end }}
-
-{{- /* selector */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).selectorLabels }}
-    {{- $_ := set .Values "selector" (index .Values.Workload .name).selectorLabels }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).selectorLabels }}
-    {{- $_ := set .Values "selector" (index $data .name).selectorLabels }}
-{{- end }}
-{{- end }}
-
-{{- /* sessionAffinity */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).service.sessionAffinity }}
-    {{- $_ := set .Values "sessionAffinity" (index .Values.Workload .name).service.sessionAffinity }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).sessionAffinity }}
-    {{- $_ := set .Values "sessionAffinity" (index $data .name).sessionAffinity }}
-{{- end }}
-{{- end }}
-
-{{- /* sessionAffinityConfig */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).service.sessionAffinityConfig }}
-    {{- $_ := set .Values "sessionAffinityConfig" (index .Values.Workload .name).service.sessionAffinityConfig }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).sessionAffinityConfig }}
-    {{- $_ := set .Values "sessionAffinityConfig" (index $data .name).sessionAffinityConfig }}
-{{- end }}
-{{- end }}
-
-{{- /* loadBalancerIP */ -}}
-{{- if .Values.IsWorkload }}
-{{- if (index .Values.Workload .name).service.loadBalancerIP }}
-    {{- $_ := set .Values "loadBalancerIP" (index .Values.Workload .name).service.loadBalancerIP }}
-{{- end }}
-{{- else }}
-{{- if (index $data .name).loadBalancerIP }}
-    {{- $_ := set .Values "loadBalancerIP" (index $data .name).loadBalancerIP }}
-{{- end }}
-{{- end }}
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with .Values.annotations }}
+  {{- with $annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
+  {{- with $labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
 spec:
-  type: {{ .Values.type | default "ClusterIP" }}
-  {{- if eq .Values.type "ExternalName" }}
-  externalName: {{ .Values.externalName }}
+  type: {{ $svc.type | default "ClusterIP" }}
+  {{- if eq ($svc.type | default "") "ExternalName" }}
+  externalName: {{ $svc.externalName }}
   {{- end }}
-  {{- if .Values.externalTrafficPolicy }}
-  externalTrafficPolicy: {{ .Values.externalTrafficPolicy | default "Cluster" }}
+  {{- with $svc.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ . }}
   {{- end }}
-  {{- if .Values.loadBalancerIP }}
-  loadBalancerIP: {{ .Values.loadBalancerIP }}
+  {{- with $svc.ipFamilies }}
+  ipFamilies:
+    {{- toYaml . | nindent 4 }}
   {{- end }}
-  sessionAffinity: {{ .Values.sessionAffinity | default "None" }}
-  {{- with .Values.sessionAffinityConfig }}
+  {{- with $svc.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ . }}
+  {{- end }}
+  {{- with $svc.loadBalancerClass }}
+  loadBalancerClass: {{ . }}
+  {{- end }}
+  {{- if hasKey $svc "allocateLoadBalancerNodePorts" }}
+  allocateLoadBalancerNodePorts: {{ $svc.allocateLoadBalancerNodePorts }}
+  {{- end }}
+  {{- with $svc.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  {{- with $svc.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  sessionAffinity: {{ $svc.sessionAffinity | default "None" }}
+  {{- with $svc.sessionAffinityConfig }}
   sessionAffinityConfig:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
   ports:
-  {{- range .Values.ports }}
+  {{- range $svc.ports }}
   - name: {{ .name }}
     {{- if .nodePort }}
     nodePort: {{ .nodePort }}
@@ -147,7 +79,7 @@ spec:
     protocol: {{ .protocol }}
     targetPort: {{ .targetPort | default .port }}
   {{- end }}
-  {{- with .Values.selector }}
+  {{- with $selector }}
   selector:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}

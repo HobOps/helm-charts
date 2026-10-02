@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-10-02
+
+Rendered output changes for existing releases: Service `labels` and
+`loadBalancerSourceRanges` are now emitted, and fields no longer leak between
+Services. No values keys were renamed or removed.
+
+### Added
+- Service: `ipFamilyPolicy`, `ipFamilies`, `loadBalancerClass` and
+  `allocateLoadBalancerNodePorts`, for dual-stack Services and LoadBalancer
+  implementations such as Cilium LB IPAM / BGP.
+- NetworkPolicy: `labels`.
+
+### Fixed
+- Service: per-service values are now read into template locals instead of being
+  stored in `.Values`, so fields no longer leak from one Service into the next one
+  in the same release (e.g. `loadBalancerIP`, `sessionAffinityConfig`, `type`,
+  annotations). Applies to standalone Services and to Workload services.
+- Service: `labels` (and Workload `serviceLabels`) were computed but never
+  rendered; they are now emitted under `metadata.labels`.
+- Service: `loadBalancerSourceRanges` is now rendered (it was accepted in values
+  but ignored).
+- NetworkPolicy: `egress` rules are now rendered (only `ingress` was supported).
+- NetworkPolicy: an empty or missing `podSelector` is rendered as `podSelector: {}`
+  (selects every pod; required for default-deny policies) instead of being omitted.
+
 ## [1.8.0] - 2026-08-29
 
 ### Added
