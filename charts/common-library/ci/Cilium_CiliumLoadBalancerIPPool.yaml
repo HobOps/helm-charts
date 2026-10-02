@@ -1,0 +1,14 @@
+# Kind fixture for Cilium CiliumLoadBalancerIPPool (disabled set explicitly:
+# it has a schema default).
+CiliumLoadBalancerIPPool:
+  ci-lb-pool:
+    labels:
+      hobops.io/ci: "true"
+    disabled: false
+    blocks:
+    - cidr: 192.0.2.0/28
+    - start: 198.51.100.10
+      stop: 198.51.100.19
+    serviceSelector:
+      matchLabels:
+        hobops.io/ci: "true"

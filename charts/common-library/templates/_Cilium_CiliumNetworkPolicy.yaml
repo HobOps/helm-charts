@@ -1,0 +1,33 @@
+{{- /*
+  Cilium CiliumNetworkPolicy (Namespaced).
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+  Use `specs` (a list of rules) instead of the flat rule keys for several rules
+  in one object; both can be combined.
+*/ -}}
+{{- define "library.Cilium.CiliumNetworkPolicy" }}
+{{- $data := .Values.CiliumNetworkPolicy }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "cilium.io/v2" }}
+kind: CiliumNetworkPolicy
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- $spec := omit $entry "annotations" "labels" "apiVersion" "specs" }}
+{{- with $entry.specs }}
+specs:
+  {{- tpl (toYaml .) $ | nindent 2 }}
+{{- end }}
+{{- if or $spec (not $entry.specs) }}
+spec:
+  {{- tpl (toYaml $spec) $ | nindent 2 }}
+{{- end }}
+{{- end }}

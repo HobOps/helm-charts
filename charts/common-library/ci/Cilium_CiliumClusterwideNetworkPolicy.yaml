@@ -1,0 +1,13 @@
+# Kind fixture for Cilium CiliumClusterwideNetworkPolicy (cluster-scoped).
+CiliumClusterwideNetworkPolicy:
+  ci-ccnp:
+    labels:
+      hobops.io/ci: "true"
+    description: ci tenants default deny
+    endpointSelector:
+      matchLabels:
+        tenant: ci
+    ingress:
+    - fromEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system

@@ -1,0 +1,18 @@
+# Kind fixture for Cilium CiliumEgressGatewayPolicy (egressGateways set
+# explicitly: it has a schema default).
+CiliumEgressGatewayPolicy:
+  ci-egress-gateway:
+    labels:
+      hobops.io/ci: "true"
+    selectors:
+    - podSelector:
+        matchLabels:
+          app: ci-egress
+    destinationCIDRs:
+    - 0.0.0.0/0
+    egressGateway:
+      nodeSelector:
+        matchLabels:
+          egress-gateway: "true"
+      egressIP: 192.0.2.50
+    egressGateways: []

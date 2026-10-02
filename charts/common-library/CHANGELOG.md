@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-10-02
+
+### Added
+- Cilium templates (`cilium.io/v2` by default, overridable per object with `apiVersion`):
+  - `CiliumBGPClusterConfig`, `CiliumBGPPeerConfig`, `CiliumBGPAdvertisement`
+    (BGP control plane v2)
+  - `CiliumLoadBalancerIPPool` (LB IPAM)
+  - `CiliumNetworkPolicy` (namespaced) and `CiliumClusterwideNetworkPolicy`,
+    both accepting the flat rule keys and/or `specs` (list of rules)
+  - `CiliumEgressGatewayPolicy`
+  - Cluster-scoped kinds are rendered without `metadata.namespace`
+- Kind CI: `.github/prereq/install-cilium-crds.sh` installs only the CRDs above
+  from the pinned Cilium tag (`CILIUM_VERSION`, default `v1.20.2`), plus fixtures
+  under `ci/` (schema defaults set explicitly so render and live objects match)
+
 ## [1.9.0] - 2026-10-02
 
 Rendered output changes for existing releases: Service `labels` and

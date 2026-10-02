@@ -1,0 +1,17 @@
+# Kind fixture for Cilium CiliumBGPClusterConfig (CRD only, no Cilium agent).
+CiliumBGPClusterConfig:
+  ci-bgp-cluster:
+    labels:
+      hobops.io/ci: "true"
+    nodeSelector:
+      matchLabels:
+        bgp: enabled
+    bgpInstances:
+    - name: ci
+      localASN: 64610
+      peers:
+      - name: router-v4
+        peerASN: 64512
+        peerAddress: 192.0.2.1
+        peerConfigRef:
+          name: ci-bgp-peer

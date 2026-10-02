@@ -1,0 +1,55 @@
+CiliumNetworkPolicy:
+  web-allow-dns-and-api:
+    annotations:
+      annotation: web-allow-dns-and-api
+    description: Web pods may resolve DNS and call api.example.com over HTTPS
+    endpointSelector:
+      matchLabels:
+        app: web
+    egress:
+    - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+          k8s-app: kube-dns
+      toPorts:
+      - ports:
+        - port: "53"
+          protocol: ANY
+        rules:
+          dns:
+          - matchPattern: "*"
+    - toFQDNs:
+      - matchName: api.example.com
+      toPorts:
+      - ports:
+        - port: "443"
+          protocol: TCP
+  multi-rule:
+    specs:
+    - description: Allow HTTP GET /health from the ingress gateway
+      endpointSelector:
+        matchLabels:
+          app: web
+      ingress:
+      - fromEndpoints:
+        - matchLabels:
+            app: gateway
+        toPorts:
+        - ports:
+          - port: "8080"
+            protocol: TCP
+          rules:
+            http:
+            - method: GET
+              path: /health
+    - description: Allow ICMPv6 echo from anywhere
+      endpointSelector:
+        matchLabels:
+          app: web
+      ingress:
+      - fromEntities:
+        - world
+        icmps:
+        - fields:
+          - type: 128
+            family: IPv6
