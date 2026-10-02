@@ -16,3 +16,28 @@ NetworkPolicy:
           matchLabels:
             type: changeme-label
 
+  test-networkpolicy-default-deny:
+    labels:
+      policy: default-deny
+    policyTypes:
+    - Ingress
+    - Egress
+  test-networkpolicy-egress-dns:
+    podSelector:
+      matchLabels:
+        changeme-match-label: "true"
+    policyTypes:
+    - Egress
+    egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+      ports:
+      - protocol: UDP
+        port: 53
+      - protocol: TCP
+        port: 53

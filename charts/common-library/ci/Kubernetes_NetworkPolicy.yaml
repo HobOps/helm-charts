@@ -16,3 +16,21 @@ NetworkPolicy:
       ports:
       - protocol: TCP
         port: 80
+  ci-networkpolicy-default-deny:
+    policyTypes:
+    - Ingress
+    - Egress
+  ci-networkpolicy-egress-dns:
+    podSelector:
+      matchLabels:
+        app: ci-networkpolicy
+    policyTypes:
+    - Egress
+    egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+      ports:
+      - protocol: UDP
+        port: 53

@@ -1,26 +1,39 @@
 {{- define "library.Kubernetes.NetworkPolicy" }}
 {{- $data := .Values.NetworkPolicy }}
+{{- $np := index $data .name | default dict }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: {{ .name }}
   namespace: {{ .Release.Namespace }}
-  {{- with (index $data .name).annotations }}
+  {{- with $np.annotations }}
   annotations:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-spec:
-  {{- with (index $data .name).podSelector }}
-  podSelector:
+  {{- with $np.labels }}
+  labels:
     {{- tpl (toYaml .) $ | nindent 4 }}
   {{- end }}
-  {{- with (index $data .name).policyTypes }}
+spec:
+  {{- /* podSelector is required by the API; an empty one selects every pod
+         in the namespace (default-deny policies), so render it as {}. */}}
+  {{- if $np.podSelector }}
+  podSelector:
+    {{- tpl (toYaml $np.podSelector) $ | nindent 4 }}
+  {{- else }}
+  podSelector: {}
+  {{- end }}
+  {{- with $np.policyTypes }}
   policyTypes:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
-  {{- with (index $data .name).ingress }}
+  {{- with $np.ingress }}
   ingress:
+    {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
+  {{- with $np.egress }}
+  egress:
     {{- tpl (toYaml .) $ | nindent 2 }}
   {{- end }}
 {{- end }}
