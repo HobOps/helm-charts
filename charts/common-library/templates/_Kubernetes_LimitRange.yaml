@@ -1,0 +1,24 @@
+{{- /*
+  Kubernetes LimitRange (Namespaced).
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+*/ -}}
+{{- define "library.Kubernetes.LimitRange" }}
+{{- $data := .Values.LimitRange }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "v1" }}
+kind: LimitRange
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml (omit $entry "annotations" "labels" "apiVersion")) $ | nindent 2 }}
+{{- end }}

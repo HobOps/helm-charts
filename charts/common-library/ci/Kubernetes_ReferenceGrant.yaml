@@ -1,0 +1,13 @@
+# Kind fixture for Gateway API ReferenceGrant (v1).
+ReferenceGrant:
+  ci-referencegrant:
+    labels:
+      hobops.io/ci: "true"
+    from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: ci-other
+    to:
+    - group: ""
+      kind: Service
+      name: ci-backend

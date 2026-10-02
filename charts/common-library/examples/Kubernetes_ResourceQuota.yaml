@@ -1,0 +1,19 @@
+ResourceQuota:
+  tenant-quota:
+    labels:
+      quota: tenant
+    hard:
+      requests.cpu: "4"
+      requests.memory: 8Gi
+      limits.cpu: "8"
+      limits.memory: 16Gi
+      pods: "50"
+      services.loadbalancers: "2"
+      services.nodeports: "0"
+      persistentvolumeclaims: "10"
+      requests.storage: 200Gi
+  tenant-quota-best-effort:
+    hard:
+      pods: "5"
+    scopes:
+    - BestEffort

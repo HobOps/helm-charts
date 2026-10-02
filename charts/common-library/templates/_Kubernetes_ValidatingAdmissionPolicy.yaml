@@ -1,0 +1,23 @@
+{{- /*
+  Kubernetes ValidatingAdmissionPolicy (Cluster-scoped (no metadata.namespace)).
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+*/ -}}
+{{- define "library.Kubernetes.ValidatingAdmissionPolicy" }}
+{{- $data := .Values.ValidatingAdmissionPolicy }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "admissionregistration.k8s.io/v1" }}
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: {{ .name }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml (omit $entry "annotations" "labels" "apiVersion")) $ | nindent 2 }}
+{{- end }}

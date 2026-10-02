@@ -1,0 +1,14 @@
+# Kind fixture for ValidatingAdmissionPolicyBinding (cluster-scoped). It may
+# reference a policy that does not exist; the API server accepts it.
+ValidatingAdmissionPolicyBinding:
+  ci-vap-binding:
+    labels:
+      hobops.io/ci: "true"
+    policyName: ci-vap
+    validationActions: ["Deny"]
+    matchResources:
+      matchPolicy: Equivalent
+      namespaceSelector:
+        matchLabels:
+          hobops.io/ci-tenant: "true"
+      objectSelector: {}

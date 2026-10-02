@@ -1,0 +1,21 @@
+# Lives in the namespace that owns the target objects (the release namespace).
+ReferenceGrant:
+  allow-shared-gateway-certs:
+    labels:
+      referencegrant: shared-gateway
+    from:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      namespace: gateway-system
+    to:
+    - group: ""
+      kind: Secret
+      name: tenant-a-tls
+  allow-routes-to-backends:
+    from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: tenant-a-frontend
+    to:
+    - group: ""
+      kind: Service

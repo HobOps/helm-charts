@@ -1,0 +1,11 @@
+# Kind fixture for ResourceQuota (canonical quantities so the API server does
+# not rewrite them).
+ResourceQuota:
+  ci-resourcequota:
+    labels:
+      hobops.io/ci: "true"
+    hard:
+      pods: "20"
+      requests.cpu: "2"
+      requests.memory: 2Gi
+      services.loadbalancers: "1"
