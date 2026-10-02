@@ -1,0 +1,23 @@
+CiliumBGPClusterConfig:
+  gw1:
+    annotations:
+      annotation: gw1
+    labels:
+      bgp: gw1
+    nodeSelector:
+      matchLabels:
+        bgp: enabled
+    bgpInstances:
+    - name: c2
+      localASN: 64610
+      peers:
+      - name: gw1-v4
+        peerASN: 272373
+        peerAddress: 10.130.253.1
+        peerConfigRef:
+          name: gw1
+      - name: gw1-v6
+        peerASN: 272373
+        peerAddress: "2806:419:2:1160::1"
+        peerConfigRef:
+          name: gw1

@@ -1,0 +1,42 @@
+# Kind fixture for Cilium CiliumNetworkPolicy (namespaced): one flat rule and
+# one object using specs.
+CiliumNetworkPolicy:
+  ci-cnp:
+    annotations:
+      hobops.io/ci: "true"
+    endpointSelector:
+      matchLabels:
+        app: ci-cnp
+    ingress:
+    - fromEndpoints:
+      - matchLabels:
+          app: ci-cnp-client
+      toPorts:
+      - ports:
+        - port: "80"
+          protocol: TCP
+  ci-cnp-specs:
+    specs:
+    - description: allow dns egress
+      endpointSelector:
+        matchLabels:
+          app: ci-cnp
+      egress:
+      - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+        toPorts:
+        - ports:
+          - port: "53"
+            protocol: UDP
+    - description: allow icmp echo
+      endpointSelector:
+        matchLabels:
+          app: ci-cnp
+      ingress:
+      - fromEntities:
+        - cluster
+        icmps:
+        - fields:
+          - type: 8
+            family: IPv4

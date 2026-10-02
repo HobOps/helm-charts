@@ -43,3 +43,10 @@ Federation: {}
 Shovel: {}
 SchemaReplication: {}
 SuperStream: {}
+CiliumBGPClusterConfig: {}
+CiliumBGPPeerConfig: {}
+CiliumBGPAdvertisement: {}
+CiliumLoadBalancerIPPool: {}
+CiliumEgressGatewayPolicy: {}
+CiliumNetworkPolicy: {}
+CiliumClusterwideNetworkPolicy: {}

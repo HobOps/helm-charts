@@ -1,0 +1,14 @@
+# Kind fixture for Cilium CiliumBGPAdvertisement.
+CiliumBGPAdvertisement:
+  ci-bgp-advertisement:
+    labels:
+      advertise: ci
+    advertisements:
+    - advertisementType: PodCIDR
+    - advertisementType: Service
+      service:
+        addresses:
+        - LoadBalancerIP
+      selector:
+        matchLabels:
+          hobops.io/ci: "true"

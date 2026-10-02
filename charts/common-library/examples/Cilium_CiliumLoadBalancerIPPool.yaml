@@ -1,0 +1,17 @@
+CiliumLoadBalancerIPPool:
+  public:
+    labels:
+      pool: public
+    blocks:
+    - cidr: 38.58.138.128/25
+    - cidr: "2806:419:2:1180::/64"
+    serviceSelector:
+      matchLabels:
+        lb-pool: public
+  tenant-a:
+    blocks:
+    - start: 38.58.138.200
+      stop: 38.58.138.209
+    serviceSelector:
+      matchLabels:
+        io.kubernetes.service.namespace: tenant-a

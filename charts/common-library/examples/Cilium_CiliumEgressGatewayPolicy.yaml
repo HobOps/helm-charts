@@ -1,0 +1,16 @@
+CiliumEgressGatewayPolicy:
+  smtp-relay:
+    selectors:
+    - podSelector:
+        matchLabels:
+          app: smtp-relay
+          io.kubernetes.pod.namespace: mail
+    destinationCIDRs:
+    - 0.0.0.0/0
+    excludedCIDRs:
+    - 10.0.0.0/8
+    egressGateway:
+      nodeSelector:
+        matchLabels:
+          egress-gateway: "true"
+      egressIP: 38.58.138.250

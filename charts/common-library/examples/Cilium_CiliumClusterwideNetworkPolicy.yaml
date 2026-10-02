@@ -1,0 +1,28 @@
+CiliumClusterwideNetworkPolicy:
+  tenants-default-deny:
+    description: Tenant namespaces only accept traffic from their own namespace and the gateway
+    endpointSelector:
+      matchLabels:
+        io.cilium.k8s.namespace.labels.tenant: "true"
+    ingress:
+    - fromEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: gateway-system
+  host-firewall:
+    description: Nodes accept only SSH from the management network and BGP from gw1
+    nodeSelector:
+      matchLabels:
+        node-role.kubernetes.io/control-plane: "true"
+    ingress:
+    - fromCIDR:
+      - 10.130.248.0/21
+      toPorts:
+      - ports:
+        - port: "22"
+          protocol: TCP
+    - fromCIDR:
+      - 10.130.253.1/32
+      toPorts:
+      - ports:
+        - port: "179"
+          protocol: TCP

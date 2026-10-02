@@ -1,0 +1,16 @@
+CiliumBGPAdvertisement:
+  c2:
+    labels:
+      advertise: c2
+    advertisements:
+    - advertisementType: PodCIDR
+    - advertisementType: Service
+      service:
+        addresses:
+        - LoadBalancerIP
+      selector:
+        matchExpressions:
+        - key: expose
+          operator: NotIn
+          values:
+          - never

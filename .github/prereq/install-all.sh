@@ -16,7 +16,8 @@
 #   9. Movetokube CRDs
 #  10. Prometheus Operator CRDs
 #  11. RabbitMQ Cluster + Messaging Topology Operator CRDs
-#  12. IngressClass + GatewayClass stubs (no Traefik)
+#  12. Cilium CRDs (BGP, LB IPAM, network and egress gateway policies)
+#  13. IngressClass + GatewayClass stubs (no Traefik)
 #
 # Usage:
 #   ./.github/prereq/install-all.sh
@@ -57,6 +58,7 @@ assert_kind_storage
 "${PREREQ_DIR}/install-movetokube-crds.sh"
 "${PREREQ_DIR}/install-prometheus-operator-crds.sh"
 "${PREREQ_DIR}/install-rabbitmq-operator-crds.sh"
+"${PREREQ_DIR}/install-cilium-crds.sh"
 "${PREREQ_DIR}/install-stubs.sh"
 
 if ! kubectl get ingressclass traefik >/dev/null 2>&1; then
@@ -97,6 +99,9 @@ if ! kubectl get crd rabbitmqclusters.rabbitmq.com >/dev/null 2>&1; then
 fi
 if ! kubectl get crd bindings.rabbitmq.com >/dev/null 2>&1; then
   die "RabbitMQ Messaging Topology Operator CRDs are not available"
+fi
+if ! kubectl get crd ciliumbgpclusterconfigs.cilium.io >/dev/null 2>&1; then
+  die "Cilium CRDs are not available"
 fi
 
 log "All Kind prereqs installed"
