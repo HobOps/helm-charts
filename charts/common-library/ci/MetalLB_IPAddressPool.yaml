@@ -1,0 +1,20 @@
+# Kind fixture for MetalLB IPAddressPool (namespaced). Schema defaults
+# (autoAssign, avoidBuggyIPs) are set explicitly so render and live objects match.
+IPAddressPool:
+  ci-pool:
+    annotations:
+      hobops.io/ci: "true"
+    addresses:
+    - 192.0.2.0/28
+    - "2001:db8::/64"
+    autoAssign: true
+    avoidBuggyIPs: false
+  ci-pool-manual:
+    addresses:
+    - 192.0.2.32-192.0.2.40
+    autoAssign: false
+    avoidBuggyIPs: true
+    serviceAllocation:
+      priority: 50
+      namespaces:
+      - common-library-ci

@@ -1,0 +1,17 @@
+IPAddressPool:
+  public:
+    labels:
+      pool: public
+    addresses:
+    - 38.58.138.240/28
+    - "2806:419:2:2080::/64"
+    autoAssign: true
+    avoidBuggyIPs: true
+  tenant-a:
+    addresses:
+    - 38.58.138.200-38.58.138.209
+    autoAssign: false
+    serviceAllocation:
+      priority: 50
+      namespaces:
+      - tenant-a

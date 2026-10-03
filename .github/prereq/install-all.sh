@@ -17,7 +17,8 @@
 #  10. Prometheus Operator CRDs
 #  11. RabbitMQ Cluster + Messaging Topology Operator CRDs
 #  12. Cilium CRDs (BGP, LB IPAM, network and egress gateway policies)
-#  13. IngressClass + GatewayClass stubs (no Traefik)
+#  13. MetalLB CRDs (pools, BGP peers/advertisements, BFD, L2, communities)
+#  14. IngressClass + GatewayClass stubs (no Traefik)
 #
 # Usage:
 #   ./.github/prereq/install-all.sh
@@ -59,6 +60,7 @@ assert_kind_storage
 "${PREREQ_DIR}/install-prometheus-operator-crds.sh"
 "${PREREQ_DIR}/install-rabbitmq-operator-crds.sh"
 "${PREREQ_DIR}/install-cilium-crds.sh"
+"${PREREQ_DIR}/install-metallb-crds.sh"
 "${PREREQ_DIR}/install-stubs.sh"
 
 if ! kubectl get ingressclass traefik >/dev/null 2>&1; then
@@ -102,6 +104,9 @@ if ! kubectl get crd bindings.rabbitmq.com >/dev/null 2>&1; then
 fi
 if ! kubectl get crd ciliumbgpclusterconfigs.cilium.io >/dev/null 2>&1; then
   die "Cilium CRDs are not available"
+fi
+if ! kubectl get crd ipaddresspools.metallb.io >/dev/null 2>&1; then
+  die "MetalLB CRDs are not available"
 fi
 
 log "All Kind prereqs installed"

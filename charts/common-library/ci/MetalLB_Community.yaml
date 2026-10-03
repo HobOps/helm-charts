@@ -1,0 +1,8 @@
+# Kind fixture for MetalLB Community (namespaced).
+Community:
+  ci-communities:
+    communities:
+    - name: no-export
+      value: "65535:65282"
+    - name: large-blackhole
+      value: "large:272373:666:0"

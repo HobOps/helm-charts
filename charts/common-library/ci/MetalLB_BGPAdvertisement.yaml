@@ -1,0 +1,13 @@
+# Kind fixture for MetalLB BGPAdvertisement (namespaced). Schema defaults
+# (aggregationLength, aggregationLengthV6) are set explicitly.
+BGPAdvertisement:
+  ci-adv:
+    ipAddressPools:
+    - ci-pool
+    aggregationLength: 32
+    aggregationLengthV6: 128
+    communities:
+    - "65535:65282"
+    localPref: 100
+    peers:
+    - ci-peer-v4

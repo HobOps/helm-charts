@@ -1,0 +1,30 @@
+{{- /*
+  MetalLB Community (Namespaced): named BGP communities for BGPAdvertisements.
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+  Create it in the namespace where MetalLB runs (usually metallb-system).
+*/ -}}
+{{- define "library.MetalLB.Community" }}
+{{- $data := .Values.Community }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "metallb.io/v1beta1" }}
+kind: Community
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- $spec := omit $entry "annotations" "labels" "apiVersion" }}
+{{- if $spec }}
+spec:
+  {{- tpl (toYaml $spec) $ | nindent 2 }}
+{{- else }}
+spec: {{ "{}" }}
+{{- end }}
+{{- end }}

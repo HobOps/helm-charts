@@ -1,0 +1,30 @@
+{{- /*
+  MetalLB BGPAdvertisement (Namespaced): how pool addresses are announced over BGP.
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+  Create it in the namespace where MetalLB runs (usually metallb-system).
+*/ -}}
+{{- define "library.MetalLB.BGPAdvertisement" }}
+{{- $data := .Values.BGPAdvertisement }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "metallb.io/v1beta1" }}
+kind: BGPAdvertisement
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+{{- $spec := omit $entry "annotations" "labels" "apiVersion" }}
+{{- if $spec }}
+spec:
+  {{- tpl (toYaml $spec) $ | nindent 2 }}
+{{- else }}
+spec: {{ "{}" }}
+{{- end }}
+{{- end }}
