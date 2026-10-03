@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-10-02
+
+### Added
+- MetalLB templates (namespaced; create them in MetalLB's namespace). Every key
+  other than `annotations` / `labels` / `apiVersion` is rendered as the spec:
+  - `IPAddressPool`, `BGPAdvertisement`, `BFDProfile`, `L2Advertisement` and
+    `Community` (`metallb.io/v1beta1`)
+  - `BGPPeer` (`metallb.io/v1beta2`, the storage version)
+  - An entry with no keys renders `spec: {}` (e.g. an L2Advertisement for all pools)
+- Kind CI: `.github/prereq/install-metallb-crds.sh` installs only the CRDs above
+  from the pinned MetalLB tag (`METALLB_VERSION`, default `v0.16.1`), plus
+  fixtures under `ci/` (schema defaults set explicitly so render and live
+  objects match)
+
 ## [1.11.0] - 2026-10-02
 
 ### Added

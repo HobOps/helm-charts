@@ -1,0 +1,12 @@
+BGPAdvertisement:
+  public:
+    ipAddressPools:
+    - public
+    aggregationLength: 32
+    aggregationLengthV6: 128
+    communities:
+    - no-export
+    localPref: 100
+    peers:
+    - upstream-v4
+    - upstream-v6

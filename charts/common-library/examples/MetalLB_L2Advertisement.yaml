@@ -1,0 +1,7 @@
+L2Advertisement:
+  lan:
+    ipAddressPools:
+    - lan
+    interfaces:
+    - eth0
+  all-pools: {}

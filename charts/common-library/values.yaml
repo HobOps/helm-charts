@@ -55,3 +55,9 @@ ValidatingAdmissionPolicy: {}
 ValidatingAdmissionPolicyBinding: {}
 ResourceQuota: {}
 LimitRange: {}
+IPAddressPool: {}
+BGPPeer: {}
+BGPAdvertisement: {}
+BFDProfile: {}
+L2Advertisement: {}
+Community: {}

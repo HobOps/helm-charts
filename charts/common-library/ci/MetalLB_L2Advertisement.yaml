@@ -1,0 +1,8 @@
+# Kind fixture for MetalLB L2Advertisement (namespaced), with and without spec.
+L2Advertisement:
+  ci-l2:
+    ipAddressPools:
+    - ci-pool
+    interfaces:
+    - eth0
+  ci-l2-all: {}

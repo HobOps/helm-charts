@@ -25,7 +25,8 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 10. Prometheus Operator CRDs (`monitoring.coreos.com`)
 11. RabbitMQ Cluster + Messaging Topology Operator CRDs (`rabbitmq.com`)
 12. Cilium CRDs (`cilium.io/v2`: BGP, LB IPAM, network and egress gateway policies)
-13. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
+13. MetalLB CRDs (`metallb.io`: address pools, BGP peers/advertisements, BFD profiles, L2 advertisements, communities)
+14. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
 
 ## Layout
 
@@ -43,6 +44,7 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 | `install-prometheus-operator-crds.sh` | Prometheus Operator CRDs |
 | `install-rabbitmq-operator-crds.sh` | RabbitMQ Cluster + Topology Operator CRDs |
 | `install-cilium-crds.sh` | Cilium CRDs used by the chart (no agent) |
+| `install-metallb-crds.sh` | MetalLB CRDs used by the chart (no controller/speaker) |
 | `install-stubs.sh` | IngressClass + GatewayClass stubs |
 | `_lib.sh` | Shared bash helpers |
 

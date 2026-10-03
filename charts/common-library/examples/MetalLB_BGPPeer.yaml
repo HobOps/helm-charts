@@ -1,0 +1,23 @@
+BGPPeer:
+  upstream-v4:
+    annotations:
+      argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    myASN: 64620
+    peerASN: 65101
+    peerAddress: 10.132.0.1
+    holdTime: 9s
+    keepaliveTime: 3s
+    bfdProfile: fast
+    passwordSecret:
+      name: upstream-bgp-password
+      namespace: metallb-system
+  upstream-v6:
+    myASN: 64620
+    peerASN: 65101
+    peerAddress: "2806:419:2:2040::1"
+    holdTime: 9s
+    keepaliveTime: 3s
+    bfdProfile: fast
+    nodeSelectors:
+    - matchLabels:
+        node-role.kubernetes.io/worker: "true"

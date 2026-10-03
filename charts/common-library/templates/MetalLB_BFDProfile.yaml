@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.BFDProfile }}
+  {{ include "library.MetalLB.BFDProfile" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

@@ -1,0 +1,7 @@
+BFDProfile:
+  fast:
+    receiveInterval: 300
+    transmitInterval: 300
+    detectMultiplier: 3
+    echoMode: false
+    passiveMode: false
