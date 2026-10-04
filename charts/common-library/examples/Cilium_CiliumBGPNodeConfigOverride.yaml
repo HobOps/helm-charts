@@ -1,0 +1,10 @@
+# Kind fixture for CiliumBGPNodeConfigOverride (cluster-scoped; name = node name).
+CiliumBGPNodeConfigOverride:
+  ci-node-1:
+    bgpInstances:
+    - name: lab
+      routerID: 192.0.2.10
+      localPort: 179
+      peers:
+      - name: router-v4
+        localAddress: 192.0.2.10

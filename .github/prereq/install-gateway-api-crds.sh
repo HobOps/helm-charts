@@ -8,7 +8,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 source "${ROOT_DIR}/.github/prereq/_lib.sh"
 
 # Pin to a Gateway API release compatible with Kind CI (K8s >= 1.31).
-GATEWAY_API_VERSION="${GATEWAY_API_VERSION:-v1.5.1}"
+# v1.6.1: the release Cilium 1.20 supports; first with TCPRoute/UDPRoute in standard.
+GATEWAY_API_VERSION="${GATEWAY_API_VERSION:-v1.6.1}"
 GATEWAY_API_URL="${GATEWAY_API_MANIFEST_URL:-https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml}"
 
 require_bins kubectl
@@ -26,6 +27,11 @@ kubectl apply --server-side --force-conflicts -f "${GATEWAY_API_URL}"
 wait_crd_established \
   crd/gateways.gateway.networking.k8s.io \
   crd/gatewayclasses.gateway.networking.k8s.io \
-  crd/httproutes.gateway.networking.k8s.io
+  crd/httproutes.gateway.networking.k8s.io \
+  crd/grpcroutes.gateway.networking.k8s.io \
+  crd/tlsroutes.gateway.networking.k8s.io \
+  crd/tcproutes.gateway.networking.k8s.io \
+  crd/udproutes.gateway.networking.k8s.io \
+  crd/backendtlspolicies.gateway.networking.k8s.io
 
 log "Gateway API CRDs ready"

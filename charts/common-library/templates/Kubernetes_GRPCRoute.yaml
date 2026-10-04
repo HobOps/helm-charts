@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.GRPCRoute }}
+  {{ include "library.Kubernetes.GRPCRoute" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

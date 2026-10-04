@@ -61,3 +61,11 @@ BGPAdvertisement: {}
 BFDProfile: {}
 L2Advertisement: {}
 Community: {}
+GRPCRoute: {}
+TLSRoute: {}
+TCPRoute: {}
+UDPRoute: {}
+BackendTLSPolicy: {}
+CiliumCIDRGroup: {}
+CiliumL2AnnouncementPolicy: {}
+CiliumBGPNodeConfigOverride: {}

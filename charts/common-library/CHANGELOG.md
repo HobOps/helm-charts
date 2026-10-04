@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-10-04
+
+### Added
+- Gateway API templates (`gateway.networking.k8s.io/v1`, namespaced):
+  `GRPCRoute`, `TLSRoute`, `TCPRoute`, `UDPRoute` and `BackendTLSPolicy`.
+- Cilium templates (cluster-scoped): `CiliumCIDRGroup` (`cilium.io/v2`),
+  `CiliumL2AnnouncementPolicy` (`cilium.io/v2alpha1`) and
+  `CiliumBGPNodeConfigOverride` (`cilium.io/v2`; the name is the node name).
+- All of them follow the generic pattern: every key other than `annotations`
+  / `labels` / `apiVersion` is rendered as the spec.
+- Kind CI: Gateway API CRDs now v1.6.1 (the release Cilium 1.20 supports;
+  TCPRoute and UDPRoute are standard there), the three Cilium CRDs above,
+  and fixtures with schema defaults set explicitly.
+
 ## [1.12.1] - 2026-10-04
 
 ### Fixed

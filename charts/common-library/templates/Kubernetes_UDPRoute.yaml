@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.UDPRoute }}
+  {{ include "library.Kubernetes.UDPRoute" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

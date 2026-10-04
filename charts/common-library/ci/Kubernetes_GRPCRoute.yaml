@@ -1,0 +1,23 @@
+# Kind fixture for GRPCRoute (namespaced). Schema defaults set explicitly.
+GRPCRoute:
+  ci-grpcroute:
+    annotations:
+      hobops.io/ci: "true"
+    parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: ci-gateway
+    hostnames:
+    - grpc.example.local
+    rules:
+    - matches:
+      - method:
+          type: Exact
+          service: echo.v1.Echo
+          method: Ping
+      backendRefs:
+      - group: ""
+        kind: Service
+        name: ci-grpc
+        port: 9000
+        weight: 1

@@ -1,0 +1,23 @@
+{{- /*
+  Cilium CiliumL2AnnouncementPolicy (Cluster-scoped (no metadata.namespace)): ARP/NDP announcement of LoadBalancer/external IPs.
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+*/ -}}
+{{- define "library.Cilium.CiliumL2AnnouncementPolicy" }}
+{{- $data := .Values.CiliumL2AnnouncementPolicy }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "cilium.io/v2alpha1" }}
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: {{ .name }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml (omit $entry "annotations" "labels" "apiVersion")) $ | nindent 2 }}
+{{- end }}
