@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.1] - 2026-10-04
+
+### Fixed
+- `Gateway`: `infrastructure` was rendered with the wrong indentation, so its
+  `annotations` landed next to it under `spec` and its `labels` were lost.
+  It now nests both. With Cilium, this is what selects the LB IPAM pool and
+  the fixed IP of the Gateway's Service.
+- Example and Kind CI fixture for `Gateway` now set `infrastructure`.
+
 ## [1.12.0] - 2026-10-02
 
 ### Added
