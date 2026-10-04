@@ -6,6 +6,11 @@ Gateway:
     labels:
       app: ci-gateway
     gatewayClassName: traefik
+    infrastructure:
+      labels:
+        lb-pool: gateway
+      annotations:
+        lbipam.cilium.io/ips: 192.0.2.29
     listeners:
     - name: http
       protocol: HTTP

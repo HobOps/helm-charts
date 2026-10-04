@@ -3,6 +3,13 @@ Gateway:
     annotations:
       annotation: main-gateway
     gatewayClassName: envoy-gateway
+    # Labels/annotations the controller copies to the resources it creates
+    # (e.g. Cilium's LoadBalancer Service: LB IPAM pool and a fixed IP).
+    infrastructure:
+      labels:
+        lb-pool: gateway
+      annotations:
+        lbipam.cilium.io/ips: 192.0.2.29
     listeners:
     - name: http
       protocol: HTTP
