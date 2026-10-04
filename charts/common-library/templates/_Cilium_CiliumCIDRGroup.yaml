@@ -1,0 +1,23 @@
+{{- /*
+  Cilium CiliumCIDRGroup (Cluster-scoped (no metadata.namespace)): named CIDR sets referenced from Cilium network policies.
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+*/ -}}
+{{- define "library.Cilium.CiliumCIDRGroup" }}
+{{- $data := .Values.CiliumCIDRGroup }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "cilium.io/v2" }}
+kind: CiliumCIDRGroup
+metadata:
+  name: {{ .name }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml (omit $entry "annotations" "labels" "apiVersion")) $ | nindent 2 }}
+{{- end }}

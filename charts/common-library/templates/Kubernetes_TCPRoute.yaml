@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.TCPRoute }}
+  {{ include "library.Kubernetes.TCPRoute" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

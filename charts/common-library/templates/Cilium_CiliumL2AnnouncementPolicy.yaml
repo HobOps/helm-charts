@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.CiliumL2AnnouncementPolicy }}
+  {{ include "library.Cilium.CiliumL2AnnouncementPolicy" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

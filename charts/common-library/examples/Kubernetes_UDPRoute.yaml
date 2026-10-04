@@ -1,0 +1,15 @@
+# Kind fixture for UDPRoute (namespaced). Schema defaults set explicitly.
+UDPRoute:
+  ci-udproute:
+    parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: ci-gateway
+      sectionName: udp
+    rules:
+    - backendRefs:
+      - group: ""
+        kind: Service
+        name: ci-udp
+        port: 53
+        weight: 1

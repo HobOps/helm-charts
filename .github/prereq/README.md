@@ -24,7 +24,7 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 9. Movetokube CRDs (Postgres, PostgresUser)
 10. Prometheus Operator CRDs (`monitoring.coreos.com`)
 11. RabbitMQ Cluster + Messaging Topology Operator CRDs (`rabbitmq.com`)
-12. Cilium CRDs (`cilium.io/v2`: BGP, LB IPAM, network and egress gateway policies)
+12. Cilium CRDs (`cilium.io`: BGP incl. node overrides, LB IPAM, L2 announcements, CIDR groups, network and egress gateway policies)
 13. MetalLB CRDs (`metallb.io`: address pools, BGP peers/advertisements, BFD profiles, L2 advertisements, communities)
 14. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
 

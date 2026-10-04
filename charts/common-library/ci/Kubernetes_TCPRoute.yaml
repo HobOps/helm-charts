@@ -1,0 +1,15 @@
+# Kind fixture for TCPRoute (namespaced). Schema defaults set explicitly.
+TCPRoute:
+  ci-tcproute:
+    parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: ci-gateway
+      sectionName: tcp
+    rules:
+    - backendRefs:
+      - group: ""
+        kind: Service
+        name: ci-tcp
+        port: 5432
+        weight: 1

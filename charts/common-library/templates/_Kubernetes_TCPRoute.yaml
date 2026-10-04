@@ -1,0 +1,24 @@
+{{- /*
+  Kubernetes TCPRoute (Namespaced): TCP routing from a Gateway listener to Services.
+  Every key other than annotations / labels / apiVersion is rendered as the spec.
+*/ -}}
+{{- define "library.Kubernetes.TCPRoute" }}
+{{- $data := .Values.TCPRoute }}
+{{- $entry := index $data .name | default dict }}
+---
+apiVersion: {{ $entry.apiVersion | default "gateway.networking.k8s.io/v1" }}
+kind: TCPRoute
+metadata:
+  name: {{ .name }}
+  namespace: {{ .Release.Namespace }}
+  {{- with $entry.annotations }}
+  annotations:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+  {{- with $entry.labels }}
+  labels:
+    {{- tpl (toYaml .) $ | nindent 4 }}
+  {{- end }}
+spec:
+  {{- tpl (toYaml (omit $entry "annotations" "labels" "apiVersion")) $ | nindent 2 }}
+{{- end }}

@@ -1,0 +1,8 @@
+# Kind fixture for CiliumCIDRGroup (cluster-scoped).
+CiliumCIDRGroup:
+  ci-cidrgroup:
+    annotations:
+      hobops.io/ci: "true"
+    externalCIDRs:
+    - 192.0.2.0/24
+    - 2001:db8::/32

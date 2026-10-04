@@ -1,0 +1,10 @@
+# Kind fixture for BackendTLSPolicy (namespaced).
+BackendTLSPolicy:
+  ci-backendtls:
+    targetRefs:
+    - group: ""
+      kind: Service
+      name: ci-backend
+    validation:
+      hostname: backend.example.local
+      wellKnownCACertificates: System

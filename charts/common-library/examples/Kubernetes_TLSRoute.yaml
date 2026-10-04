@@ -1,0 +1,17 @@
+# Kind fixture for TLSRoute (namespaced). Schema defaults set explicitly.
+TLSRoute:
+  ci-tlsroute:
+    parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: ci-gateway
+      sectionName: tls
+    hostnames:
+    - tls.example.local
+    rules:
+    - backendRefs:
+      - group: ""
+        kind: Service
+        name: ci-tls
+        port: 443
+        weight: 1
