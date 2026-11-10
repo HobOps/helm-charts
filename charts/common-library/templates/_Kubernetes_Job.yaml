@@ -39,6 +39,10 @@ spec:
       securityContext:
         {{- tpl (toYaml .) $ | nindent 8 }}
       {{- end }}
+      {{- with (index $data .name).initContainers }}
+      initContainers:
+        {{- tpl (toYaml .) $ | nindent 8 }}
+      {{- end }}
       containers:
       - name: {{ (index $data .name).containerName | default .name }}
         {{- with (index $data .name).securityContext }}
