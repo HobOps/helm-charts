@@ -29,6 +29,13 @@ CronJob:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       runAsUser: 1000
+    initContainers:
+    - name: prepare
+      image: alpine:3.22
+      command: [sh, -c, "echo prepared > /work/ready"]
+      volumeMounts:
+      - name: work
+        mountPath: /work
     image:
       repository: alpine
       tag: latest
@@ -64,6 +71,8 @@ CronJob:
     - name: config-file
       configMap:
         name: test-file-configmap
+    - name: work
+      emptyDir: {}
     nodeSelector:
       node: changeme
     hostNetwork: false
