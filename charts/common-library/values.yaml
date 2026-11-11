@@ -69,3 +69,8 @@ BackendTLSPolicy: {}
 CiliumCIDRGroup: {}
 CiliumL2AnnouncementPolicy: {}
 CiliumBGPNodeConfigOverride: {}
+CNPGCluster: {}
+CNPGDatabase: {}
+CNPGScheduledBackup: {}
+CNPGPooler: {}
+BarmanCloudObjectStore: {}

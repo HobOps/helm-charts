@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.CNPGPooler }}
+  {{ include "library.CloudNativePG.Pooler" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}

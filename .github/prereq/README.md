@@ -9,7 +9,7 @@ Run against a Kind cluster (local or GitHub Actions `helm/kind-action`):
 This installs **CRDs + lightweight stubs only** — enough for the API server to
 accept/reject chart fixtures (schema, CEL, unknown fields). Controllers
 (Traefik, cert-manager, Argo CD, External Secrets, KEDA, ACK, Istio,
-Movetokube, Prometheus Operator, …) are **not** installed.
+Movetokube, Prometheus Operator, CloudNativePG, …) are **not** installed.
 
 ## What gets installed
 
@@ -26,7 +26,8 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 11. RabbitMQ Cluster + Messaging Topology Operator CRDs (`rabbitmq.com`)
 12. Cilium CRDs (`cilium.io`: BGP incl. node overrides, LB IPAM, L2 announcements, CIDR groups, network and egress gateway policies)
 13. MetalLB CRDs (`metallb.io`: address pools, BGP peers/advertisements, BFD profiles, L2 advertisements, communities)
-14. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
+14. CloudNativePG + barman-cloud plugin CRDs (`postgresql.cnpg.io`, `barmancloud.cnpg.io`)
+15. `IngressClass/traefik` + `GatewayClass/traefik` stubs (no controller)
 
 ## Layout
 
@@ -45,6 +46,7 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 | `install-rabbitmq-operator-crds.sh` | RabbitMQ Cluster + Topology Operator CRDs |
 | `install-cilium-crds.sh` | Cilium CRDs used by the chart (no agent) |
 | `install-metallb-crds.sh` | MetalLB CRDs used by the chart (no controller/speaker) |
+| `install-cnpg-crds.sh` | CloudNativePG operator + barman-cloud plugin CRDs (no operator/plugin) |
 | `install-stubs.sh` | IngressClass + GatewayClass stubs |
 | `_lib.sh` | Shared bash helpers |
 
@@ -64,6 +66,8 @@ Movetokube, Prometheus Operator, …) are **not** installed.
 - `RABBITMQ_CLUSTER_OPERATOR_VERSION` (default `v2.22.5`)
 - `RABBITMQ_TOPOLOGY_OPERATOR_VERSION` (default `v1.20.2`)
 - `CILIUM_VERSION` (default `v1.20.2`)
+- `CNPG_VERSION` (default `1.30.1`)
+- `BARMAN_CLOUD_PLUGIN_VERSION` (default `v0.15.1`)
 - `INGRESS_CLASS_NAME` / `GATEWAY_CLASS_NAME` (default `traefik`)
 - `LOCAL_PATH_STORAGE_CLASS` (default `standard`; assert only)
 

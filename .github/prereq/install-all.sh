@@ -18,7 +18,8 @@
 #  11. RabbitMQ Cluster + Messaging Topology Operator CRDs
 #  12. Cilium CRDs (BGP, LB IPAM, network and egress gateway policies)
 #  13. MetalLB CRDs (pools, BGP peers/advertisements, BFD, L2, communities)
-#  14. IngressClass + GatewayClass stubs (no Traefik)
+#  14. CloudNativePG + barman-cloud plugin CRDs (clusters, databases, backups, poolers, object stores)
+#  15. IngressClass + GatewayClass stubs (no Traefik)
 #
 # Usage:
 #   ./.github/prereq/install-all.sh
@@ -61,6 +62,7 @@ assert_kind_storage
 "${PREREQ_DIR}/install-rabbitmq-operator-crds.sh"
 "${PREREQ_DIR}/install-cilium-crds.sh"
 "${PREREQ_DIR}/install-metallb-crds.sh"
+"${PREREQ_DIR}/install-cnpg-crds.sh"
 "${PREREQ_DIR}/install-stubs.sh"
 
 if ! kubectl get ingressclass traefik >/dev/null 2>&1; then
@@ -107,6 +109,12 @@ if ! kubectl get crd ciliumbgpclusterconfigs.cilium.io >/dev/null 2>&1; then
 fi
 if ! kubectl get crd ipaddresspools.metallb.io >/dev/null 2>&1; then
   die "MetalLB CRDs are not available"
+fi
+if ! kubectl get crd clusters.postgresql.cnpg.io >/dev/null 2>&1; then
+  die "CloudNativePG CRDs are not available"
+fi
+if ! kubectl get crd objectstores.barmancloud.cnpg.io >/dev/null 2>&1; then
+  die "barman-cloud plugin CRDs are not available"
 fi
 
 log "All Kind prereqs installed"

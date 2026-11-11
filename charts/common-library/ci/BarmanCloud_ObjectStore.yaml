@@ -1,0 +1,15 @@
+# Kind fixture for barman-cloud ObjectStore (barmancloud.cnpg.io/v1,
+# namespaced; CRD only, no plugin).
+BarmanCloudObjectStore:
+  ci-objectstore:
+    configuration:
+      destinationPath: s3://ci-bucket/cnpg
+      endpointURL: http://minio.example.svc:9000
+      s3Credentials:
+        accessKeyId:
+          name: ci-objectstore-s3
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: ci-objectstore-s3
+          key: ACCESS_SECRET_KEY
+    retentionPolicy: 7d

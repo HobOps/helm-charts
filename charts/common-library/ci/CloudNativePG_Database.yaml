@@ -1,0 +1,10 @@
+# Kind fixture for CloudNativePG Database (postgresql.cnpg.io/v1, namespaced).
+# Schema defaults (databaseReclaimPolicy, ensure) are set explicitly.
+CNPGDatabase:
+  ci-cnpg-app:
+    name: app
+    owner: app
+    cluster:
+      name: ci-cnpg
+    ensure: present
+    databaseReclaimPolicy: retain

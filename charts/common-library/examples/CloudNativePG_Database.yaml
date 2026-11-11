@@ -1,0 +1,17 @@
+CNPGDatabase:
+  app-db-reporting:
+    labels:
+      app.kubernetes.io/part-of: app
+    name: reporting
+    owner: app
+    cluster:
+      name: app-db
+    ensure: present
+    databaseReclaimPolicy: retain
+    extensions:
+    - name: pg_stat_statements
+      ensure: present
+    schemas:
+    - name: reports
+      owner: app
+      ensure: present

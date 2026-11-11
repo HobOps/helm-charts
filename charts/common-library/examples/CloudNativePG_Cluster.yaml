@@ -1,0 +1,50 @@
+CNPGCluster:
+  app-db:
+    annotations:
+      argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    labels:
+      app.kubernetes.io/part-of: app
+    instances: 3
+    primaryUpdateStrategy: unsupervised
+    storage:
+      storageClass: longhorn
+      size: 20Gi
+    walStorage:
+      storageClass: longhorn
+      size: 5Gi
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    postgresql:
+      parameters:
+        max_connections: "200"
+        shared_buffers: 256MB
+    affinity:
+      enablePodAntiAffinity: true
+      topologyKey: kubernetes.io/hostname
+      podAntiAffinityType: required
+    bootstrap:
+      initdb:
+        database: app
+        owner: app
+        secret:
+          name: app-db-app-credentials
+    managed:
+      roles:
+      - name: app_readonly
+        ensure: present
+        login: true
+        inRoles:
+        - pg_read_all_data
+        passwordSecret:
+          name: app-db-readonly-credentials
+    plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: app-db-backups
+    monitoring:
+      enablePodMonitor: true
