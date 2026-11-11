@@ -1,0 +1,11 @@
+# Kind fixture for CloudNativePG Pooler (postgresql.cnpg.io/v1, namespaced).
+# Schema defaults (instances, type, pgbouncer.paused) are set explicitly.
+CNPGPooler:
+  ci-cnpg-pooler-rw:
+    cluster:
+      name: ci-cnpg
+    instances: 1
+    type: rw
+    pgbouncer:
+      poolMode: transaction
+      paused: false

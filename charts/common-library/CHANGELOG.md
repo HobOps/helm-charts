@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2026-11-11
+
+### Added
+- CloudNativePG templates (`postgresql.cnpg.io/v1`, namespaced): `Cluster`,
+  `Database`, `ScheduledBackup` and `Pooler`, under the values keys
+  `CNPGCluster`, `CNPGDatabase`, `CNPGScheduledBackup` and `CNPGPooler`.
+- barman-cloud plugin template: `ObjectStore` (`barmancloud.cnpg.io/v1`,
+  namespaced) under the values key `BarmanCloudObjectStore`.
+- The values keys are prefixed because `Cluster` / `Database` are too generic
+  for a top-level key. All of them follow the generic pattern: every key other
+  than `annotations` / `labels` / `apiVersion` is rendered as the spec.
+- Kind CI: `.github/prereq/install-cnpg-crds.sh` installs only the CRDs of
+  CloudNativePG `1.30.1` (`CNPG_VERSION`) and plugin-barman-cloud `v0.15.1`
+  (`BARMAN_CLOUD_PLUGIN_VERSION`) from their release manifests, plus fixtures
+  under `ci/` (schema defaults set explicitly so render and live objects match).
+
 ## [1.13.0] - 2026-10-04
 
 ### Added

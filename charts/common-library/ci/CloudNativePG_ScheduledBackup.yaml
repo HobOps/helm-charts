@@ -1,0 +1,11 @@
+# Kind fixture for CloudNativePG ScheduledBackup (postgresql.cnpg.io/v1,
+# namespaced). Schema default backupOwnerReference is set explicitly.
+CNPGScheduledBackup:
+  ci-cnpg-daily:
+    schedule: "0 30 2 * * *"
+    cluster:
+      name: ci-cnpg
+    method: plugin
+    pluginConfiguration:
+      name: barman-cloud.cloudnative-pg.io
+    backupOwnerReference: none

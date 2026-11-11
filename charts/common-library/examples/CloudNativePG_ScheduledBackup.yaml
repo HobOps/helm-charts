@@ -1,0 +1,13 @@
+CNPGScheduledBackup:
+  app-db-daily:
+    labels:
+      app.kubernetes.io/part-of: app
+    # Six-field cron (seconds first): every day at 02:30.
+    schedule: "0 30 2 * * *"
+    immediate: true
+    backupOwnerReference: self
+    cluster:
+      name: app-db
+    method: plugin
+    pluginConfiguration:
+      name: barman-cloud.cloudnative-pg.io

@@ -1,0 +1,29 @@
+BarmanCloudObjectStore:
+  app-db-backups:
+    labels:
+      app.kubernetes.io/part-of: app
+    configuration:
+      destinationPath: s3://cnpg-backups/app-db
+      endpointURL: https://s3.example.com
+      s3Credentials:
+        accessKeyId:
+          name: app-db-backup-s3
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: app-db-backup-s3
+          key: ACCESS_SECRET_KEY
+        region:
+          name: app-db-backup-s3
+          key: REGION
+      wal:
+        compression: gzip
+        maxParallel: 4
+      data:
+        compression: gzip
+        jobs: 2
+    retentionPolicy: 30d
+    instanceSidecarConfiguration:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi

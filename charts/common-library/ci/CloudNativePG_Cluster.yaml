@@ -1,0 +1,50 @@
+# Kind fixture for CloudNativePG Cluster (postgresql.cnpg.io/v1, namespaced;
+# CRDs only, no operator, so no pods or PVCs are created). Schema defaults are
+# set explicitly so render and live objects match.
+CNPGCluster:
+  ci-cnpg:
+    annotations:
+      hobops.io/ci: "true"
+    labels:
+      app: ci-cnpg
+    instances: 1
+    storage:
+      size: 1Gi
+      resizeInUseVolumes: true
+    bootstrap:
+      initdb:
+        database: app
+        owner: app
+    managed:
+      roles:
+      - name: app_readonly
+        ensure: present
+        login: true
+        inherit: true
+        connectionLimit: -1
+    plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      enabled: true
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: ci-objectstore
+    # Schema defaults
+    enablePDB: true
+    enableSuperuserAccess: false
+    failoverDelay: 0
+    logLevel: info
+    maxSyncReplicas: 0
+    minSyncReplicas: 0
+    postgresGID: 26
+    postgresUID: 26
+    primaryUpdateMethod: restart
+    primaryUpdateStrategy: unsupervised
+    replicationSlots:
+      highAvailability:
+        enabled: true
+        slotPrefix: _cnpg_
+      updateInterval: 30
+    smartShutdownTimeout: 180
+    startDelay: 3600
+    stopDelay: 1800
+    switchoverDelay: 3600

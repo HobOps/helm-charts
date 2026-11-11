@@ -116,3 +116,33 @@ Values keys (`rabbitmq.com`):
 Spec fields are passed through (same pattern as PrometheusRule). Controllers
 are not part of this chart — install Cluster + Messaging Topology operators
 separately.
+
+### CloudNativePG and barman-cloud
+
+Values keys:
+
+| Values key | Kind | apiVersion (default) |
+|------------|------|----------------------|
+| `CNPGCluster` | `Cluster` | `postgresql.cnpg.io/v1` |
+| `CNPGDatabase` | `Database` | `postgresql.cnpg.io/v1` |
+| `CNPGScheduledBackup` | `ScheduledBackup` | `postgresql.cnpg.io/v1` |
+| `CNPGPooler` | `Pooler` | `postgresql.cnpg.io/v1` |
+| `BarmanCloudObjectStore` | `ObjectStore` | `barmancloud.cnpg.io/v1` |
+
+The values keys are prefixed instead of using the bare kind (as most other
+templates do) because `Cluster`, `Database` or `ObjectStore` are too generic to
+own a top-level values key.
+
+All of them are namespaced (`.Release.Namespace`) and follow the generic
+pattern: every key other than `annotations` / `labels` / `apiVersion` is
+rendered as the spec, through Helm `tpl` (like the RabbitMQ templates, unlike
+ExternalSecret `target.template`). CloudNativePG specs have no operator
+placeholders; if a field must contain a literal `{{` (e.g. in
+`bootstrap.initdb.postInitSQL`), escape it as `{{ "{{" }}`.
+
+Backups use the barman-cloud plugin (CNPG-I), not the deprecated in-tree
+`barmanObjectStore`: an `ObjectStore`, a `plugins` entry in the Cluster with
+`name: barman-cloud.cloudnative-pg.io`, `isWALArchiver: true` and
+`parameters.barmanObjectName: <ObjectStore name>`, and ScheduledBackups with
+`method: plugin`. The CloudNativePG operator and the plugin are not part of
+this chart — install them separately.

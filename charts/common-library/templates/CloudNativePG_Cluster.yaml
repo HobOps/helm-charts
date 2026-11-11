@@ -1,0 +1,3 @@
+{{ range $name, $data := .Values.CNPGCluster }}
+  {{ include "library.CloudNativePG.Cluster" (dict "name" $name "data" $data "Release" $.Release "Values" $.Values "Template" $.Template ) }}
+{{ end }}
